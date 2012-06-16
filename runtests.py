@@ -13,7 +13,16 @@ if not settings.configured:
             }
         },
         INSTALLED_APPS=(
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.sites',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
             'allaccess',
+        ),
+        AUTHENTICATION_BACKENDS=(
+            'allaccess.backends.AuthorizedServiceBackend',
         ),
         SITE_ID=1,
         SECRET_KEY='super-secret',

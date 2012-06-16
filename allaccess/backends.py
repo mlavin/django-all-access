@@ -8,10 +8,10 @@ from .models import AccountAccess
 class AuthorizedServiceBackend(ModelBackend):
     "Authentication backend for users registered with remote service."
 
-    def authenticate(self, identifier=None, service=None):
+    def authenticate(self, service=None, identifier=None):
         "Fetch user for a given service by id."
         try:
-            acccess = AccountAccess.objects.filter(
+            access = AccountAccess.objects.filter(
                 identifier=identifier, service=service
             ).select_related('user')[0]
         except IndexError:
