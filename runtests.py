@@ -25,7 +25,7 @@ if not settings.configured:
             'allaccess.backends.AuthorizedServiceBackend',
         ),
         SITE_ID=1,
-        SECRET_KEY='super-secret',
+        SECRET_KEY='9a0e2569bccc45e49ba8e393233fc427',
     )
 
 

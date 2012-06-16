@@ -12,8 +12,17 @@ class AuthBackendTestCase(AllAccessTestCase):
 
     def test_successful_authenticate(self):
         "User successfully authenticated."
-        user = authenticate(service=self.access.service, identifier=self.access.identifier)
+        service = self.access.service
+        identifier = self.access.identifier
+        user = authenticate(service=service, identifier=identifier)
         self.assertEqual(user, self.user, "Correct user was not returned.")
+
+    def test_service_name(self):
+        "Match on service name as a string."
+        service = self.access.service.name
+        identifier = self.access.identifier
+        user = authenticate(service=service, identifier=identifier)
+        self.assertEqual(user, self.user, "Correct user was not returned.")        
 
     def test_failed_authentication(self):
         "No matches found for the service/id pair."

@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
 
-from .models import AccountAccess
+from .models import Provider, AccountAccess
 
 
 class AuthorizedServiceBackend(ModelBackend):
@@ -10,9 +11,12 @@ class AuthorizedServiceBackend(ModelBackend):
 
     def authenticate(self, service=None, identifier=None):
         "Fetch user for a given service by id."
+        service_q = Q(service__name=service)
+        if isinstance(service, Provider):
+            service_q = Q(service=service)
         try:
             access = AccountAccess.objects.filter(
-                identifier=identifier, service=service
+                service_q, identifier=identifier
             ).select_related('user')[0]
         except IndexError:
             return None

@@ -7,18 +7,25 @@ import string
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from allaccess.models import AccountAccess
+from allaccess.models import Provider, AccountAccess
 
 
 class AllAccessTestCase(TestCase):
     "Common base test class."
 
     def get_random_string(self, length=10):
+        "Create a random string for generating test data."
         return ''.join(random.choice(string.ascii_letters) for x in xrange(length))
 
     def get_random_email(self, domain='example.com'):
+        "Create a random email for generating test data."
         local = self.get_random_string()
         return '{0}@{1}'.format(local, domain)
+    
+    def get_random_url(self, domain='example.com'):
+        "Create a random url for generating test data."
+        path = self.get_random_string()
+        return 'http://{0}/{1}'.format(domain, path)
 
     def create_user(self, **kwargs):
         "Create a test User"
@@ -30,11 +37,22 @@ class AllAccessTestCase(TestCase):
         defaults.update(kwargs)
         return User.objects.create_user(**defaults)
 
+    def create_provider(self, **kwargs):
+        "Create OAuth provider."
+        defaults = {
+            'name': self.get_random_string(),
+            'authorization_url': self.get_random_url(),
+            'access_token_url': self.get_random_url(),
+        }
+        defaults.update(kwargs)
+        return Provider.objects.create(**defaults)
+
     def create_access(self, **kwargs):
         "Create a test remote AccountAccess"
         defaults = {
-            'service': self.get_random_string(),
             'identifier': self.get_random_string(),
         }
         defaults.update(kwargs)
+        if 'service' not in defaults:
+            defaults['service'] =  self.create_provider()
         return AccountAccess.objects.create(**defaults)
