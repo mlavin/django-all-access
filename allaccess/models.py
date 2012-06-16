@@ -17,6 +17,14 @@ class Provider(models.Model):
     key = EncryptedField(blank=True, null=True, default=None)
     secret = EncryptedField(blank=True, null=True, default=None)
 
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def enabled(self)
+        return self.key is not None and self.secret is not None
+    enabled.boolean = True
+
 
 class AccountAccess(models.Model):
     "Authorized remote service."
@@ -31,3 +39,6 @@ class AccountAccess(models.Model):
 
     class Meta(object):
         unique_together = ('identifier', 'service')
+
+    def __unicode__(self):
+        return '{0} {1}'format(self.service, self.name)
