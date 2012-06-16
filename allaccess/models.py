@@ -21,9 +21,9 @@ class Provider(models.Model):
         return self.name
 
     @property
-    def enabled(self)
+    def enabled(self):
+        enabled.boolean = True
         return self.key is not None and self.secret is not None
-    enabled.boolean = True
 
 
 class AccountAccess(models.Model):
@@ -41,4 +41,4 @@ class AccountAccess(models.Model):
         unique_together = ('identifier', 'service')
 
     def __unicode__(self):
-        return '{0} {1}'format(self.service, self.name)
+        return '{0} {1}'.format(self.service, self.name)
