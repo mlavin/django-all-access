@@ -29,3 +29,8 @@ class AuthBackendTestCase(AllAccessTestCase):
         self.access.save()
         user = authenticate(service=self.access.service, identifier=self.access.identifier)
         self.assertEqual(user, None, "No user should be returned.")
+
+    def test_performance(self):
+        "Only one query should be required to get the user."
+        with self.assertNumQueries(1):
+            authenticate(service=self.access.service, identifier=self.access.identifier)
