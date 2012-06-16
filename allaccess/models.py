@@ -14,8 +14,8 @@ class Provider(models.Model):
     authorization_url = models.URLField()
     access_token_url = models.URLField()
     profile_url = models.URLField(blank=True)
-    key = EncryptedField(blank=True)
-    secret = EncryptedField(blank=True)
+    key = EncryptedField(blank=True, null=True, default=None)
+    secret = EncryptedField(blank=True, null=True, default=None)
 
 
 class AccountAccess(models.Model):

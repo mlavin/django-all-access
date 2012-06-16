@@ -48,6 +48,9 @@ class EncryptedField(models.TextField):
         return value
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
+        if self.null:
+            # Normalize empty values to None
+            value = value or None
         if value is None:
             return None
         value = smart_str(value)
