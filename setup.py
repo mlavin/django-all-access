@@ -35,8 +35,9 @@ setup(
     ],
     long_description=read_file('README.rst'),
     install_requires=(
-        'pycrypto',
+        'pycrypto>=2.3',
         'requests>=0.13.0',
+        'oauthlib>=0.1.0,<0.2.0',
     ),
     test_suite="runtests.runtests",
     zip_safe=False, # because we're including media that Django needs
