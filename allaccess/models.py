@@ -20,6 +20,11 @@ class Provider(models.Model):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.key = self.key or None
+        self.secret = self.secret or None
+        super(Provider, self).save(*args, **kwargs)
+
     @property
     def enabled(self):
         enabled.boolean = True
