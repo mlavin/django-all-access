@@ -7,7 +7,7 @@ from mock import patch, MagicMock, Mock
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
-from allaccess.clients import OAuthClient
+from allaccess.clients import OAuthClient, OAuth2Client
 
 
 class BaseClientTestCase(AllAccessTestCase):
@@ -98,3 +98,10 @@ class OAuthClientTestCase(BaseClientTestCase):
         request.session = {}
         self.oauth.get_request_token(request)
         self.assertEqual(request.session[self.oauth.session_key], raw_token)
+
+
+@patch('allaccess.clients.requests')
+class OAuth2ClientTestCase(BaseClientTestCase):
+    "OAuth 2.0 client handling."
+
+    oauth_client = OAuth2Client
