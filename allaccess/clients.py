@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 
 import requests
 from requests.auth import OAuth1
+from requests.exceptions import RequestException
 
 
 class BaseOAuthClient(object):
@@ -16,7 +17,7 @@ class BaseOAuthClient(object):
 
     def get_access_token(self, request):
         "Fetch access token from callback request."
-        raise NotImplementedError('Defined in a sub-class')
+        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
     def get_callback_url(self, request):
         "Construct the callback url for a given provider."
@@ -25,11 +26,11 @@ class BaseOAuthClient(object):
 
     def get_profile_info(self, raw_token):
         "Fetch user profile information."
-        raise NotImplementedError('Defined in a sub-class')
+        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
     def get_redirect_args(self, request):
         "Get request parameters for redirect url."
-        raise NotImplementedError('Defined in a sub-class')
+        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
     def get_redirect_url(self, request):
         "Build authentication redirect url."
@@ -39,7 +40,7 @@ class BaseOAuthClient(object):
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
-        raise NotImplementedError('Defined in a sub-class')
+        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
 
 class OAuthClient(BaseOAuthClient):
@@ -57,13 +58,17 @@ class OAuthClient(BaseOAuthClient):
                 client_secret=self.provider.secret,
                 verifier=oauth_verifier,
             )
-            # TODO: Handle bad responses
-            response = requests.post(
-                self.provider.access_token_url,
-                {'oauth_verifier': oauth_verifier},
-                auth=oauth
-            )
-            return response.text
+            try:
+                response = requests.post(
+                    self.provider.access_token_url,
+                    {'oauth_verifier': oauth_verifier},
+                    auth=oauth
+                )
+            except RequestException:
+                # TODO: Logging
+                return None
+            else:
+                return response.text
         return None
 
     def get_profile_info(self, raw_token):
@@ -75,17 +80,27 @@ class OAuthClient(BaseOAuthClient):
             client_key=self.provider.key,
             client_secret=self.provider.secret,
         )
-        response = requests.get(self.provider.profile_url, auth=oauth)
-        return response.json
+        try:
+            response = requests.get(self.provider.profile_url, auth=oauth)
+        except RequestException:
+            # TODO: Logging
+            return None
+        else:
+            return response.json
 
     def get_request_token(self, request):
         "Fetch the OAuth request token. Only required for OAuth 1.0."
         oauth = OAuth1(client_key=self.provider.key, client_secret=self.provider.secret)
-        # TODO: Handle bad responses
-        response = requests.post(self.provider.request_token_url, auth=oauth)
-        raw_token = response.text
-        # Store token in the session for callback
-        request.session[self.session_key] = raw_token
+        # TODO: requests supresses HttpErrors but we may want to log them
+        try:
+            response = requests.post(url=self.provider.request_token_url, auth=oauth)
+        except RequestException:
+            # TODO: Logging
+            raw_token = ''
+        else:
+            raw_token = response.text
+            # Store token in the session for callback
+            request.session[self.session_key] = raw_token
         return self.parse_raw_token(raw_token)
 
     def get_redirect_args(self, request):
@@ -100,8 +115,8 @@ class OAuthClient(BaseOAuthClient):
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
         qs = parse_qs(raw_token)
-        token = qs['oauth_token'][0]
-        secret = qs['oauth_token_secret'][0]
+        token = qs.get('oauth_token', [None])[0]
+        secret = qs.get('oauth_token_secret', [None])[0]
         return (token, secret)
 
     @property
@@ -120,9 +135,13 @@ class OAuth2Client(BaseOAuthClient):
             'client_secret': self.provider.secret,
             'code': request.GET.get('code', '')
         }
-        # TODO: Handle bad responses
-        response = requests.get(self.provider.access_token_url, params=args)
-        return response.text
+        try:
+            response = requests.get(self.provider.access_token_url, params=args)
+        except RequestException:
+            # TODO: Logging
+            return None
+        else:
+            return response.text
 
     def get_redirect_args(self, request):
         "Get request parameters for redirect url."
