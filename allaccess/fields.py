@@ -10,8 +10,8 @@ from django.utils.encoding import smart_str, force_unicode
 
 try:
     import Crypto.Cipher.AES
-except ImportError:
-    raise ImportError('PyCrypto is required to use django-all-access.')
+except ImportError: # pragma: no cover
+    raise ImportError('PyCrypto is required to use django-all-access.') 
 
 
 class EncryptedField(models.TextField):
