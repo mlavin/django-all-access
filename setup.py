@@ -39,6 +39,7 @@ setup(
         'requests>=0.13.0',
         'oauthlib>=0.1.0,<0.2.0',
     ),
+    tests_require=('mock>=0.8', ),
     test_suite="runtests.runtests",
     zip_safe=False, # because we're including media that Django needs
 )
