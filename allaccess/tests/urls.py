@@ -1,5 +1,9 @@
-from django.conf.urls import patterns, url, include
-from django.http import HttpResponse
+from django.conf.urls import patterns, url, include, handler404, handler500
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
+
+
+handler404 = 'allaccess.tests.urls.test_404'
+handler500 = 'allaccess.tests.urls.test_500'
 
 
 def error(request):
@@ -12,6 +16,14 @@ def home(request):
 
 def login(request):
     return HttpResponse('Login')
+
+
+def test_404(request):
+    return HttpResponseNotFound()
+
+
+def test_500(request):
+    return HttpResponseServerError()
 
 
 urlpatterns = patterns('',
