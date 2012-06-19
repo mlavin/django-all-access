@@ -11,5 +11,5 @@ Contributing
 --------------------------------------
 
 If you think you've found a bug or are interested in contributing to this project
-check out `django-ad-code on Github <https://github.com/mlavin/django-all-access>`_.
+check out `django-all-access on Github <https://github.com/mlavin/django-all-access>`_.
 
