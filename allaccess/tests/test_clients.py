@@ -32,7 +32,7 @@ class BaseClientTestCase(AllAccessTestCase):
 
 
 @patch('allaccess.clients.OAuth1')
-@patch('allaccess.clients.requests')
+@patch('allaccess.clients.request')
 class OAuthClientTestCase(BaseClientTestCase):
     "OAuth 1.0 client handling to match http://oauth.net/core/1.0/"
 
@@ -49,59 +49,193 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.oauth.get_request_token(request)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertTrue(kwargs['client_key'], self.provider.key)
-        self.assertTrue(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], None)
+        self.assertEqual(kwargs['resource_owner_secret'], None)
+        self.assertEqual(kwargs['verifier'], None)
 
     def test_request_token_url(self, requests, auth):
         "Post should be sent to provider's request_token_url."
         request = MagicMock()
         self.oauth.get_request_token(request)
-        self.assertTrue(requests.post.called)
-        args, kwargs = requests.post.call_args
-        self.assertTrue(kwargs['url'], self.provider.request_token_url)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        method, url = args
+        self.assertEqual(method, 'post')        
+        self.assertEqual(url, self.provider.request_token_url)
 
     def test_request_token_response(self, requests, auth):
-        "Key and secret should be parsed from the server response."
+        "Return full response text without parsing key/secret."
         response = Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
-        requests.post.return_value = response
+        requests.return_value = response
         request = MagicMock()
-        token, secret = self.oauth.get_request_token(request)
-        self.assertEqual(token, 'token')
-        self.assertEqual(secret, 'secret')
-
-    def test_request_token_invalid_token(self, requests, auth):
-        "Handle invalid server responses."
-        response = Mock()
-        response.text = 'XXXXXXXXXXXXXXXXXXX'
-        requests.post.return_value = response
-        request = MagicMock()
-        token, secret = self.oauth.get_request_token(request)
-        self.assertEqual(token, None)
-        self.assertEqual(secret, None)
+        token = self.oauth.get_request_token(request)
+        self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
 
     def test_request_token_failure(self, requests, auth):
-        "Handle upstream server errors."
-        requests.post.side_effect = RequestException('Server Down')
+        "Handle upstream server errors when fetching request token."
+        requests.side_effect = RequestException('Server Down')
         request = MagicMock()
-        token, secret = self.oauth.get_request_token(request)
+        token = self.oauth.get_request_token(request)
         self.assertEqual(token, None)
-        self.assertEqual(secret, None)
 
-    def test_request_token_save(self, requests, auth):
-        "Raw token response should be saved to the session."
-        response = Mock()
-        raw_token = 'oauth_token=token&oauth_token_secret=secret'
-        response.text = raw_token
-        requests.post.return_value = response
+    def test_access_token_auth(self, requests, auth):
+        "Construct auth from provider key and secret and request token."
+        request = MagicMock()
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
+        request.GET = {'oauth_verifier': 'verifier'}
+        self.oauth.get_access_token(request)
+        self.assertTrue(auth.called)
+        args, kwargs = auth.call_args
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], 'token')
+        self.assertEqual(kwargs['resource_owner_secret'], 'secret')
+        self.assertEqual(kwargs['verifier'], 'verifier')
+
+    def test_access_token_no_request_token(self, requests, auth):
+        "Handle no request token found in the session."
         request = MagicMock()
         request.session = {}
-        self.oauth.get_request_token(request)
-        self.assertEqual(request.session[self.oauth.session_key], raw_token)
+        request.GET = {'oauth_verifier': 'verifier'}
+        response = self.oauth.get_access_token(request)
+        self.assertEqual(response, None)
+        self.assertFalse(requests.called)
+        self.assertFalse(auth.called)
+
+    def test_access_token_bad_request_token(self, requests, auth):
+        "Handle bad request token found in the session."
+        request = MagicMock()
+        request.session = {self.oauth.session_key: 'XXXXX'}
+        request.GET = {'oauth_verifier': 'verifier'}
+        self.oauth.get_access_token(request)
+        self.assertTrue(auth.called)
+        args, kwargs = auth.call_args
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], None)
+        self.assertEqual(kwargs['resource_owner_secret'], None)
+        self.assertEqual(kwargs['verifier'], 'verifier')
+
+    def test_access_token_url(self, requests, auth):
+        "Post should be sent to provider's access_token_url."
+        request = MagicMock()
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
+        request.GET = {'oauth_verifier': 'verifier'}
+        self.oauth.get_access_token(request)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        method, url = args
+        self.assertEqual(method, 'post')        
+        self.assertEqual(url, self.provider.access_token_url)
+
+    def test_access_token_response(self, requests, auth):
+        "Return full response text without parsing key/secret."
+        response = Mock()
+        response.text = 'oauth_token=token&oauth_token_secret=secret'
+        requests.return_value = response
+        request = MagicMock()
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
+        request.GET = {'oauth_verifier': 'verifier'}
+        token = self.oauth.get_access_token(request)
+        self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
+
+    def test_access_token_failure(self, requests, auth):
+        "Handle upstream server errors when fetching access token."
+        requests.side_effect = RequestException('Server Down')
+        request = MagicMock()
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
+        request.GET = {'oauth_verifier': 'verifier'}
+        token = self.oauth.get_access_token(request)
+        self.assertEqual(token, None)
+
+    def test_profile_info_auth(self, requests, auth):
+        "Construct auth from provider key and secret and user token."
+        raw_token = 'oauth_token=token&oauth_token_secret=secret'
+        self.oauth.get_profile_info(raw_token)
+        self.assertTrue(auth.called)
+        args, kwargs = auth.call_args
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], 'token')
+        self.assertEqual(kwargs['resource_owner_secret'], 'secret')
+
+    def test_profile_info_url(self, requests, auth):
+        "Make get request for profile url."
+        raw_token = 'oauth_token=token&oauth_token_secret=secret'
+        self.oauth.get_profile_info(raw_token)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        method, url = args
+        self.assertEqual(method, 'get')        
+        self.assertEqual(url, self.provider.profile_url)
+
+    def test_profile_info_failure(self, requests, auth):
+        "Handle upstream server errors when fetching profile info."
+        requests.side_effect = RequestException('Server Down')
+        raw_token = 'oauth_token=token&oauth_token_secret=secret'
+        response = self.oauth.get_profile_info(raw_token)
+        self.assertEqual(response, None)
 
 
-@patch('allaccess.clients.requests')
+@patch('allaccess.clients.request')
 class OAuth2ClientTestCase(BaseClientTestCase):
     "OAuth 2.0 client handling."
 
     oauth_client = OAuth2Client
+
+    def test_access_token_url(self, requests):
+        "Get should be sent to provider's access_token_url."
+        request = MagicMock()
+        request.GET = {'code': 'code'}
+        self.oauth.get_access_token(request)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        method, url = args
+        self.assertEqual(method, 'get')        
+        self.assertEqual(url, self.provider.access_token_url)
+
+    def test_access_token_response(self, requests):
+        "Return full response text without parsing key/secret."
+        response = Mock()
+        response.text = 'access_token=USER_ACESS_TOKEN'
+        requests.return_value = response
+        request = MagicMock()
+        request.GET = {'code': 'code'}
+        token = self.oauth.get_access_token(request)
+        self.assertEqual(token, 'access_token=USER_ACESS_TOKEN')
+
+    def test_access_token_failure(self, requests):
+        "Handle upstream server errors when fetching access token."
+        requests.side_effect = RequestException('Server Down')
+        request = MagicMock()
+        request.GET = {'code': 'code'}
+        token = self.oauth.get_access_token(request)
+        self.assertEqual(token, None)
+
+    def test_profile_info_auth(self, requests):
+        "Pass access token when requesting profile info."
+        raw_token = 'access_token=USER_ACESS_TOKEN'
+        self.oauth.get_profile_info(raw_token)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        self.assertEqual(kwargs['params']['access_token'], 'USER_ACESS_TOKEN')
+
+    def test_profile_info_url(self, requests):
+        "Make get request for profile url."
+        raw_token = 'access_token=USER_ACESS_TOKEN'
+        self.oauth.get_profile_info(raw_token)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        method, url = args
+        self.assertEqual(method, 'get')        
+        self.assertEqual(url, self.provider.profile_url)
+
+    def test_profile_info_failure(self, requests):
+        "Handle upstream server errors when fetching profile info."
+        requests.side_effect = RequestException('Server Down')
+        raw_token = 'access_token=USER_ACESS_TOKEN'
+        response = self.oauth.get_profile_info(raw_token)
+        self.assertEqual(response, None)

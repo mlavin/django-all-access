@@ -13,7 +13,7 @@ class Provider(models.Model):
     request_token_url = models.URLField(blank=True)
     authorization_url = models.URLField()
     access_token_url = models.URLField()
-    profile_url = models.URLField(blank=True)
+    profile_url = models.URLField()
     key = EncryptedField(blank=True, null=True, default=None)
     secret = EncryptedField(blank=True, null=True, default=None)
 

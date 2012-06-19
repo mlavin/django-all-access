@@ -43,6 +43,7 @@ class AllAccessTestCase(TestCase):
             'name': self.get_random_string(),
             'authorization_url': self.get_random_url(),
             'access_token_url': self.get_random_url(),
+            'profile_url': self.get_random_url(),
         }
         defaults.update(kwargs)
         return Provider.objects.create(**defaults)
