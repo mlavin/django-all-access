@@ -32,7 +32,7 @@ class Provider(models.Model):
 
 
 class AccountAccess(models.Model):
-    "Authorized remote service."
+    "Authorized remote OAuth provider."
 
     identifier = models.CharField(max_length=255)
     service = models.ForeignKey(Provider)
@@ -46,4 +46,4 @@ class AccountAccess(models.Model):
         unique_together = ('identifier', 'service')
 
     def __unicode__(self):
-        return '{0} {1}'.format(self.service, self.name)
+        return '{0} {1}'.format(self.service, self.identifier)

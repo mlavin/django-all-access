@@ -56,8 +56,8 @@ class OAuthCallback(View):
             info = client.get_profile_info(raw_token)
             if info is None:
                 return self.handle_login_failure(provider, "Could not retrive profile.")
-            indentifier = self.get_user_id(provider, info)
-            if indentifier is None:
+            identifier = self.get_user_id(provider, info)
+            if identifier is None:
                 return self.handle_login_failure(provider, "Could not determine id.")
             # Get or create access record
             defaults = {
@@ -91,7 +91,7 @@ class OAuthCallback(View):
 
     def handle_existing_user(self, provider, user, access):
         "Login user and redirect."
-        login(request, user)
+        login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access))
 
     def handle_login_failure(self, provider, reason):
@@ -108,6 +108,6 @@ class OAuthCallback(View):
         user = User.objects.create_user(username)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
-        user = authenticate(service=access.provider, identifier=access.identifier)
-        login(request, user)
+        user = authenticate(service=access.service, identifier=access.identifier)
+        login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access, True))

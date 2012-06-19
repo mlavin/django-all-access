@@ -1,10 +1,14 @@
+"Redirect and callback view tests."
+from __future__ import unicode_literals
+
 from urlparse import urlparse, parse_qs
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from mock import patch
+from mock import patch, Mock
 
-from .base import AllAccessTestCase
+from .base import AllAccessTestCase, AccountAccess, User
 
 
 class BaseViewTestCase(AllAccessTestCase):
@@ -21,7 +25,7 @@ class BaseViewTestCase(AllAccessTestCase):
 
 
 class OAuthRedirectTestCase(BaseViewTestCase):
-    "Initial redirect for user to sign log in."
+    "Initial redirect for user to sign log in with OAuth 1.0 provider."
 
     url_name = 'allaccess-login'
 
@@ -77,3 +81,85 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         self.provider.delete()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
+
+
+class OAuthCallbackTestCase(BaseViewTestCase):
+    "Callback after user has authenticated with OAuth provider."
+
+    url_name = 'allaccess-callback'
+
+    def setUp(self):
+        super(OAuthCallbackTestCase, self).setUp()
+        # Patch OAuth client
+        self.patched_get_client = patch('allaccess.views.get_client')
+        self.get_client = self.patched_get_client.start()
+        self.mock_client = Mock()
+        self.get_client.return_value = self.mock_client
+
+    def tearDown(self):
+        super(OAuthCallbackTestCase, self).tearDown()
+        self.patched_get_client.stop()
+
+    def test_unknown_provider(self):
+        "Return a 404 if unknown provider name is given."
+        self.provider.delete()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_failed_access_token(self):
+        "Handle bad response when fetching access token."
+        self.mock_client.get_access_token.return_value = None
+        response = self.client.get(self.url)
+        # Errors redirect to LOGIN_URL by default
+        self.assertRedirects(response, settings.LOGIN_URL)
+
+    def test_failed_user_profile(self):
+        "Handle bad response when fetching user info."
+        self.mock_client.get_access_token.return_value = 'token'
+        self.mock_client.get_profile_info.return_value = None
+        response = self.client.get(self.url)
+        # Errors redirect to LOGIN_URL by default
+        self.assertRedirects(response, settings.LOGIN_URL)
+
+    def test_failed_user_id(self):
+        "Handle bad response when parsing user id from info."
+        self.mock_client.get_access_token.return_value = 'token'
+        self.mock_client.get_profile_info.return_value = {}
+        response = self.client.get(self.url)
+        # Errors redirect to LOGIN_URL by default
+        self.assertRedirects(response, settings.LOGIN_URL)
+
+    def test_create_new_user(self):
+        "Create a new user and associate them with the provider."
+        User.objects.all().delete()
+        self.mock_client.get_access_token.return_value = 'token'
+        self.mock_client.get_profile_info.return_value = {'id': 100}
+        self.client.get(self.url)
+        access = AccountAccess.objects.get(
+            service=self.provider, identifier=100
+        )
+        self.assertEqual(access.access_token, 'token')
+        self.assertTrue(access.user, "User should be created.")
+        self.assertFalse(access.user.has_usable_password(), "User created without password.")
+
+    def test_existing_user(self):
+        "Authenticate existing user and update their access token."
+        user = self.create_user(username='bob', password='thebuilder')
+        access = self.create_access(user=user, service=self.provider)
+        user_count = User.objects.all().count()
+        access_count = AccountAccess.objects.all().count()
+        self.mock_client.get_access_token.return_value = 'token'
+        self.mock_client.get_profile_info.return_value = {'id': access.identifier}
+        self.client.get(self.url)
+        self.assertEqual(User.objects.all().count(), user_count, "No users created.")
+        self.assertEqual(AccountAccess.objects.all().count(), access_count, "No access records created.")
+        # Refresh from DB
+        access = AccountAccess.objects.get(pk=access.pk)
+        self.assertEqual(access.access_token, 'token')
+
+    def test_authentication_redirect(self):
+        "Post-authentication redirect to LOGIN_REDIRECT_URL."
+        self.mock_client.get_access_token.return_value = 'token'
+        self.mock_client.get_profile_info.return_value = {'id': 100}
+        response = self.client.get(self.url)
+        self.assertRedirects(response, settings.LOGIN_REDIRECT_URL)
