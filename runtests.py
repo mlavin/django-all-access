@@ -26,7 +26,7 @@ if not settings.configured:
         ),
         SITE_ID=1,
         SECRET_KEY='9a0e2569bccc45e49ba8e393233fc427',
-        ROOT_URLCONF='allaccess.urls',
+        ROOT_URLCONF='allaccess.tests.urls',
     )
 
 
