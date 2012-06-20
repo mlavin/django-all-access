@@ -19,6 +19,7 @@ if not settings.configured:
             'django.contrib.sites',
             'django.contrib.messages',
             'django.contrib.staticfiles',
+            'django.contrib.admin',
             'allaccess',
         ),
         AUTHENTICATION_BACKENDS=(

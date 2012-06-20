@@ -1,6 +1,9 @@
 from django.conf.urls import patterns, url, include, handler404, handler500
+from django.contrib import admin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 
+
+admin.autodiscover()
 
 handler404 = 'allaccess.tests.urls.test_404'
 handler500 = 'allaccess.tests.urls.test_500'
