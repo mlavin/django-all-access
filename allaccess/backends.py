@@ -7,16 +7,16 @@ from .models import Provider, AccountAccess
 
 
 class AuthorizedServiceBackend(ModelBackend):
-    "Authentication backend for users registered with remote service."
+    "Authentication backend for users registered with remote OAuth provider."
 
-    def authenticate(self, service=None, identifier=None):
-        "Fetch user for a given service by id."
-        service_q = Q(service__name=service)
-        if isinstance(service, Provider):
-            service_q = Q(service=service)
+    def authenticate(self, provider=None, identifier=None):
+        "Fetch user for a given provider by id."
+        provider_q = Q(provider__name=provider)
+        if isinstance(provider, Provider):
+            provider_q = Q(provider=provider)
         try:
             access = AccountAccess.objects.filter(
-                service_q, identifier=identifier
+                provider_q, identifier=identifier
             ).select_related('user')[0]
         except IndexError:
             return None

@@ -54,6 +54,6 @@ class AllAccessTestCase(TestCase):
             'identifier': self.get_random_string(),
         }
         defaults.update(kwargs)
-        if 'service' not in defaults:
-            defaults['service'] =  self.create_provider()
+        if 'provider' not in defaults:
+            defaults['provider'] =  self.create_provider()
         return AccountAccess.objects.create(**defaults)

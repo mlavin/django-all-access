@@ -35,7 +35,7 @@ class AccountAccess(models.Model):
     "Authorized remote OAuth provider."
 
     identifier = models.CharField(max_length=255)
-    service = models.ForeignKey(Provider)
+    provider = models.ForeignKey(Provider)
     user = models.ForeignKey('auth.User', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, default=datetime.now)
     modified = models.DateTimeField(auto_now=True, default=datetime.now)    
@@ -43,7 +43,7 @@ class AccountAccess(models.Model):
     raw_data = models.TextField(default='', blank=True)
 
     class Meta(object):
-        unique_together = ('identifier', 'service')
+        unique_together = ('identifier', 'provider')
 
     def __unicode__(self):
-        return '{0} {1}'.format(self.service, self.identifier)
+        return '{0} {1}'.format(self.provider, self.identifier)

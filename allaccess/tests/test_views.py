@@ -21,7 +21,7 @@ class BaseViewTestCase(AllAccessTestCase):
         self.key = self.get_random_string()
         self.secret = self.get_random_string()
         self.provider = self.create_provider(key=self.key, secret=self.secret)
-        self.url = reverse(self.url_name, kwargs={'service': self.provider.name})
+        self.url = reverse(self.url_name, kwargs={'provider': self.provider.name})
 
 
 class OAuthRedirectTestCase(BaseViewTestCase):
@@ -51,7 +51,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
             scheme, netloc, path, params, query, fragment = urlparse(url)
             query = parse_qs(query)
             self.assertEqual(query['oauth_token'][0], 'token')
-            callback = reverse('allaccess-callback', kwargs={'service': self.provider.name})
+            callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
             self.assertEqual(query['callback_url'][0], 'http://testserver' + callback)
 
     def test_oauth_2_redirect(self):
@@ -71,7 +71,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         url = response['Location']
         scheme, netloc, path, params, query, fragment = urlparse(url)
         query = parse_qs(query)
-        callback = reverse('allaccess-callback', kwargs={'service': self.provider.name})
+        callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
         self.assertEqual(query['redirect_uri'][0], 'http://testserver' + callback)
         self.assertEqual(query['response_type'][0], 'code')
         self.assertEqual(query['client_id'][0], self.provider.key)
@@ -136,7 +136,7 @@ class OAuthCallbackTestCase(BaseViewTestCase):
         self.mock_client.get_profile_info.return_value = {'id': 100}
         self.client.get(self.url)
         access = AccountAccess.objects.get(
-            service=self.provider, identifier=100
+            provider=self.provider, identifier=100
         )
         self.assertEqual(access.access_token, 'token')
         self.assertTrue(access.user, "User should be created.")
@@ -145,7 +145,7 @@ class OAuthCallbackTestCase(BaseViewTestCase):
     def test_existing_user(self):
         "Authenticate existing user and update their access token."
         user = self.create_user(username='bob', password='thebuilder')
-        access = self.create_access(user=user, service=self.provider)
+        access = self.create_access(user=user, provider=self.provider)
         user_count = User.objects.all().count()
         access_count = AccountAccess.objects.all().count()
         self.mock_client.get_access_token.return_value = 'token'

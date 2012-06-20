@@ -17,17 +17,17 @@ from .models import Provider, AccountAccess
 
 
 class OAuthRedirect(RedirectView):
-    "Redirect user to service to enable access."
+    "Redirect user to OAuth provider to enable access."
 
     permanent = False  
         
     def get_redirect_url(self, **kwargs):
         "Build redirect url for a given provider."
-        service = kwargs.get('service', '')
+        name = kwargs.get('provider', '')
         try:
             provider = Provider.objects.filter(
                 key__isnull=False, secret__isnull=False
-            ).get(name=service)
+            ).get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -39,11 +39,11 @@ class OAuthCallback(View):
     "Base OAuth callback view."
         
     def get(self, request, *args, **kwargs):
-        service = kwargs.get('service', '')
+        name = kwargs.get('provider', '')
         try:
             provider = Provider.objects.filter(
                 key__isnull=False, secret__isnull=False
-            ).get(name=service)
+            ).get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -65,13 +65,13 @@ class OAuthCallback(View):
                 'raw_data': json.dumps(info),
             }
             access, created = AccountAccess.objects.get_or_create(
-                service=provider, identifier=identifier, defaults=defaults
+                provider=provider, identifier=identifier, defaults=defaults
             )
             if not created:
                 for field, value in defaults.items():
                     setattr(access, field, value)
                 AccountAccess.objects.filter(pk=access.pk).update(**defaults)
-            user = authenticate(service=provider, identifier=identifier)
+            user = authenticate(provider=provider, identifier=identifier)
             if user is None:
                 return self.handle_new_user(provider, access)
             else:
@@ -108,6 +108,6 @@ class OAuthCallback(View):
         user = User.objects.create_user(username)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
-        user = authenticate(service=access.service, identifier=access.identifier)
+        user = authenticate(provider=access.provider, identifier=access.identifier)
         login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access, True))

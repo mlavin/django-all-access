@@ -21,7 +21,7 @@ class BaseOAuthClient(object):
 
     def get_callback_url(self, request):
         "Construct the callback url for a given provider."
-        callback = reverse('allaccess-callback', kwargs={'service': self.provider.name})
+        callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
         return request.build_absolute_uri(callback)
 
     def get_profile_info(self, raw_token):
