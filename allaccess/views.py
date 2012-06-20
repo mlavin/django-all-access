@@ -107,7 +107,7 @@ class OAuthCallback(View):
         # Base 64 encode to get below 30 characters
         # Removed padding characters
         username = base64.urlsafe_b64encode(digest).replace('=', '')
-        user = User.objects.create_user(username)
+        user = User.objects.create_user(username=username, email='', password=None)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
         user = authenticate(provider=access.provider, identifier=access.identifier)

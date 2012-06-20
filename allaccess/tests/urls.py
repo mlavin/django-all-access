@@ -1,6 +1,11 @@
-from django.conf.urls import patterns, url, include, handler404, handler500
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
+try:
+    # Django 1.4+
+    from django.conf.urls import patterns, url, include, handler404, handler500
+except ImportError: # pragma: no cover
+    # Django 1.3
+    from django.conf.urls.defaults import patterns, url, include, handler404, handler500
 
 
 admin.autodiscover()
