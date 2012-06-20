@@ -52,3 +52,12 @@ class ProviderTestCase(AllAccessTestCase):
         provider = Provider.objects.get(pk=self.provider.pk)
         self.assertEqual(provider.key, key, "Could not decrypt key.")
         self.assertEqual(provider.secret, secret, "Could not decrypt secret.")
+
+    def test_encrypted_prefix(self):
+        "Check encyption prefix."
+        key_field = Provider._meta.get_field('key')
+        encrypted_key = key_field.get_db_prep_value('key')
+        self.assertTrue(encrypted_key.startswith('$AES$'))
+        secret_field = Provider._meta.get_field('secret')
+        encrypted_secret = secret_field.get_db_prep_value('secret')
+        self.assertTrue(encrypted_secret.startswith('$AES$'))
