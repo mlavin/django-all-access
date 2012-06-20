@@ -32,7 +32,7 @@ class BaseOAuthClient(object):
             # TODO: Logging
             return None
         else:
-            return response.json
+            return response.json if response.json is not None else response.text
 
     def get_redirect_args(self, request):
         "Get request parameters for redirect url."

@@ -86,8 +86,10 @@ class OAuthCallback(View):
         return settings.LOGIN_REDIRECT_URL
 
     def get_user_id(self, provider, info):
-        "Return unique identifier from the profile info."        
-        return info.get('id')
+        "Return unique identifier from the profile info."
+        if hasattr(info, 'get'):
+            return info.get('id')
+        return None
 
     def handle_existing_user(self, provider, user, access):
         "Login user and redirect."
