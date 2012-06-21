@@ -9,7 +9,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
-from django.utils import simplejson as json
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
