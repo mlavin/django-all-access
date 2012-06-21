@@ -61,3 +61,13 @@ class EncryptedField(models.TextField):
                     for index in range(padding-1)])
             value = self.prefix + binascii.b2a_hex(self.cipher.encrypt(value))
         return value
+
+
+# pragma: no cover
+try:
+    from south.modelsinspector import add_introspection_rules
+except ImportError: # pragma: no cover
+    # South not installed
+    pass
+else:
+    add_introspection_rules([], ["^allaccess\.fields\.EncryptedField"])
