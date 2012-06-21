@@ -9,7 +9,7 @@ from .fields import EncryptedField
 class Provider(models.Model):
     "Configuration for OAuth provider."
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     request_token_url = models.URLField(blank=True)
     authorization_url = models.URLField()
     access_token_url = models.URLField()
