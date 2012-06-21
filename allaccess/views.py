@@ -62,20 +62,18 @@ class OAuthCallback(View):
             # Get or create access record
             defaults = {
                 'access_token': raw_token,
-                'raw_data': json.dumps(info),
             }
             access, created = AccountAccess.objects.get_or_create(
                 provider=provider, identifier=identifier, defaults=defaults
             )
             if not created:
-                for field, value in defaults.items():
-                    setattr(access, field, value)
+                access.access_token = raw_token
                 AccountAccess.objects.filter(pk=access.pk).update(**defaults)
             user = authenticate(provider=provider, identifier=identifier)
             if user is None:
-                return self.handle_new_user(provider, access)
+                return self.handle_new_user(provider, access, info)
             else:
-                return self.handle_existing_user(provider, user, access)
+                return self.handle_existing_user(provider, user, access, info)
 
     def get_error_redirect(self, provider, reason):
         "Return url to redirect on login failure."
@@ -91,7 +89,7 @@ class OAuthCallback(View):
             return info.get('id')
         return None
 
-    def handle_existing_user(self, provider, user, access):
+    def handle_existing_user(self, provider, user, access, info):
         "Login user and redirect."
         login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access))
@@ -101,7 +99,7 @@ class OAuthCallback(View):
         messages.error(self.request, 'Authenication Failed.')
         return redirect(self.get_error_redirect(provider, reason))
 
-    def handle_new_user(self, provider, access):
+    def handle_new_user(self, provider, access, info):
         "Create a shell auth.User and redirect."
         digest = hashlib.sha1(str(access)).digest()
         # Base 64 encode to get below 30 characters

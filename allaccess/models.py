@@ -40,7 +40,6 @@ class AccountAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True, default=datetime.now)
     modified = models.DateTimeField(auto_now=True, default=datetime.now)    
     access_token = models.TextField(default='', blank=True)
-    raw_data = models.TextField(default='', blank=True)
 
     class Meta(object):
         unique_together = ('identifier', 'provider')
