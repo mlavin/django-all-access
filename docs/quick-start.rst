@@ -74,21 +74,9 @@ If you are also using South then you should run ``migrate`` instead::
     python manage.py migrate allaccess
 
 
-Provider Data
+Next Steps
 ------------------------------------
 
-django-all-access configures and stores the set of OAuth providers in the database.
-An initial set of providers is loaded by data migrations. If you are using South
-these will be loaded for you automatically.
-
-To enable your users to authenticate with a particular provide you will need to add the
-consumer key and consumer secret. The process of registering your application with
-each provider will vary and you should refer to the provider's API documentation
-for more information.
-
-.. note::
-
-    For those not using South, an initial set of providers is available by loading
-    the ``allaccess_providers.json`` fixture. To do this you should simply run::
-
-        python manage.py loaddata allaccess_providers.json
+At this point your project is configured to use the default django-all-access
+authentication but no providers have been added. Continue reading to learn how
+to add providers for your project.
