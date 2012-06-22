@@ -4,6 +4,7 @@ from urllib import urlencode
 from urlparse import parse_qs
 
 from django.core.urlresolvers import reverse
+from django.utils.encoding import force_unicode
 
 from requests.api import request
 from requests.auth import OAuth1
@@ -22,7 +23,7 @@ class BaseOAuthClient(object):
     def get_callback_url(self, request):
         "Construct the callback url for a given provider."
         callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
-        return request.build_absolute_uri(callback)
+        return force_unicode(request.build_absolute_uri(callback))
 
     def get_profile_info(self, raw_token):
         "Fetch user profile information."
@@ -60,8 +61,10 @@ class OAuthClient(BaseOAuthClient):
         raw_token = request.session.get(self.session_key, '')
         if raw_token:
             data = {'oauth_verifier': request.GET.get('oauth_verifier', '')}
+            callback = self.get_callback_url(request)
             try:
-                response = self.request('post', self.provider.access_token_url, token=raw_token, data=data)
+                response = self.request('post', self.provider.access_token_url, 
+                                        token=raw_token, data=data, oauth_callback=callback)
             except RequestException:
                 # TODO: Logging
                 return None
@@ -71,8 +74,9 @@ class OAuthClient(BaseOAuthClient):
 
     def get_request_token(self, request):
         "Fetch the OAuth request token. Only required for OAuth 1.0."
+        callback = self.get_callback_url(request)
         try:
-            response = self.request('post', self.provider.request_token_url)
+            response = self.request('post', self.provider.request_token_url, oauth_callback=callback)
         except RequestException:
             # TODO: Logging
             return None
@@ -102,6 +106,7 @@ class OAuthClient(BaseOAuthClient):
         "Build remote url request. Constructs necessary auth."
         user_token = kwargs.pop('token', '')
         token, secret = self.parse_raw_token(user_token)
+        callback = kwargs.pop('oauth_callback', None)
         verifier = kwargs.get('data', {}).get('oauth_verifier')
         oauth = OAuth1(
             resource_owner_key=token,
@@ -109,6 +114,7 @@ class OAuthClient(BaseOAuthClient):
             client_key=self.provider.key,
             client_secret=self.provider.secret,
             verifier=verifier,
+            callback_uri=callback,
         )
         kwargs['auth'] = oauth
         return super(OAuthClient, self).request(method, url, **kwargs)
