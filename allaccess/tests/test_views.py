@@ -22,6 +22,16 @@ class BaseViewTestCase(AllAccessTestCase):
         self.secret = self.get_random_string()
         self.provider = self.create_provider(key=self.key, secret=self.secret)
         self.url = reverse(self.url_name, kwargs={'provider': self.provider.name})
+        # Replace exsiting settings
+        self.LOGIN_URL = settings.LOGIN_URL
+        self.LOGIN_REDIRECT_URL = settings.LOGIN_REDIRECT_URL
+        settings.LOGIN_URL = '/login/'
+        settings.LOGIN_REDIRECT_URL = '/'
+
+    def tearDown(self):
+        # Restore settings
+        settings.LOGIN_URL = self.LOGIN_URL
+        settings.LOGIN_REDIRECT_URL = self.LOGIN_REDIRECT_URL
 
 
 class OAuthRedirectTestCase(BaseViewTestCase):
