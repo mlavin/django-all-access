@@ -39,6 +39,10 @@ created by ``startproject``. If you want to continue to use the default
 username/password based authentication should be be sure to include
 ``django.contrib.auth.backends.ModelBackend`` in this setting.
 
+By default django-all-access uses the built-in Django settings ``LOGIN_URL`` and 
+``LOGIN_REDIRECT_URL``. You should be sure that these are set to valid urls for
+your site.
+
 
 Configure Urls
 ------------------------------------
