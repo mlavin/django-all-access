@@ -53,13 +53,13 @@ using django-all-access you would create the following ``Provider`` record::
 
 After adding your consumer key and secret to this record you should now be able
 to authenticate with Twitter by visiting ``/accounts/login/twitter/``.
-You can find more information on the Twitter API on their `developer site <https://dev.twitter.com/docs>`.
+You can find more information on the Twitter API on their `developer site <https://dev.twitter.com/docs>`_.
 
 
 OAuth 2.0 Providers
 ------------------------------------
 
-Unlike OAuth 1.0, OAuth 2.0 is only a `working draft <http://tools.ietf.org/html/draft-ietf-oauth-v2-28>`
+Unlike OAuth 1.0, OAuth 2.0 is only a `working draft <http://tools.ietf.org/html/draft-ietf-oauth-v2-28>`_
 and not an official standard. In many ways it is much simpler than its predecessor.
 It is often referred to as 2-Legged OAuth because it removes the need for the
 request token step.
