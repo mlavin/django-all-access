@@ -82,6 +82,14 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
+    def test_disabled_provider(self):
+        "Return a 404 if provider does not have key/secret set."
+        self.provider.key = None
+        self.provider.secret = None
+        self.provider.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
 
 class OAuthCallbackTestCase(BaseViewTestCase):
     "Callback after user has authenticated with OAuth provider."
@@ -103,6 +111,14 @@ class OAuthCallbackTestCase(BaseViewTestCase):
     def test_unknown_provider(self):
         "Return a 404 if unknown provider name is given."
         self.provider.delete()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_disabled_provider(self):
+        "Return a 404 if provider does not have key/secret set."
+        self.provider.key = None
+        self.provider.secret = None
+        self.provider.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
