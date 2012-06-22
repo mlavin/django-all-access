@@ -52,7 +52,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
             query = parse_qs(query)
             self.assertEqual(query['oauth_token'][0], 'token')
             callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
-            self.assertEqual(query['callback_url'][0], 'http://testserver' + callback)
+            self.assertEqual(query['oauth_callback'][0], 'http://testserver' + callback)
 
     def test_oauth_2_redirect(self):
         "Redirect url for OAuth 2.0 provider."

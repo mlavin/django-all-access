@@ -88,7 +88,7 @@ class OAuthClient(BaseOAuthClient):
         callback = self.get_callback_url(request)
         return {
             'oauth_token': token,
-            'callback_url': callback,
+            'oauth_callback': callback,
         }
 
     def parse_raw_token(self, raw_token):
