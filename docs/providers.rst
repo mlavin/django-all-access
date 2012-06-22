@@ -43,8 +43,8 @@ Twitter Example
 
 Twitter is a popular social website which provides a REST API with OAuth 1.0
 authentication. If you wanted to enable Twitter authentication on your website
-using django-all-access you would create the following ``Provider`` record.
-::
+using django-all-access you would create the following ``Provider`` record::
+
     name: twitter
     request_token_url: https://api.twitter.com/oauth/request_token
     authorization_url: https://api.twitter.com/oauth/authenticate
@@ -79,8 +79,8 @@ Facebook Example
 ------------------------------------
 
 Facebook is a large social network which provides a REST API with OAuth 2.0
-authentication. The below ``Provider`` record will enable Facebook authentication.
-::
+authentication. The below ``Provider`` record will enable Facebook authentication::
+
     name: facebook
     authorization_url: https://www.facebook.com/dialog/oauth
     access_token_url: https://graph.facebook.com/oauth/access_token
