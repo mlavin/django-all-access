@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.test.client import RequestFactory
 
-from mock import patch, MagicMock, Mock
+from mock import patch, Mock
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
@@ -26,7 +26,7 @@ class BaseClientTestCase(AllAccessTestCase):
         "Redirect url is build from provider authorization_url."
         with patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
-            request = MagicMock()
+            request = self.factory.get('/login/')
             url = self.oauth.get_redirect_url(request, callback='/callback/')
             expected = self.provider.authorization_url + '?foo=bar'
             self.assertEqual(url, expected)
@@ -85,9 +85,8 @@ class OAuthClientTestCase(BaseClientTestCase):
 
     def test_access_token_auth(self, requests, auth):
         "Construct auth from provider key and secret and request token."
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
-        request.GET = {'oauth_verifier': 'verifier'}
         self.oauth.get_access_token(request)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
@@ -96,12 +95,12 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertEqual(kwargs['resource_owner_key'], 'token')
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
         self.assertEqual(kwargs['verifier'], 'verifier')
+        self.assertEqual(kwargs['callback_uri'], 'http://testserver/callback/')
 
     def test_access_token_no_request_token(self, requests, auth):
         "Handle no request token found in the session."
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {}
-        request.GET = {'oauth_verifier': 'verifier'}
         response = self.oauth.get_access_token(request)
         self.assertEqual(response, None)
         self.assertFalse(requests.called)
@@ -109,9 +108,8 @@ class OAuthClientTestCase(BaseClientTestCase):
 
     def test_access_token_bad_request_token(self, requests, auth):
         "Handle bad request token found in the session."
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'XXXXX'}
-        request.GET = {'oauth_verifier': 'verifier'}
         self.oauth.get_access_token(request)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
@@ -123,9 +121,8 @@ class OAuthClientTestCase(BaseClientTestCase):
 
     def test_access_token_url(self, requests, auth):
         "Post should be sent to provider's access_token_url."
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
-        request.GET = {'oauth_verifier': 'verifier'}
         self.oauth.get_access_token(request)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -138,18 +135,16 @@ class OAuthClientTestCase(BaseClientTestCase):
         response = Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
-        request.GET = {'oauth_verifier': 'verifier'}
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
 
     def test_access_token_failure(self, requests, auth):
         "Handle upstream server errors when fetching access token."
         requests.side_effect = RequestException('Server Down')
-        request = MagicMock()
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
-        request.GET = {'oauth_verifier': 'verifier'}
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, None)
 
@@ -190,8 +185,7 @@ class OAuth2ClientTestCase(BaseClientTestCase):
 
     def test_access_token_url(self, requests):
         "Get should be sent to provider's access_token_url."
-        request = MagicMock()
-        request.GET = {'code': 'code'}
+        request = self.factory.get('/callback/', {'code': 'code'})
         self.oauth.get_access_token(request)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -204,16 +198,14 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         response = Mock()
         response.text = 'access_token=USER_ACESS_TOKEN'
         requests.return_value = response
-        request = MagicMock()
-        request.GET = {'code': 'code'}
+        request = self.factory.get('/callback/', {'code': 'code'})
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, 'access_token=USER_ACESS_TOKEN')
 
     def test_access_token_failure(self, requests):
         "Handle upstream server errors when fetching access token."
         requests.side_effect = RequestException('Server Down')
-        request = MagicMock()
-        request.GET = {'code': 'code'}
+        request = self.factory.get('/callback/', {'code': 'code'})
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, None)
 
