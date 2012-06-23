@@ -3,6 +3,31 @@ Release History
 
 Release and change history for django-all-access
 
+v0.2.0 (TBD)
+------------------------------------
+
+Features
+_________________
+
+- OAuthRedirect view can now specify a callback url
+- Context processor for adding enabled providers to the template context
+
+
+Bug Fixes
+_________________
+
+- Fixed OAuth2Client to include ``grant_type`` paramater when requesting access token
+
+
+Backwards Incompatible Changes
+__________________________________
+
+- Moving the construction on the callback from the client to the view changed the
+signature of the client ``get_redirect_url``, ``get_redirect_args``, ``get_request_token``
+(OAuth 1.0 only) and ``get_access_token`` to include the callback. These are largely
+internal functions and likely will not impact existing applications.
+
+
 v0.1.1 (2012-06-22)
 ------------------------------------
 

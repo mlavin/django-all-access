@@ -30,7 +30,7 @@ class BaseOAuthClient(object):
         else:
             return response.json if response.json is not None else response.text
 
-    def get_redirect_args(self, request):
+    def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
         raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
