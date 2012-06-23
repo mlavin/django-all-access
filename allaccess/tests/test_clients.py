@@ -289,3 +289,31 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         raw_token = 'access_token=USER_ACESS_TOKEN'
         response = self.oauth.get_profile_info(raw_token)
         self.assertEqual(response, None)
+
+    def test_parse_token_response_json(self, requests):
+        "Parse token response which is JSON encoded per spec."
+        raw_token = '{"access_token": "USER_ACESS_TOKEN"}'
+        token, secret = self.oauth.parse_raw_token(raw_token)
+        self.assertEqual(token, 'USER_ACESS_TOKEN')
+        self.assertEqual(secret, None)
+
+    def test_parse_error_response_json(self, requests):
+        "Parse token error response which is JSON encoded per spec."
+        raw_token = '{"error": "invalid_request"}'
+        token, secret = self.oauth.parse_raw_token(raw_token)
+        self.assertEqual(token, None)
+        self.assertEqual(secret, None)
+
+    def test_parse_token_response_query(self, requests):
+        "Parse token response which is url encoded (FB)."
+        raw_token = 'access_token=USER_ACESS_TOKEN'
+        token, secret = self.oauth.parse_raw_token(raw_token)
+        self.assertEqual(token, 'USER_ACESS_TOKEN')
+        self.assertEqual(secret, None)
+
+    def test_parse_invalid_token_response(self, requests):
+        "Parse garbage token response."
+        raw_token = 'XXXXX'
+        token, secret = self.oauth.parse_raw_token(raw_token)
+        self.assertEqual(token, None)
+        self.assertEqual(secret, None)
