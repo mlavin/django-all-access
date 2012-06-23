@@ -53,9 +53,10 @@ class OAuthClient(BaseOAuthClient):
 
     def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
-        raw_token = request.session.get(self.session_key, '')
-        if raw_token:
-            data = {'oauth_verifier': request.GET.get('oauth_verifier', '')}
+        raw_token = request.session.get(self.session_key, None)
+        verifier = request.GET.get('oauth_verifier', None)
+        if raw_token is not None and verifier is not None:
+            data = {'oauth_verifier': verifier}
             callback = request.build_absolute_uri(callback or request.path)
             callback = force_unicode(callback)
             try:
@@ -125,14 +126,18 @@ class OAuth2Client(BaseOAuthClient):
     def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
         callback = request.build_absolute_uri(callback or request.path)
-        args = {
-            'client_id': self.provider.key,
-            'redirect_uri': callback,
-            'client_secret': self.provider.secret,
-            'code': request.GET.get('code', '')
-        }
+        if 'code' in request.GET:
+            args = {
+                'client_id': self.provider.key,
+                'redirect_uri': callback,
+                'client_secret': self.provider.secret,
+                'code': request.GET['code'],
+                'grant_type': 'authorization_code',
+            }
+        else:
+            return None
         try:
-            response = self.request('get', self.provider.access_token_url, params=args)
+            response = self.request('post', self.provider.access_token_url, params=args)
         except RequestException:
             # TODO: Logging
             return None

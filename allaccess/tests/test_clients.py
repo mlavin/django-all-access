@@ -97,10 +97,33 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertEqual(kwargs['verifier'], 'verifier')
         self.assertEqual(kwargs['callback_uri'], 'http://testserver/callback/')
 
+    def test_access_token_auth_custom_callback(self, requests, auth):
+        "Construct auth when a callback is given."
+        request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
+        self.oauth.get_access_token(request, callback='/other/')
+        self.assertTrue(auth.called)
+        args, kwargs = auth.call_args
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], 'token')
+        self.assertEqual(kwargs['resource_owner_secret'], 'secret')
+        self.assertEqual(kwargs['verifier'], 'verifier')
+        self.assertEqual(kwargs['callback_uri'], 'http://testserver/other/')
+
     def test_access_token_no_request_token(self, requests, auth):
         "Handle no request token found in the session."
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {}
+        response = self.oauth.get_access_token(request)
+        self.assertEqual(response, None)
+        self.assertFalse(requests.called)
+        self.assertFalse(auth.called)
+
+    def test_access_token_no_verifier(self, requests, auth):
+        "Don't request access token if no verifier was given."
+        request = self.factory.get('/callback/')
+        request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
         response = self.oauth.get_access_token(request)
         self.assertEqual(response, None)
         self.assertFalse(requests.called)
@@ -190,8 +213,41 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'get')        
+        self.assertEqual(method, 'post')        
         self.assertEqual(url, self.provider.access_token_url)
+
+    def test_access_token_parameters(self, requests):
+        "Check parameters used when fetching access token."
+        request = self.factory.get('/callback/', {'code': 'code'})
+        self.oauth.get_access_token(request)
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        params = kwargs['params']
+        self.assertEqual(params['redirect_uri'], 'http://testserver/callback/')
+        self.assertEqual(params['code'], 'code')
+        self.assertEqual(params['grant_type'], 'authorization_code')
+        self.assertEqual(params['client_id'], self.provider.key)
+        self.assertEqual(params['client_secret'], self.provider.secret)
+
+    def test_access_token_custom_callback(self, requests):
+        "Check parameters used with custom callback."
+        request = self.factory.get('/callback/', {'code': 'code'})
+        self.oauth.get_access_token(request, callback='/other/')
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        params = kwargs['params']
+        self.assertEqual(params['redirect_uri'], 'http://testserver/other/')
+        self.assertEqual(params['code'], 'code')
+        self.assertEqual(params['grant_type'], 'authorization_code')
+        self.assertEqual(params['client_id'], self.provider.key)
+        self.assertEqual(params['client_secret'], self.provider.secret)
+
+    def test_access_token_no_code(self, requests):
+        "Don't request token if no code was given to the callback."
+        request = self.factory.get('/callback/')
+        token = self.oauth.get_access_token(request)
+        self.assertEqual(token, None)
+        self.assertFalse(requests.called)
 
     def test_access_token_response(self, requests):
         "Return full response text without parsing key/secret."
