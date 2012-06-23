@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import json
 from urllib import urlencode
 from urlparse import parse_qs
 
@@ -155,8 +156,14 @@ class OAuth2Client(BaseOAuthClient):
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
-        qs = parse_qs(raw_token)
-        token = qs.get('access_token', [None])[0]
+        # Load as json first then parse as query string
+        try:
+            token_data = json.loads(raw_token)
+        except ValueError:
+            qs = parse_qs(raw_token)
+            token = qs.get('access_token', [None])[0]
+        else:
+            token = token_data.get('access_token', None)
         return (token, None)
 
     def request(self, method, url, **kwargs):

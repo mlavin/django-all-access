@@ -17,6 +17,7 @@ Bug Fixes
 _________________
 
 - Fixed OAuth2Client to include ``grant_type`` paramater when requesting access token
+- Fixed OAuth2Client to match current OAuth draft for access token response as well as legacy response from Facebook
 
 
 Backwards Incompatible Changes
