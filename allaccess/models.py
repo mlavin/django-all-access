@@ -6,6 +6,14 @@ from django.db import models
 from .fields import EncryptedField
 
 
+class ProviderManager(models.Manager):
+    "Additional manager methods for Providers."
+
+    def enabled(self):
+        "Filter down providers which have key/secret pairs."
+        return super(ProviderManager, self).filter(key__isnull=False, secret__isnull=False)
+
+
 class Provider(models.Model):
     "Configuration for OAuth provider."
 
@@ -17,6 +25,8 @@ class Provider(models.Model):
     key = EncryptedField(blank=True, null=True, default=None)
     secret = EncryptedField(blank=True, null=True, default=None)
 
+    objects = ProviderManager()
+
     def __unicode__(self):
         return self.name
 
@@ -25,10 +35,9 @@ class Provider(models.Model):
         self.secret = self.secret or None
         super(Provider, self).save(*args, **kwargs)
 
-    @property
     def enabled(self):
-        enabled.boolean = True
         return self.key is not None and self.secret is not None
+    enabled.boolean = True
 
 
 class AccountAccess(models.Model):

@@ -61,3 +61,16 @@ class ProviderTestCase(AllAccessTestCase):
         secret_field = Provider._meta.get_field('secret')
         encrypted_secret = secret_field.get_db_prep_value('secret')
         self.assertTrue(encrypted_secret.startswith('$AES$'))
+
+    def test_enabled_filter(self):
+        "Return only providers with key/secret pairs."
+        key = self.get_random_string()
+        secret = self.get_random_string()
+        self.provider.key = key
+        self.provider.secret = secret
+        self.provider.save()
+        other_provider = self.create_provider(key=None, secret=None)
+        self.assertTrue(self.provider.enabled())
+        self.assertTrue(self.provider in Provider.objects.enabled())
+        self.assertFalse(other_provider.enabled())
+        self.assertFalse(other_provider in Provider.objects.enabled())

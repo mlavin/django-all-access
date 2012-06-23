@@ -24,9 +24,7 @@ class OAuthRedirect(RedirectView):
         "Build redirect url for a given provider."
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.filter(
-                key__isnull=False, secret__isnull=False
-            ).get(name=name)
+            provider = Provider.objects.enabled().get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -40,9 +38,7 @@ class OAuthCallback(View):
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.filter(
-                key__isnull=False, secret__isnull=False
-            ).get(name=name)
+            provider = Provider.objects.enabled().get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
