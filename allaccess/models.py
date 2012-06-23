@@ -48,10 +48,14 @@ class AccountAccess(models.Model):
     user = models.ForeignKey('auth.User', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, default=datetime.now)
     modified = models.DateTimeField(auto_now=True, default=datetime.now)    
-    access_token = models.TextField(default='', blank=True)
+    access_token = EncryptedField(blank=True, null=True, default=None)
 
     class Meta(object):
         unique_together = ('identifier', 'provider')
 
     def __unicode__(self):
         return '{0} {1}'.format(self.provider, self.identifier)
+
+    def save(self, *args, **kwargs):
+        self.access_token = self.access_token or None
+        super(AccountAccess, self).save(*args, **kwargs)

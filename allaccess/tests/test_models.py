@@ -1,7 +1,7 @@
 "Models and field encryption tests."
 from __future__ import unicode_literals
 
-from .base import AllAccessTestCase, Provider
+from .base import AllAccessTestCase, Provider, AccountAccess
 
 
 class ProviderTestCase(AllAccessTestCase):
@@ -55,12 +55,18 @@ class ProviderTestCase(AllAccessTestCase):
 
     def test_encrypted_prefix(self):
         "Check encyption prefix."
-        key_field = Provider._meta.get_field('key')
-        encrypted_key = key_field.get_db_prep_value('key')
-        self.assertTrue(encrypted_key.startswith('$AES$'))
-        secret_field = Provider._meta.get_field('secret')
-        encrypted_secret = secret_field.get_db_prep_value('secret')
-        self.assertTrue(encrypted_secret.startswith('$AES$'))
+        key = self.get_random_string()
+        secret = self.get_random_string()
+        self.provider.key = key
+        self.provider.secret = secret
+        self.provider.save()
+        provider = Provider.objects.extra(
+            select={'raw_key': 'key', 'raw_secret': 'secret'}
+        ).get(pk=self.provider.pk)
+        self.assertNotEqual(provider.raw_key, key)
+        self.assertTrue(provider.raw_key.startswith('$AES$'))
+        self.assertNotEqual(provider.raw_secret, secret)
+        self.assertTrue(provider.raw_secret.startswith('$AES$'))
 
     def test_enabled_filter(self):
         "Return only providers with key/secret pairs."
@@ -74,3 +80,48 @@ class ProviderTestCase(AllAccessTestCase):
         self.assertTrue(self.provider in Provider.objects.enabled())
         self.assertFalse(other_provider.enabled())
         self.assertFalse(other_provider in Provider.objects.enabled())
+
+
+class AccountAccessTestCase(AllAccessTestCase):
+    "Custom AccountAccess methods and access token encryption."
+
+    def setUp(self):
+        self.access = self.create_access()
+
+    def test_save_empty_token(self):
+        "None/blank access token should normalize to None which is not encrypted."
+        self.access.access_token = ''
+        self.access.save()
+        self.assertEqual(self.access.access_token, None)
+
+        self.access.access_token = None
+        self.access.save()
+        self.assertEqual(self.access.access_token, None)
+
+    def test_encrypted_save(self):
+        "Encrypt access token on save."
+        access_token = self.get_random_string()
+        self.access.access_token = access_token
+        self.access.save()
+        found = AccountAccess.objects.filter(access_token=access_token).exists()
+        self.assertFalse(found, "Cannot filter on unencrypted token.")
+        access = AccountAccess.objects.get(pk=self.access.pk)
+        self.assertEqual(access.access_token, access_token, "Token should be unencrypted on fetch.")
+
+    def test_encrypted_update(self):
+        "Access token should be encrypted on update."
+        access_token = self.get_random_string()
+        AccountAccess.objects.filter(pk=self.access.pk).update(access_token=access_token)
+        found = AccountAccess.objects.filter(access_token=access_token).exists()
+        self.assertFalse(found, "Cannot filter on unencrypted token.")
+
+    def test_raw_token_storage(self):
+        "Fetch raw token encrypted token."
+        access_token = self.get_random_string()
+        self.access.access_token = access_token
+        self.access.save()
+        access = AccountAccess.objects.extra(
+            select={'raw_token': 'access_token'}
+        ).get(pk=self.access.pk)
+        self.assertNotEqual(access.raw_token, access_token)
+        self.assertTrue(access.raw_token.startswith('$AES$'))
