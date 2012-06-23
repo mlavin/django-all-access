@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import RedirectView, View
@@ -29,7 +30,11 @@ class OAuthRedirect(RedirectView):
             raise Http404('Unknown OAuth provider.')
         else:
             client = get_client(provider)
-            return client.get_redirect_url(self.request)
+            callback = self.get_callback_url(provider)
+            return client.get_redirect_url(self.request, callback=callback)
+
+    def get_callback_url(self, provider):
+        return reverse('allaccess-callback', kwargs={'provider': provider.name})
 
 
 class OAuthCallback(View):
@@ -43,8 +48,9 @@ class OAuthCallback(View):
             raise Http404('Unknown OAuth provider.')
         else:
             client = get_client(provider)
+            callback = self.get_callback_url(provider)
             # Fetch access token
-            raw_token = client.get_access_token(self.request)
+            raw_token = client.get_access_token(self.request, callback=callback)
             if raw_token is None:
                 return self.handle_login_failure(provider, "Could not retrive token.")
             # Fetch profile info
@@ -69,6 +75,10 @@ class OAuthCallback(View):
                 return self.handle_new_user(provider, access, info)
             else:
                 return self.handle_existing_user(provider, user, access, info)
+
+    def get_callback_url(self, provider):
+        "Return callback url if different than the current url."
+        return None
 
     def get_error_redirect(self, provider, reason):
         "Return url to redirect on login failure."

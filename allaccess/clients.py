@@ -16,14 +16,9 @@ class BaseOAuthClient(object):
     def __init__(self, provider):
         self.provider = provider
 
-    def get_access_token(self, request):
+    def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
         raise NotImplementedError('Defined in a sub-class') # pragma: no cover
-
-    def get_callback_url(self, request):
-        "Construct the callback url for a given provider."
-        callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
-        return force_unicode(request.build_absolute_uri(callback))
 
     def get_profile_info(self, raw_token):
         "Fetch user profile information."
@@ -39,9 +34,9 @@ class BaseOAuthClient(object):
         "Get request parameters for redirect url."
         raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
-    def get_redirect_url(self, request):
+    def get_redirect_url(self, request, callback):
         "Build authentication redirect url."
-        args = self.get_redirect_args(request)
+        args = self.get_redirect_args(request, callback=callback)
         params = urlencode(args)
         return '{0}?{1}'.format(self.provider.authorization_url, params)
 
@@ -56,12 +51,13 @@ class BaseOAuthClient(object):
 
 class OAuthClient(BaseOAuthClient):
 
-    def get_access_token(self, request):
+    def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
         raw_token = request.session.get(self.session_key, '')
         if raw_token:
             data = {'oauth_verifier': request.GET.get('oauth_verifier', '')}
-            callback = self.get_callback_url(request)
+            callback = request.build_absolute_uri(callback or request.path)
+            callback = force_unicode(callback)
             try:
                 response = self.request('post', self.provider.access_token_url, 
                                         token=raw_token, data=data, oauth_callback=callback)
@@ -72,9 +68,9 @@ class OAuthClient(BaseOAuthClient):
                 return response.text
         return None
 
-    def get_request_token(self, request):
+    def get_request_token(self, request, callback):
         "Fetch the OAuth request token. Only required for OAuth 1.0."
-        callback = self.get_callback_url(request)
+        callback = force_unicode(request.build_absolute_uri(callback))
         try:
             response = self.request('post', self.provider.request_token_url, oauth_callback=callback)
         except RequestException:
@@ -83,13 +79,13 @@ class OAuthClient(BaseOAuthClient):
         else:
             return response.text
 
-    def get_redirect_args(self, request):
+    def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
-        raw_token = self.get_request_token(request)
+        callback = force_unicode(request.build_absolute_uri(callback))
+        raw_token = self.get_request_token(request, callback)
         token, secret = self.parse_raw_token(raw_token)
         if token is not None and secret is not None:
             request.session[self.session_key] = raw_token
-        callback = self.get_callback_url(request)
         return {
             'oauth_token': token,
             'oauth_callback': callback,
@@ -126,9 +122,9 @@ class OAuthClient(BaseOAuthClient):
 
 class OAuth2Client(BaseOAuthClient):
 
-    def get_access_token(self, request):
+    def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
-        callback = self.get_callback_url(request)
+        callback = request.build_absolute_uri(callback or request.path)
         args = {
             'client_id': self.provider.key,
             'redirect_uri': callback,
@@ -143,9 +139,9 @@ class OAuth2Client(BaseOAuthClient):
         else:
             return response.text
 
-    def get_redirect_args(self, request):
+    def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
-        callback = self.get_callback_url(request)
+        callback = request.build_absolute_uri(callback)
         return {
             'client_id': self.provider.key,
             'redirect_uri': callback,

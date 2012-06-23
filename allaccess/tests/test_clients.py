@@ -20,13 +20,14 @@ class BaseClientTestCase(AllAccessTestCase):
         self.secret = self.get_random_string()
         self.provider = self.create_provider(key=self.key, secret=self.secret)
         self.oauth = self.oauth_client(self.provider)
+        self.factory = RequestFactory()
 
     def test_redirect_url(self, *args, **kwargs):
         "Redirect url is build from provider authorization_url."
         with patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
             request = MagicMock()
-            url = self.oauth.get_redirect_url(request)
+            url = self.oauth.get_redirect_url(request, callback='/callback/')
             expected = self.provider.authorization_url + '?foo=bar'
             self.assertEqual(url, expected)
 
@@ -45,8 +46,8 @@ class OAuthClientTestCase(BaseClientTestCase):
 
     def test_request_token_auth(self, requests, auth):
         "Construct post auth with provider key and secret."
-        request = MagicMock()
-        self.oauth.get_request_token(request)
+        request = self.factory.get('/login/')
+        self.oauth.get_request_token(request, callback='/callback/')
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
         self.assertEqual(kwargs['client_key'], self.provider.key)
@@ -54,11 +55,12 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertEqual(kwargs['resource_owner_key'], None)
         self.assertEqual(kwargs['resource_owner_secret'], None)
         self.assertEqual(kwargs['verifier'], None)
+        self.assertEqual(kwargs['callback_uri'], 'http://testserver/callback/')
 
     def test_request_token_url(self, requests, auth):
         "Post should be sent to provider's request_token_url."
-        request = MagicMock()
-        self.oauth.get_request_token(request)
+        request = self.factory.get('/login/')
+        self.oauth.get_request_token(request, callback='/callback/')
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
@@ -70,15 +72,15 @@ class OAuthClientTestCase(BaseClientTestCase):
         response = Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
-        request = MagicMock()
-        token = self.oauth.get_request_token(request)
+        request = self.factory.get('/login/')
+        token = self.oauth.get_request_token(request, callback='/callback/')
         self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
 
     def test_request_token_failure(self, requests, auth):
         "Handle upstream server errors when fetching request token."
         requests.side_effect = RequestException('Server Down')
-        request = MagicMock()
-        token = self.oauth.get_request_token(request)
+        request = self.factory.get('/login/')
+        token = self.oauth.get_request_token(request, callback='/callback/')
         self.assertEqual(token, None)
 
     def test_access_token_auth(self, requests, auth):
