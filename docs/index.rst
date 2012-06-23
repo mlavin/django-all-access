@@ -13,6 +13,7 @@ Contents
 
     quick-start
     providers
+    customize-views
     releases
 
 

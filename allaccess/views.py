@@ -88,6 +88,14 @@ class OAuthCallback(View):
         "Return url to redirect authenticated users."
         return settings.LOGIN_REDIRECT_URL
 
+    def get_or_create_user(self, provider, access, info):
+        "Create a shell auth.User."
+        digest = hashlib.sha1(str(access)).digest()
+        # Base 64 encode to get below 30 characters
+        # Removed padding characters
+        username = base64.urlsafe_b64encode(digest).replace('=', '')
+        return User.objects.create_user(username=username, email='', password=None)
+
     def get_user_id(self, provider, info):
         "Return unique identifier from the profile info."
         if hasattr(info, 'get'):
@@ -106,11 +114,7 @@ class OAuthCallback(View):
 
     def handle_new_user(self, provider, access, info):
         "Create a shell auth.User and redirect."
-        digest = hashlib.sha1(str(access)).digest()
-        # Base 64 encode to get below 30 characters
-        # Removed padding characters
-        username = base64.urlsafe_b64encode(digest).replace('=', '')
-        user = User.objects.create_user(username=username, email='', password=None)
+        user = self.get_or_create_user(provider, access, info)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
         user = authenticate(provider=access.provider, identifier=access.identifier)
