@@ -1,6 +1,8 @@
 "OAuth 1.0 and 2.0 client tests."
 from __future__ import unicode_literals
 
+from urlparse import urlparse, parse_qs
+
 from django.test.client import RequestFactory
 
 from mock import patch, Mock
@@ -28,8 +30,21 @@ class BaseClientTestCase(AllAccessTestCase):
             args.return_value = {'foo': 'bar'}
             request = self.factory.get('/login/')
             url = self.oauth.get_redirect_url(request, callback='/callback/')
-            expected = self.provider.authorization_url + '?foo=bar'
-            self.assertEqual(url, expected)
+            scheme, netloc, path, params, query, fragment = urlparse(url)
+            query = parse_qs(query)
+            self.assertEqual('%s://%s%s' % (scheme, netloc, path), self.provider.authorization_url)
+            self.assertEqual(query, {'foo': ['bar']})
+
+    def test_additional_redirect_args(self, *args, **kwargs):
+        "Additional redirect arguments."
+        with patch.object(self.oauth, 'get_redirect_args') as args:
+            args.return_value = {'foo': 'bar'}
+            request = self.factory.get('/login/')
+            additional = {'scope': 'email'}
+            url = self.oauth.get_redirect_url(request, callback='/callback/', parameters=additional)
+            scheme, netloc, path, params, query, fragment = urlparse(url)
+            query = parse_qs(query)
+            self.assertEqual(query, {'foo': ['bar'], 'scope': ['email']})
 
 
 @patch('allaccess.clients.OAuth1')

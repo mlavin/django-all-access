@@ -26,6 +26,14 @@ will return a 404.
         parameters to match the OAuth specifications. You should not need to override
         this method in your application.
 
+    .. method:: get_additional_parameters(provider)
+
+        Here you can return additional parameters for the authorization request. By
+        default this returns ``{}``. A common usage for overriding this method is
+        to request additional permissions for the authorization. There is no
+        standard for additional permissions in the OAuth 1.0 specification. For
+        an OAuth 2.0 provider this is done with the ``scope`` parameter.
+
     .. method:: get_callback_url(provider)
 
         This returns the url which the remote provider should return the user after
@@ -124,6 +132,39 @@ for an enabled provider. If no enabled provider is found for the name then this 
         (i.e. pick a username or provide an email if not returned by the provider).
 
 
+Additional Scope Example
+----------------------------------
+
+As noted above the default ``OAuthRedirect`` redirect does not request any additional
+permissions from the provider. It is recommended by most providers that you limit
+the number of additional permissions that you request. The user will see the list
+of permissions you are requesting and if they see a long list of permissions they
+may decline the authorization. The below example shows how you can request
+additional parameters for various providers.
+
+.. code-block:: python
+
+    from allaccess.views import OAuthRedirect
+
+    class AdditionalPermissionsRedirect(OAuthRedirect):
+
+        def get_additional_parameters(self, provider):
+            if provider.name == 'facebook':
+                # Request permission to see user's email
+                return {'scope': 'email'}
+            if provider.name == 'google':
+                # Request permission to see user's profile and email
+                perms = ['userinfo.email', 'userinfo.profile']
+                scope = ' '.join(['https://www.googleapis.com/auth/' + p for p in perms])
+                return {'scope': scope}
+            return super(AdditionalPermissionsRedirect, self).get_additional_parameters(provider)
+
+This would be used instead of the default ``OAuthRedirect`` for the ``allaccess-login`` url.
+Remember that this logic can be based on the provider or even the current request. That
+would allow your project to A/B test requesting more or less permissions to see its
+impact on user regisitrations.
+
+
 Additional Accounts Example
 ----------------------------------
 
@@ -166,8 +207,8 @@ the url pattern.
 
     class AssociateRedirect(OAuthRedirect):
 
-    def get_callback_url(self, provider):
-        return reverse('associate-callback', kwargs={'provider': provider.name})
+        def get_callback_url(self, provider):
+            return reverse('associate-callback', kwargs={'provider': provider.name})
 
 This assumes that we named the pattern for the above callback ``associate-callback``. An
 example set of url patterns is given below.

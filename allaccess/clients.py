@@ -35,9 +35,11 @@ class BaseOAuthClient(object):
         "Get request parameters for redirect url."
         raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
-    def get_redirect_url(self, request, callback):
+    def get_redirect_url(self, request, callback, parameters=None):
         "Build authentication redirect url."
         args = self.get_redirect_args(request, callback=callback)
+        additional = parameters or {}
+        args.update(additional)
         params = urlencode(args)
         return '{0}?{1}'.format(self.provider.authorization_url, params)
 

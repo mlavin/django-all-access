@@ -20,6 +20,14 @@ class OAuthRedirect(RedirectView):
     "Redirect user to OAuth provider to enable access."
 
     permanent = False  
+
+    def get_additional_parameters(self, provider):
+        "Return additional redirect parameters for this provider."
+        return {}
+
+    def get_callback_url(self, provider):
+        "Return the callback url for this provider."
+        return reverse('allaccess-callback', kwargs={'provider': provider.name})
         
     def get_redirect_url(self, **kwargs):
         "Build redirect url for a given provider."
@@ -31,10 +39,8 @@ class OAuthRedirect(RedirectView):
         else:
             client = get_client(provider)
             callback = self.get_callback_url(provider)
-            return client.get_redirect_url(self.request, callback=callback)
-
-    def get_callback_url(self, provider):
-        return reverse('allaccess-callback', kwargs={'provider': provider.name})
+            params = self.get_additional_parameters(provider)
+            return client.get_redirect_url(self.request, callback=callback, parameters=params)
 
 
 class OAuthCallback(View):
