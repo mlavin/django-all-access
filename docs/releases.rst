@@ -26,10 +26,10 @@ Features
 _________________
 
 - ``OAuthRedirect`` view can now specify a callback url
+- ``OAuthRedirect`` view can now specify additional permissions
 - Context processor for adding enabled providers to the template context
 - User access tokens are stored with AES encryption
 - Documentation on customizing the view workflow behaviors
-
 
 Bug Fixes
 _________________
