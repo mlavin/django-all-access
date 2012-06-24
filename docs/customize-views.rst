@@ -123,3 +123,65 @@ for an enabled provider. If no enabled provider is found for the name then this 
         in order to have them complete another registration form 
         (i.e. pick a username or provide an email if not returned by the provider).
 
+
+Additional Accounts Example
+----------------------------------
+
+You may want to allow a user to associate their account on your website with multiple
+providers. This example will show a basic outline of how you can customize these
+views for that purpose.
+
+First we will define a new callback which will associate the provider with the current
+user rather than creating a new user. This view will also have to handle the case that
+another user is associated with the new provider. For this the view will just return
+an error.
+
+.. code-block:: python
+
+    from allaccess.views import OAuthCallback
+
+    class AssociateCallback(OAuthCallback):
+
+        def get_or_create_user(self, provider, access, info):
+            return self.request.user
+
+        def handle_existing_user(self, provider, user, access, info):
+            if user != self.request.user:
+                return self.handle_login_failure(provider, "Another user is associated with this account")
+            # User was already associated with this account
+            return super(AssociateCallback, self).handle_existing_user(provider, user, access, info)
+
+This view will require authentication which is handled in the url pattern. There
+are multiple methods for decorating class based views which are detailed in the
+`Django docs <https://docs.djangoproject.com/en/1.4/topics/class-based-views/#decorating-class-based-views>`_.
+
+Next we will need a redirect view to send the user to this callback. This view
+will also require that the user already be authenticated which can be handled in
+the url pattern.
+
+.. code-block:: python
+
+    from django.core.urlresolvers import reverse
+    from allaccess.views import OAuthRedirect
+
+    class AssociateRedirect(OAuthRedirect):
+
+    def get_callback_url(self, provider):
+        return reverse('associate-callback', kwargs={'provider': provider.name})
+
+This assumes that we named the pattern for the above callback ``associate-callback``. An
+example set of url patterns is given below.
+
+.. code-block:: python
+
+    from django.contrib.auth.decorators import login_required
+
+    from .views import AssociateRedirect, AssociateCallback
+
+    urlpatterns = patterns('',
+        url(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
+        url(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
+    )
+
+That is the basic outline of how you would allow multiple account associations. This
+could be further customized using the hooks described earlier.
