@@ -30,6 +30,7 @@ _________________
 - Context processor for adding enabled providers to the template context
 - User access tokens are stored with AES encryption
 - Documentation on customizing the view workflow behaviors
+- Travis CI integration
 
 Bug Fixes
 _________________

@@ -8,6 +8,11 @@ The goal of this project is to make it easy to create your own workflows for
 authenticating with these remote APIs. django-all-access will provide the simple 
 views with sane defaults along with hooks to override the default behavior.
 
+.. image::
+    https://secure.travis-ci.org/mlavin/django-all-access.png?branch=master
+    :alt: Build Status
+        :target: https://secure.travis-ci.org/mlavin/django-all-access
+
 
 Installation
 ------------------------------------
@@ -30,6 +35,13 @@ Documentation
 
 Additional documentation on using django-all-access is available on 
 `Read The Docs <http://readthedocs.org/docs/django-all-access/>`_.
+
+
+License
+--------------------------------------
+
+django-all-access is released under the BSD License. See the 
+`LICENSE <https://github.com/mlavin/django-all-access/blob/master/LICENSE>`_ file for more details.
 
 
 Contributing
