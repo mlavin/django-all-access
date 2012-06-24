@@ -3,7 +3,7 @@ Release History
 
 Release and change history for django-all-access
 
-v0.2.0 (TBD)
+v0.2.0 (2012-06-24)
 ------------------------------------
 
 There are two South migrations included with this release. To upgrade you should run::
