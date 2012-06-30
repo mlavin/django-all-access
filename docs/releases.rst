@@ -3,6 +3,15 @@ Release History
 
 Release and change history for django-all-access
 
+v0.2.1 (2012-06-29)
+------------------------------------
+
+Bug Fixes
+_________________
+
+- Fixes missing Content-Length header when requesting OAuth 2.0 access token
+
+
 v0.2.0 (2012-06-24)
 ------------------------------------
 

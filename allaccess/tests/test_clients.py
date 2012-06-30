@@ -237,7 +237,7 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         self.oauth.get_access_token(request)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
-        params = kwargs['params']
+        params = kwargs['data']
         self.assertEqual(params['redirect_uri'], 'http://testserver/callback/')
         self.assertEqual(params['code'], 'code')
         self.assertEqual(params['grant_type'], 'authorization_code')
@@ -250,7 +250,7 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         self.oauth.get_access_token(request, callback='/other/')
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
-        params = kwargs['params']
+        params = kwargs['data']
         self.assertEqual(params['redirect_uri'], 'http://testserver/other/')
         self.assertEqual(params['code'], 'code')
         self.assertEqual(params['grant_type'], 'authorization_code')
