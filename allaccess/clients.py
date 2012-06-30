@@ -140,7 +140,7 @@ class OAuth2Client(BaseOAuthClient):
         else:
             return None
         try:
-            response = self.request('post', self.provider.access_token_url, params=args)
+            response = self.request('post', self.provider.access_token_url, data=args)
         except RequestException:
             # TODO: Logging
             return None
