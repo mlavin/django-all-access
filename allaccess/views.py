@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import base64
 import hashlib
+import logging
 
 from django.conf import settings
 from django.contrib import messages
@@ -14,6 +15,9 @@ from django.views.generic import RedirectView, View
 
 from .clients import get_client
 from .models import Provider, AccountAccess
+
+
+logger = logging.getLogger('allaccess.views')
 
 
 class OAuthRedirect(RedirectView):
@@ -115,6 +119,7 @@ class OAuthCallback(View):
 
     def handle_login_failure(self, provider, reason):
         "Message user and redirect on error."
+        logger.error('Authenication Failure: {0}'.format(reason))
         messages.error(self.request, 'Authenication Failed.')
         return redirect(self.get_error_redirect(provider, reason))
 
