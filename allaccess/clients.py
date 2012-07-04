@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import json
+import logging
 from urllib import urlencode
 from urlparse import parse_qs
 
@@ -10,6 +11,9 @@ from django.utils.encoding import force_unicode
 from requests.api import request
 from requests.auth import OAuth1
 from requests.exceptions import RequestException
+
+
+logger = logging.getLogger('allaccess.clients')
 
 
 class BaseOAuthClient(object):
@@ -25,8 +29,8 @@ class BaseOAuthClient(object):
         "Fetch user profile information."
         try:
             response = self.request('get', self.provider.profile_url, token=raw_token)
-        except RequestException:
-            # TODO: Logging
+        except RequestException as e:
+            logger.error('Unable to fetch user profile: {0}'.format(e))
             return None
         else:
             return response.json if response.json is not None else response.text
@@ -65,8 +69,8 @@ class OAuthClient(BaseOAuthClient):
             try:
                 response = self.request('post', self.provider.access_token_url, 
                                         token=raw_token, data=data, oauth_callback=callback)
-            except RequestException:
-                # TODO: Logging
+            except RequestException as e:
+                logger.error('Unable to fetch access token: {0}'.format(e))
                 return None
             else:
                 return response.text
@@ -77,8 +81,8 @@ class OAuthClient(BaseOAuthClient):
         callback = force_unicode(request.build_absolute_uri(callback))
         try:
             response = self.request('post', self.provider.request_token_url, oauth_callback=callback)
-        except RequestException:
-            # TODO: Logging
+        except RequestException as e:
+            logger.error('Unable to fetch request token: {0}'.format(e))
             return None
         else:
             return response.text
@@ -141,8 +145,8 @@ class OAuth2Client(BaseOAuthClient):
             return None
         try:
             response = self.request('post', self.provider.access_token_url, data=args)
-        except RequestException:
-            # TODO: Logging
+        except RequestException as e:
+            logger.error('Unable to fetch access token: {0}'.format(e))
             return None
         else:
             return response.text
