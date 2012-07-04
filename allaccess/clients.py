@@ -29,6 +29,7 @@ class BaseOAuthClient(object):
         "Fetch user profile information."
         try:
             response = self.request('get', self.provider.profile_url, token=raw_token)
+            response.raise_for_status()
         except RequestException as e:
             logger.error('Unable to fetch user profile: {0}'.format(e))
             return None
@@ -69,6 +70,7 @@ class OAuthClient(BaseOAuthClient):
             try:
                 response = self.request('post', self.provider.access_token_url, 
                                         token=raw_token, data=data, oauth_callback=callback)
+                response.raise_for_status()
             except RequestException as e:
                 logger.error('Unable to fetch access token: {0}'.format(e))
                 return None
@@ -81,6 +83,7 @@ class OAuthClient(BaseOAuthClient):
         callback = force_unicode(request.build_absolute_uri(callback))
         try:
             response = self.request('post', self.provider.request_token_url, oauth_callback=callback)
+            response.raise_for_status()
         except RequestException as e:
             logger.error('Unable to fetch request token: {0}'.format(e))
             return None
@@ -145,6 +148,7 @@ class OAuth2Client(BaseOAuthClient):
             return None
         try:
             response = self.request('post', self.provider.access_token_url, data=args)
+            response.raise_for_status()
         except RequestException as e:
             logger.error('Unable to fetch access token: {0}'.format(e))
             return None
