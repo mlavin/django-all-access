@@ -3,6 +3,52 @@ Release History
 
 Release and change history for django-all-access
 
+
+v0.3.0 (TBD)
+------------------------------------
+
+This release added some basic logging to django-all-access. To enable this logging
+in your project you should update your ``LOGGING`` configuration to include the
+``allaccess`` in the ``loggers`` section. Below is an example:
+
+.. code-block:: python
+
+    LOGGING = {
+        'handlers': {
+            'console':{
+                'level':'DEBUG',
+                'class':'logging.StreamHandler',
+            },
+            'mail_admins': {
+                'level': 'ERROR',
+                'class': 'django.utils.log.AdminEmailHandler',
+                'filters': ['special']
+            }
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['mail_admins', ],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+            'allaccess': {
+                'handlers': ['console', ],
+                'level': 'INFO',
+            }
+        }
+    }
+
+For more information on logging please see the 
+`Django doucmentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
+or the `Python doucmentation http://docs.python.org/library/logging.html>`_.
+
+
+Features
+_________________
+
+- Added basic error logging to OAuth clients and views
+
+
 v0.2.1 (2012-06-29)
 ------------------------------------
 
