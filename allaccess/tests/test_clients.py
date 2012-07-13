@@ -214,6 +214,18 @@ class OAuthClientTestCase(BaseClientTestCase):
         response = self.oauth.get_profile_info(raw_token)
         self.assertEqual(response, None)
 
+    def test_request_with_user_token(self, requests, auth):
+        "Use token for request auth."
+        token = 'oauth_token=token&oauth_token_secret=secret'
+        self.oauth = self.oauth_client(self.provider, token=token)
+        self.oauth.request('get', 'http://example.com/')
+        self.assertTrue(auth.called)
+        args, kwargs = auth.call_args
+        self.assertEqual(kwargs['client_key'], self.provider.key)
+        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['resource_owner_key'], 'token')
+        self.assertEqual(kwargs['resource_owner_secret'], 'secret')
+
 
 @patch('allaccess.clients.request')
 class OAuth2ClientTestCase(BaseClientTestCase):
@@ -362,3 +374,12 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         response = self.oauth.get_access_token(request)
         self.assertEqual(response, None)
         self.assertFalse(requests.called)
+
+    def test_request_with_user_token(self, requests):
+        "Use token for request auth."
+        token = '{"access_token": "USER_ACESS_TOKEN"}'
+        self.oauth = self.oauth_client(self.provider, token=token)
+        self.oauth.request('get', 'http://example.com/')
+        self.assertTrue(requests.called)
+        args, kwargs = requests.call_args
+        self.assertEqual(kwargs['params']['access_token'], 'USER_ACESS_TOKEN')

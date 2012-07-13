@@ -125,3 +125,12 @@ class AccountAccessTestCase(AllAccessTestCase):
         ).get(pk=self.access.pk)
         self.assertNotEqual(access.raw_token, access_token)
         self.assertTrue(access.raw_token.startswith('$AES$'))
+
+    def test_fetch_api_client(self):
+        "Get API client with the provider and user token set."
+        access_token = self.get_random_string()
+        self.access.access_token = access_token
+        self.access.save()
+        api = self.access.api_client
+        self.assertEqual(api.provider, self.access.provider)
+        self.assertEqual(api.token, self.access.access_token)
