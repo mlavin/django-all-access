@@ -46,6 +46,7 @@ or the `Python doucmentation http://docs.python.org/library/logging.html>`_.
 Features
 _________________
 
+- Added state parameter for OAuth 2.0 by default
 - Added basic error logging to OAuth clients and views
 
 
