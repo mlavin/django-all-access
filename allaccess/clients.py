@@ -45,8 +45,9 @@ logger = logging.getLogger('allaccess.clients')
 
 class BaseOAuthClient(object):
     
-    def __init__(self, provider):
+    def __init__(self, provider, token=''):
         self.provider = provider
+        self.token = token
 
     def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
@@ -142,7 +143,7 @@ class OAuthClient(BaseOAuthClient):
 
     def request(self, method, url, **kwargs):
         "Build remote url request. Constructs necessary auth."
-        user_token = kwargs.pop('token', '')
+        user_token = kwargs.pop('token', self.token)
         token, secret = self.parse_raw_token(user_token)
         callback = kwargs.pop('oauth_callback', None)
         verifier = kwargs.get('data', {}).get('oauth_verifier')
@@ -236,7 +237,7 @@ class OAuth2Client(BaseOAuthClient):
 
     def request(self, method, url, **kwargs):
         "Build remote url request. Constructs necessary auth."
-        user_token = kwargs.pop('token', '')
+        user_token = kwargs.pop('token', self.token)
         token, _ = self.parse_raw_token(user_token)
         if token is not None:
             params = kwargs.get('params', {})
@@ -249,9 +250,9 @@ class OAuth2Client(BaseOAuthClient):
         return 'allaccess-{0}-request-state'.format(self.provider.name)
 
 
-def get_client(provider):
+def get_client(provider, token=''):
     "Return the API client for the given provider."
     cls = OAuth2Client
     if provider.request_token_url:
         cls = OAuthClient
-    return cls(provider)
+    return cls(provider, token)

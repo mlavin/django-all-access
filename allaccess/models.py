@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.db import models
 
+from .clients import get_client
 from .fields import EncryptedField
 
 
@@ -59,3 +60,7 @@ class AccountAccess(models.Model):
     def save(self, *args, **kwargs):
         self.access_token = self.access_token or None
         super(AccountAccess, self).save(*args, **kwargs)
+
+    @property
+    def api_client(self):
+        return get_client(self.provider, self.access_token or '')
