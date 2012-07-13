@@ -85,6 +85,10 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         self.assertEqual(query['redirect_uri'][0], 'http://testserver' + callback)
         self.assertEqual(query['response_type'][0], 'code')
         self.assertEqual(query['client_id'][0], self.provider.key)
+        # State should be stored in the session and passed to the provider
+        key = 'allaccess-{0}-request-state'.format(self.provider.name)
+        state = self.client.session[key]
+        self.assertEqual(query['state'][0], state)
 
     def test_unknown_provider(self):
         "Return a 404 if unknown provider name is given."

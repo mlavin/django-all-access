@@ -223,7 +223,8 @@ class OAuth2ClientTestCase(BaseClientTestCase):
 
     def test_access_token_url(self, requests):
         "Get should be sent to provider's access_token_url."
-        request = self.factory.get('/callback/', {'code': 'code'})
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -233,7 +234,8 @@ class OAuth2ClientTestCase(BaseClientTestCase):
 
     def test_access_token_parameters(self, requests):
         "Check parameters used when fetching access token."
-        request = self.factory.get('/callback/', {'code': 'code'})
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -246,7 +248,8 @@ class OAuth2ClientTestCase(BaseClientTestCase):
 
     def test_access_token_custom_callback(self, requests):
         "Check parameters used with custom callback."
-        request = self.factory.get('/callback/', {'code': 'code'})
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request, callback='/other/')
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -259,7 +262,8 @@ class OAuth2ClientTestCase(BaseClientTestCase):
 
     def test_access_token_no_code(self, requests):
         "Don't request token if no code was given to the callback."
-        request = self.factory.get('/callback/')
+        request = self.factory.get('/callback/', {'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, None)
         self.assertFalse(requests.called)
@@ -269,14 +273,16 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         response = Mock()
         response.text = 'access_token=USER_ACESS_TOKEN'
         requests.return_value = response
-        request = self.factory.get('/callback/', {'code': 'code'})
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, 'access_token=USER_ACESS_TOKEN')
 
     def test_access_token_failure(self, requests):
         "Handle upstream server errors when fetching access token."
         requests.side_effect = RequestException('Server Down')
-        request = self.factory.get('/callback/', {'code': 'code'})
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {self.oauth.session_key: 'foo'}
         token = self.oauth.get_access_token(request)
         self.assertEqual(token, None)
 
@@ -332,3 +338,27 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         token, secret = self.oauth.parse_raw_token(raw_token)
         self.assertEqual(token, None)
         self.assertEqual(secret, None)
+
+    def test_access_token_no_state_session(self, requests):
+        "Handle no state found in the session."
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
+        request.session = {}
+        response = self.oauth.get_access_token(request)
+        self.assertEqual(response, None)
+        self.assertFalse(requests.called)
+
+    def test_access_token_no_state_provider(self, requests):
+        "Handle no state returned by the provider."
+        request = self.factory.get('/callback/', {'code': 'code'})
+        request.session = {self.oauth.session_key: 'foo'}
+        response = self.oauth.get_access_token(request)
+        self.assertEqual(response, None)
+        self.assertFalse(requests.called)
+
+    def test_access_token_state_incorrect(self, requests):
+        "Handle invalid state returned by the provider"
+        request = self.factory.get('/callback/', {'code': 'code', 'state': 'bar'})
+        request.session = {self.oauth.session_key: 'foo'}
+        response = self.oauth.get_access_token(request)
+        self.assertEqual(response, None)
+        self.assertFalse(requests.called)

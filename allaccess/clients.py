@@ -6,11 +6,38 @@ from urllib import urlencode
 from urlparse import parse_qs
 
 from django.core.urlresolvers import reverse
+from django.utils.crypto import constant_time_compare
 from django.utils.encoding import force_unicode
 
 from requests.api import request
 from requests.auth import OAuth1
 from requests.exceptions import RequestException
+
+try:
+    from django.utils.crypto import get_random_string
+except ImportError: # pragma: no cover
+    # Backport implementation from Django 1.4
+    import hashlib
+    import random
+    import string
+    import time
+    from django.conf import settings
+    try:
+        random = random.SystemRandom()
+        using_sysrandom = True
+    except NotImplementedError:
+        import warnings
+        warnings.warn('A secure pseudo-random number generator is not available '
+                      'on your system. Falling back to Mersenne Twister.')
+        using_sysrandom = False
+
+    def get_random_string(length=12, allowed_chars=string.ascii_letters + string.digits):
+        "Returns a securely generated random string."
+        if not using_sysrandom:
+            # Re-seed random
+            bytes = b"{0}{1}{2}".format(random.getstate(), time.time(), settings.SECRET_KEY)
+            random.seed(hashlib.sha256(bytes).digest())
+        return ''.join([random.choice(allowed_chars) for i in range(length)])
 
 
 logger = logging.getLogger('allaccess.clients')
@@ -55,6 +82,10 @@ class BaseOAuthClient(object):
     def request(self, method, url, **kwargs):
         "Build remote url request."
         return request(method, url, **kwargs)
+
+    @property
+    def session_key(self):
+        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
 
 
 class OAuthClient(BaseOAuthClient):
@@ -133,9 +164,26 @@ class OAuthClient(BaseOAuthClient):
 
 class OAuth2Client(BaseOAuthClient):
 
+    def check_application_state(self, request, callback):
+        "Check optional state parameter."
+        stored = request.session.get(self.session_key, None)
+        returned = request.GET.get('state', None)
+        check = False
+        if stored is not None:
+            if returned is not None:
+                check = constant_time_compare(stored, returned)
+            else:
+                logger.error('No state parameter returned by the provider.')
+        else:
+            logger.error('No state stored in the sesssion.')
+        return check
+
     def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
         callback = request.build_absolute_uri(callback or request.path)
+        if not self.check_application_state(request, callback):
+            logger.error('Application state check failed.')
+            return None
         if 'code' in request.GET:
             args = {
                 'client_id': self.provider.key,
@@ -145,6 +193,7 @@ class OAuth2Client(BaseOAuthClient):
                 'grant_type': 'authorization_code',
             }
         else:
+            logger.error('No code returned by the provider')
             return None
         try:
             response = self.request('post', self.provider.access_token_url, data=args)
@@ -155,14 +204,23 @@ class OAuth2Client(BaseOAuthClient):
         else:
             return response.text
 
+    def get_application_state(self, request, callback):
+        "Generate state optional parameter."
+        return get_random_string(32)
+
     def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
         callback = request.build_absolute_uri(callback)
-        return {
+        args = {
             'client_id': self.provider.key,
             'redirect_uri': callback,
             'response_type': 'code',
         }
+        state = self.get_application_state(request, callback)
+        if state is not None:
+            args['state'] = state
+            request.session[self.session_key] = state
+        return args
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
@@ -185,6 +243,10 @@ class OAuth2Client(BaseOAuthClient):
             params['access_token'] = token
             kwargs['params'] = params
         return super(OAuth2Client, self).request(method, url, **kwargs)
+
+    @property
+    def session_key(self):
+        return 'allaccess-{0}-request-state'.format(self.provider.name)
 
 
 def get_client(provider):
