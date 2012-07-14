@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.3.0 (TBD)
+v0.3.0 (2012-07-13)
 ------------------------------------
 
 This release added some basic logging to django-all-access. To enable this logging
