@@ -40,12 +40,13 @@ in your project you should update your ``LOGGING`` configuration to include the
 
 For more information on logging please see the 
 `Django doucmentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
-or the `Python doucmentation http://docs.python.org/library/logging.html>`_.
+or the `Python doucmentation <http://docs.python.org/library/logging.html>`_.
 
 
 Features
 _________________
 
+- Added access to simple API wrapper through the ``AccountAccess`` model
 - Added state parameter for OAuth 2.0 by default
 - Added basic error logging to OAuth clients and views
 

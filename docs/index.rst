@@ -14,6 +14,7 @@ Contents
     quick-start
     providers
     customize-views
+    api-access
     releases
 
 
