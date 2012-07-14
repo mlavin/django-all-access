@@ -107,4 +107,6 @@ being incorporated then here are some tips.
 - Keep it simple. It's difficult to review a large block of code so try to keep the scope of the change small.
 
 If you aren't sure if a particular change is a good idea or if it would be helpful to
-other users then `just ask <http://groups.google.com/group/django-all-access>`_.
+other users then `just ask <http://groups.google.com/group/django-all-access>`_. You should
+also feel free to ask for help writing tests or writing documentation if you aren't sure
+how to go about it.
