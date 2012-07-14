@@ -47,6 +47,10 @@ django-all-access is released under the BSD License. See the
 Contributing
 --------------------------------------
 
+If you have questions about using django-all-access or want to follow updates about
+the project you can join the `mailing list <http://groups.google.com/group/django-all-access>`_
+through Google Groups.
+
 If you think you've found a bug or are interested in contributing to this project
 check out `django-all-access on Github <https://github.com/mlavin/django-all-access>`_.
 

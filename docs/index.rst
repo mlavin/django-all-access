@@ -15,6 +15,7 @@ Contents
     providers
     customize-views
     api-access
+    contributing
     releases
 
 

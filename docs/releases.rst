@@ -49,6 +49,7 @@ _________________
 - Added access to simple API wrapper through the ``AccountAccess`` model
 - Added state parameter for OAuth 2.0 by default
 - Added basic error logging to OAuth clients and views
+- Added contributing guide and mailing list info
 
 
 v0.2.1 (2012-06-29)
