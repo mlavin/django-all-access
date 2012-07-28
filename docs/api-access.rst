@@ -41,5 +41,5 @@ available endpoints and the access token expiration.
 
 The ``request`` method is a thin wrapper around the underlying ``python-requests``
 library which sets up the appropriate authenication for OAuth 1.0 or OAuth 2.0. For
-more information on additional hooks available you should refer to the ``python-requests``
-documentation.
+more information on additional hooks available you should refer to the `python-requests
+documentation <http://docs.python-requests.org/en/latest/api/#requests.request>`_.
