@@ -67,8 +67,9 @@ or ``/accounts/callback/facebook/``.
 Create Database Tables
 ------------------------------------
 
-You'll need to create the necessary database tables for storing ad sections and
-placements. This is done with the ``syncdb`` management command built into Django::
+You'll need to create the necessary database tables for storing OAuth providers and
+user associations with those providers. This is done with the ``syncdb`` management
+command built into Django::
 
     python manage.py syncdb
 
