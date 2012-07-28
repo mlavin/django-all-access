@@ -18,7 +18,7 @@ Features
 
 - Sane and secure defaults for OAuth authentication
 - Easy customization through class-based views
-- Built on the amazing `requests <http://docs.python-requests.org/>` library
+- Built on the amazing `requests <http://docs.python-requests.org/>`_ library
 
 
 Installation
