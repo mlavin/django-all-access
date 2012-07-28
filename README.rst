@@ -13,6 +13,13 @@ views with sane defaults along with hooks to override the default behavior.
     :alt: Build Status
         :target: https://secure.travis-ci.org/mlavin/django-all-access
 
+Features
+------------------------------------
+
+- Sane and secure defaults for OAuth authentication
+- Easy customization through class-based views
+- Built on the amazing `requests <http://docs.python-requests.org/>` library
+
 
 Installation
 ------------------------------------
