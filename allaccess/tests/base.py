@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 import random
 import string
 
-from django.contrib.auth.models import User
 from django.test import TestCase
 
+from allaccess.compat import get_user_model
 from allaccess.models import Provider, AccountAccess
 
 
@@ -29,8 +29,9 @@ class AllAccessTestCase(TestCase):
 
     def create_user(self, **kwargs):
         "Create a test User"
+        User = get_user_model()
         defaults = {
-            'username': self.get_random_string(),
+            User.USERNAME_FIELD: self.get_random_string(),
             'password': self.get_random_string(),
             'email': self.get_random_email()
         }

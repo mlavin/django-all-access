@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 from mock import patch, Mock
 
-from .base import AllAccessTestCase, AccountAccess, User
+from .base import AllAccessTestCase, AccountAccess, get_user_model
 
 
 class BaseViewTestCase(AllAccessTestCase):
@@ -161,6 +161,7 @@ class OAuthCallbackTestCase(BaseViewTestCase):
 
     def test_create_new_user(self):
         "Create a new user and associate them with the provider."
+        User = get_user_model()
         User.objects.all().delete()
         self.mock_client.get_access_token.return_value = 'token'
         self.mock_client.get_profile_info.return_value = {'id': 100}
@@ -174,6 +175,7 @@ class OAuthCallbackTestCase(BaseViewTestCase):
 
     def test_existing_user(self):
         "Authenticate existing user and update their access token."
+        User = get_user_model()
         user = self.create_user(username='bob', password='thebuilder')
         access = self.create_access(user=user, provider=self.provider)
         user_count = User.objects.all().count()
