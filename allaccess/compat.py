@@ -38,4 +38,5 @@ try:
 except ImportError: # pragma: no cover
     # Django < 1.5
     from django.contrib.auth.models import User
+    User.USERNAME_FIELD = 'username'
     get_user_model = lambda: User

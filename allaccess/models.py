@@ -4,6 +4,7 @@ from datetime import datetime
 from django.db import models
 
 from .clients import get_client
+from .compat import AUTH_USER_MODEL
 from .fields import EncryptedField
 
 
@@ -46,7 +47,7 @@ class AccountAccess(models.Model):
 
     identifier = models.CharField(max_length=255)
     provider = models.ForeignKey(Provider)
-    user = models.ForeignKey('auth.User', null=True, blank=True)
+    user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, default=datetime.now)
     modified = models.DateTimeField(auto_now=True, default=datetime.now)    
     access_token = EncryptedField(blank=True, null=True, default=None)

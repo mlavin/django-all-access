@@ -7,13 +7,13 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
+from .compat import get_user_model
 from .models import Provider, AccountAccess
 
 
@@ -104,7 +104,13 @@ class OAuthCallback(View):
         # Base 64 encode to get below 30 characters
         # Removed padding characters
         username = base64.urlsafe_b64encode(digest).replace('=', '')
-        return User.objects.create_user(username=username, email='', password=None)
+        User = get_user_model()
+        kwargs = {
+            User.USERNAME_FIELD: username,
+            'email': '',
+            'password': None
+        }
+        return User.objects.create_user(**kwargs)
 
     def get_user_id(self, provider, info):
         "Return unique identifier from the profile info."
