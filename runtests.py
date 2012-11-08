@@ -30,6 +30,7 @@ if not settings.configured:
         ROOT_URLCONF='allaccess.tests.urls',
         LOGIN_URL='/login/',
         LOGIN_REDIRECT_URL='/',
+        USE_TZ=True,
     )
 
 
