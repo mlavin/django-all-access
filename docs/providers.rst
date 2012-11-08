@@ -49,7 +49,7 @@ using django-all-access you would create the following ``Provider`` record::
     request_token_url: https://api.twitter.com/oauth/request_token
     authorization_url: https://api.twitter.com/oauth/authenticate
     access_token_url: https://api.twitter.com/oauth/access_token
-    profile_url: https://twitter.com/account/verify_credentials.json
+    profile_url: https://api.twitter.com/1.1/account/verify_credentials.json
 
 After adding your consumer key and secret to this record you should now be able
 to authenticate with Twitter by visiting ``/accounts/login/twitter/``.
