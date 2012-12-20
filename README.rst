@@ -34,7 +34,8 @@ packages::
     django>=1.3
     pycrypto>=2.3
     requests>=0.13.0
-    oauthlib>=0.1.0,<0.2.0
+    requests_oauthlib>=0.2.0
+    oauthlib>=0.3.0
 
 
 Documentation

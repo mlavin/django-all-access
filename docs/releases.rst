@@ -7,8 +7,14 @@ Release and change history for django-all-access
 v0.4.0 (TBD)
 ------------------------------------
 
+This release is largely to keep pace with features/changes to some of the
+dependencies. This also helps work toward Python 3.0 support.
+
 - Updated for compatibility with Django 1.4 timezone support
 - Updated for compatibility with Django 1.5 swappable ``auth.User``
+- Updated for compatibility with Requests 1.0
+    - Added requests_oauthlib requirement
+    - Updated requirement of oauthlib to 0.3 or higher
 
 
 v0.3.0 (2012-07-13)
