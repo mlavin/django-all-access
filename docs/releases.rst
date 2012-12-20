@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.4.0 (TBD)
+v0.4.0 (2012-12-19)
 ------------------------------------
 
 This release is largely to keep pace with features/changes to some of the
