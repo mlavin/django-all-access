@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+import os
 import sys
 
 from django.conf import settings
 
+SWAPPED = os.environ.get('SWAPPED', False)
 
 if not settings.configured:
     settings.configure(
@@ -12,7 +14,7 @@ if not settings.configured:
                 'NAME': ':memory:',
             }
         },
-        INSTALLED_APPS=(
+        INSTALLED_APPS=[
             'django.contrib.auth',
             'django.contrib.contenttypes',
             'django.contrib.sessions',
@@ -21,7 +23,7 @@ if not settings.configured:
             'django.contrib.staticfiles',
             'django.contrib.admin',
             'allaccess',
-        ),
+        ],
         AUTHENTICATION_BACKENDS=(
             'allaccess.backends.AuthorizedServiceBackend',
         ),
@@ -34,13 +36,20 @@ if not settings.configured:
     )
 
 
+if SWAPPED:
+    settings.INSTALLED_APPS.append('allaccess.tests.custom')
+    settings.AUTH_USER_MODEL = 'custom.MyUser'
+
 from django.test.utils import get_runner
 
 
 def runtests():
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True, failfast=False)
-    failures = test_runner.run_tests(['allaccess', ])
+    apps = ['allaccess', ]
+    if SWAPPED:
+        apps.append('custom')
+    failures = test_runner.run_tests(apps)
     sys.exit(failures)
 
 
