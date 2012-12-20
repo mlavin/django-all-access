@@ -10,7 +10,7 @@ from django.utils.crypto import constant_time_compare
 from django.utils.encoding import force_unicode
 
 from requests.api import request
-from requests.auth import OAuth1
+from requests_oauthlib import OAuth1
 from requests.exceptions import RequestException
 
 from .compat import get_random_string
@@ -38,7 +38,13 @@ class BaseOAuthClient(object):
             logger.error('Unable to fetch user profile: {0}'.format(e))
             return None
         else:
-            return response.json if response.json is not None else response.text
+            result = response.text
+            # Handle requests 1.0 and pre-1.0
+            if callable(response.json):
+                result = response.json() or result
+            elif response.json is not None:
+                result = response.json
+            return result
 
     def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
