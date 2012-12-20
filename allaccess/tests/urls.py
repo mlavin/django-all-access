@@ -36,6 +36,7 @@ def test_500(request):
 
 urlpatterns = patterns('',
     url(r'^allaccess/', include('allaccess.urls')),
+    url(r'^allaccess/', include('allaccess.tests.custom.urls')),
     url(r'^error/$', error),
     url(r'^login/$', login),
     url(r'^$', home),

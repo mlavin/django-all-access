@@ -5,9 +5,15 @@ import random
 import string
 
 from django.test import TestCase
+from django.utils.unittest import skipIf
 
-from allaccess.compat import get_user_model
+from allaccess.compat import get_user_model, AUTH_USER_MODEL
 from allaccess.models import Provider, AccountAccess
+
+
+def skipIfCustomUser(test_func):
+    "Tweaked version of check for replaced auth.User"
+    return skipIf(AUTH_USER_MODEL != 'auth.User', 'Custom user model in use')(test_func)
 
 
 class AllAccessTestCase(TestCase):

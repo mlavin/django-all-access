@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 
 from mock import patch, Mock
 
-from .base import AllAccessTestCase, AccountAccess, get_user_model
+from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
 
 
 class BaseViewTestCase(AllAccessTestCase):
@@ -159,8 +159,8 @@ class OAuthCallbackTestCase(BaseViewTestCase):
         # Errors redirect to LOGIN_URL by default
         self.assertRedirects(response, settings.LOGIN_URL)
 
-    def test_create_new_user(self):
-        "Create a new user and associate them with the provider."
+    def _test_create_new_user(self):
+        "Base test case for both swapped and non-swapped user."
         User = get_user_model()
         User.objects.all().delete()
         self.mock_client.get_access_token.return_value = 'token'
@@ -173,10 +173,15 @@ class OAuthCallbackTestCase(BaseViewTestCase):
         self.assertTrue(access.user, "User should be created.")
         self.assertFalse(access.user.has_usable_password(), "User created without password.")
 
-    def test_existing_user(self):
-        "Authenticate existing user and update their access token."
+    @skipIfCustomUser
+    def test_create_new_user(self):
+        "Create a new user and associate them with the provider."
+        self._test_create_new_user()
+
+    def _test_existing_user(self):
+        "Base test case for both swapped and non-swapped user."
         User = get_user_model()
-        user = self.create_user(username='bob', password='thebuilder')
+        user = self.create_user()
         access = self.create_access(user=user, provider=self.provider)
         user_count = User.objects.all().count()
         access_count = AccountAccess.objects.all().count()
@@ -189,9 +194,19 @@ class OAuthCallbackTestCase(BaseViewTestCase):
         access = AccountAccess.objects.get(pk=access.pk)
         self.assertEqual(access.access_token, 'token')
 
-    def test_authentication_redirect(self):
-        "Post-authentication redirect to LOGIN_REDIRECT_URL."
+    @skipIfCustomUser
+    def test_existing_user(self):
+        "Authenticate existing user and update their access token."
+        self._test_existing_user()
+
+    def _test_authentication_redirect(self):
+        "Base test case for both swapped and non-swapped user."
         self.mock_client.get_access_token.return_value = 'token'
         self.mock_client.get_profile_info.return_value = {'id': 100}
         response = self.client.get(self.url)
         self.assertRedirects(response, settings.LOGIN_REDIRECT_URL)
+
+    @skipIfCustomUser
+    def test_authentication_redirect(self):
+        "Post-authentication redirect to LOGIN_REDIRECT_URL."
+        self._test_authentication_redirect()
