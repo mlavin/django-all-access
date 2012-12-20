@@ -4,6 +4,13 @@ Release History
 Release and change history for django-all-access
 
 
+v0.4.0 (TBD)
+------------------------------------
+
+- Updated for compatibility with Django 1.4 timezone support
+- Updated for compatibility with Django 1.5 swappable ``auth.User``
+
+
 v0.3.0 (2012-07-13)
 ------------------------------------
 

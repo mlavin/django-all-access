@@ -89,6 +89,11 @@ for an enabled provider. If no enabled provider is found for the name then this 
         ``handle_new_user`` will connect the user to the ``access`` record and 
         does not need to be handled here.
 
+        :note:
+        
+            If you are using Django 1.5 support for a custom User model then you
+            should override this method to ensure the user is created correctly.
+
     .. method:: get_user_id(provider, info)
 
         This method should return the unique idenifier from the profile information. If
