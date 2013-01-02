@@ -3,7 +3,7 @@ django-all-access is a reusable application for user registration and authentica
 from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 """
 
-__version__ = '0.4.0'
+__version__ = '0.5.0dev'
 
 
 import logging
