@@ -1,0 +1,39 @@
+{% load url from future %}
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta-description %}{% endblock %}">
+    <meta name="author" content="{% block meta-author %}{% endblock %}">
+    <meta name="keywords" content="{% block meta-keywords %}{% endblock %}">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/site.css">
+</head>
+<body id="{% block body-id %}body{% endblock %}" class="{% block body-class %}body{% endblock %}">
+    <div class="main">
+        {% if user.is_authenticated %}
+            <h2 class="heading">You are now signed in!</h2>
+            <div class="user-info">
+                <p>Your profile info is given below.</p>
+                <p><a href="{% url 'logout' %}">Logout</a></p>
+                <pre>
+                    {{ info|pprint }}
+                </pre>
+            </div>
+        {% else %}
+            <h2 class="heading">django-all-access Demo</h2>
+            <div class="form-signin">
+            {% for provider in allaccess_providers %}
+                <a class="button zocial {{ provider.name|lower }}" href="{% url 'allaccess-login' provider.name %}">
+                    Sign in with {{ provider.name|title }}
+                </a>
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <a href="https://github.com/mlavin/django-all-access"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    {% block extra-js %}{% endblock %}
+</body>
+</html>
