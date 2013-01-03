@@ -186,3 +186,31 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'allaccess.context_processors.available_providers',
 )
+
+
+ENV_FILE = '/home/dotcloud/environment.json'
+
+if os.path.exists(ENV_FILE):
+    # We are on Dotcloud
+    with open('/home/dotcloud/environment.json') as f:
+        env = json.load(f)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'allaccess-demo',
+            'USER': env['DOTCLOUD_DB_SQL_LOGIN'],
+            'PASSWORD': env['DOTCLOUD_DB_SQL_PASSWORD'],
+            'HOST': env['DOTCLOUD_DB_SQL_HOST'],
+            'PORT': int(env['DOTCLOUD_DB_SQL_PORT']),
+        }
+    }
+
+    MEDIA_ROOT = '/home/dotcloud/data/media/'
+
+    STATIC_ROOT = '/home/dotcloud/volatile/static/'
+
+    DEBUG = False
+    TEMPLATE_DEBUG = DEBUG
+    
+    SECRET_KEY = env['SECRET_KEY']
