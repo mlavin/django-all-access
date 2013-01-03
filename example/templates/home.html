@@ -23,6 +23,7 @@
             </div>
         {% else %}
             <h2 class="heading">django-all-access Demo</h2>
+            <p>This is a simple demo application for <a href="https://github.com/mlavin/django-all-access">django-all-access</a>. Use the buttons below to sign in with your favorite OAuth provider.</p>
             <div class="form-signin">
             {% for provider in allaccess_providers %}
                 <a class="button zocial {{ provider.name|lower }}" href="{% url 'allaccess-login' provider.name %}">
