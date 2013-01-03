@@ -3,6 +3,16 @@ Release History
 
 Release and change history for django-all-access
 
+v0.4.1 (2013-01-02)
+------------------------------------
+
+There were incompatibilty issues with requests-oauthlib (0.2) and requests which
+required dropping requests 1.0 support. The requirement of oauthlib was also raised
+to 0.3.4 due to similar issues. For more detail see the below issues.
+
+- https://github.com/requests/requests-oauthlib/issues/1
+- https://github.com/requests/requests-oauthlib/pull/10
+
 
 v0.4.0 (2012-12-19)
 ------------------------------------
