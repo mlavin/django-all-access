@@ -9,6 +9,7 @@ v0.5.0 (TBD)
 
 - New view hooks for customizing the OAuth client
 - Fixed issue with including oauth_verifier in POST when fetching the access token
+- Documented the API for :py:class:`OAuthClient` and :py:class:`OAuth2Client`
 
 
 v0.4.1 (2013-01-02)
