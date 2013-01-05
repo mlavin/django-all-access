@@ -19,6 +19,17 @@ will return a 404.
 
 .. class:: OAuthRedirect()
 
+    .. method:: get_client(provider)
+    .. versionadded:: 0.5
+        
+        Here you can override the OAuth client class which is used to generate the
+        redirect url. Another use case is to disable the enforcement of the OAuth 2.0
+        ``state`` parameter for providers which don't support it. If you are using
+        the view for a single provider it would be easiest to set the ``client_class``
+        property on the class instead. 
+
+        You should be sure to use the same client class for the callback view as well.
+
     .. method:: get_redirect_url(**kwargs)
 
         This method is original defined by the RedirectView. The redirect url is
@@ -66,6 +77,17 @@ for an enabled provider. If no enabled provider is found for the name then this 
         different than the current ``request.path``. By default the callback url will be the same
         and this view will return ``None``. You will most likely not need to change this
         in your project.
+
+    .. method:: get_client(provider)
+    .. versionadded:: 0.5
+        
+        Here you can override the OAuth client class which is used to fetch the access
+        token and user information. Another use case is to disable the enforcement of
+        the OAuth 2.0 ``state`` parameter for providers which don't support it. If you 
+        are using the view for a single provider it would be easiest to set the ``client_class``
+        property on the class instead. 
+
+        You should be sure to use the same client class for the redirect view as well.
 
     .. method:: get_error_redirect(provider, reason)
         
