@@ -128,7 +128,7 @@ class OAuthClient(BaseOAuthClient):
         user_token = kwargs.pop('token', self.token)
         token, secret = self.parse_raw_token(user_token)
         callback = kwargs.pop('oauth_callback', None)
-        verifier = kwargs.get('data', {}).get('oauth_verifier')
+        verifier = kwargs.get('data', {}).pop('oauth_verifier', None)
         oauth = OAuth1(
             resource_owner_key=token,
             resource_owner_secret=secret,
