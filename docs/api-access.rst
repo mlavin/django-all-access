@@ -11,8 +11,8 @@ Getting the API
 ----------------------
 
 You can access the API client through the ``AccountAccess.api_client`` property.
-This will return either a ``OAuthClient`` or ``OAuth2Client`` based on the
-provider. API requests can be made using either the ``request`` method. This takes
+This will return either a :py:class:`OAuthClient` or :py:class:`OAuth2Client` based on the
+provider. API requests can be made using either the :py:meth:`BaseOAuthClient.request` method. This takes
 the HTTP method as the first parameter and the url as the second. An example for the
 Twitter API is given below:
 
@@ -39,8 +39,8 @@ access token from the provider might have been revoked by the user or expired.
 You should refer to the provider's API documentation for information regarding 
 available endpoints and the access token expiration.
 
-The ``request`` method is a thin wrapper around the underlying ``python-requests``
-library which sets up the appropriate authenication for OAuth 1.0 or OAuth 2.0. For
+The :py:meth:`BaseOAuthClient.request` method is a thin wrapper around the underlying
+``python-requests`` library which sets up the appropriate authenication for OAuth 1.0 or OAuth 2.0. For
 more information on additional hooks available you should refer to the `python-requests
 documentation <http://docs.python-requests.org/en/latest/api/#requests.request>`_.
 
@@ -48,11 +48,11 @@ documentation <http://docs.python-requests.org/en/latest/api/#requests.request>`
 API Client
 ----------------------
 
-The ``OAuthClient`` or ``OAuth2Client`` classes define methods centered around OAuth
+The :py:class:`OAuthClient` or :py:class:`OAuth2Client` classes define methods centered around OAuth
 specifications and the authentication and registration workflow. The common methods
-are defined in a ``BaseOAuthClient``. If you are going to extend the client for
+are defined in a :py:class:`BaseOAuthClient`. If you are going to extend the client for
 a particular provider it is recommended that you extend the appropriate OAuth 1.0 or
-2.0 client rather than the ``BaseOAuthClient``.
+2.0 client rather than the :py:class:`BaseOAuthClient`.
 
 .. class:: BaseOAuthClient()
 
@@ -78,14 +78,14 @@ a particular provider it is recommended that you extend the appropriate OAuth 1.
 
         Builds the necessary query string parameters for the initial redirect
         based on the OAuth specification. Additional parameters are better added
-        using ``OAuthRedirect.get_additional_parameters``. Unless you are
+        using :py:meth:`OAuthRedirect.get_additional_parameters`. Unless you are
         familiar with the OAuth specificiations it is not recommended that you
         override this method.
 
     .. method:: get_redirect_url(request, callback)
 
         Builds the appropriate OAuth callback URL based on the provider information
-        and the result of ``get_redirect_args``. Unless you are familiar with the 
+        and the result of :py:meth:`BaseOAuthClient.get_redirect_args`. Unless you are familiar with the 
         OAuth specificiations it is not recommended that you override this method.
 
     .. method:: parse_raw_token(raw_token)
@@ -103,19 +103,19 @@ a particular provider it is recommended that you extend the appropriate OAuth 1.
         this would be used to store the request token information. For OAuth 2.0
         this is used for enforcing the ``state`` parameter.
 
-Beyond the methods above the ``OAuthClient`` also defines the below methods.
+Beyond the methods above the :py:class:`OAuthClient` also defines the below methods.
 
 .. class:: OAuthClient()
 
     .. method:: get_request_token(request, callback)
 
         Retrieves the request token prior the initial redirect to the provider. This
-        is stored in the session using the ``session_key`` which is unique per provider.
+        is stored in the session using the :py:attr:`BaseOAuthClient.session_key` which is unique per provider.
         Unless you are familiar with the OAuth 1.0 specificiation it is not recommended that you
         override this method.
 
 
-`OAuth2Client`` extends ``BaseOAuthClient`` to include these additional methods.
+:py:class:`OAuth2Client` extends :py:class:`BaseOAuthClient` to include these additional methods.
 
 .. class:: OAuth2Client()
 
@@ -124,13 +124,13 @@ Beyond the methods above the ``OAuthClient`` also defines the below methods.
         On the callback this method is called to enforce the use of the ``state`` parameter.
         The use of ``state`` is optional in the OAuth 2.0 spec but it is recommended
         and enforced by default by django-all-access. If you do not want to enforce
-        the use of ``state`` then you should override ``get_application_state`` and
+        the use of ``state`` then you should override :py:meth:`OAuth2Client.get_application_state` and
         leave this method alone.
 
     .. method:: get_application_state(request, callback)
 
         Prior to the redirect this method is used to generate a random ``state`` parameter
-        which is stored in the session based on the ``session_key``. By default it
+        which is stored in the session based on the :py:attr:`BaseOAuthClient.session_key`. By default it
         generates a secure random 32 character string. If you wish to make it longer
         you can override this method. If you do not want to enforce the ``state``
         parameter or the provider you are using does not allow it then you can override

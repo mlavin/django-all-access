@@ -10,7 +10,7 @@ OAuthRedirect View
 ----------------------
 
 The initial step for authenticating with any OAuth provider is redirecting the
-user to the provider's website. The ``OAuthRedirect`` view extends from the
+user to the provider's website. The :py:class:`OAuthRedirect` view extends from the
 `RedirectView <https://docs.djangoproject.com/en/1.4/ref/class-based-views/#redirectview>`_
 By default it is mapped to the ``allaccess-login`` url name. This view takes one
 keyword argument from the url pattern ``provider`` which corresponds to the ``Provider.name``
@@ -19,14 +19,20 @@ will return a 404.
 
 .. class:: OAuthRedirect()
 
+    .. attribute:: client_class
+    .. versionadded:: 0.5
+
+        Used to change the :py:class:`BaseOAuthClient` used by the view. See
+        :py:method:`OAuthRedirect.get_client` for more details.
+
     .. method:: get_client(provider)
     .. versionadded:: 0.5
         
         Here you can override the OAuth client class which is used to generate the
         redirect url. Another use case is to disable the enforcement of the OAuth 2.0
         ``state`` parameter for providers which don't support it. If you are using
-        the view for a single provider it would be easiest to set the ``client_class``
-        property on the class instead. 
+        the view for a single provider it would be easiest to set the 
+        :py:attr:`OAuthRedirect.client_class` attribute on the class instead.
 
         You should be sure to use the same client class for the callback view as well.
 
@@ -48,9 +54,9 @@ will return a 404.
     .. method:: get_callback_url(provider)
 
         This returns the url which the remote provider should return the user after
-        authentication. It is called by ``get_redirect_url`` to construct the appropriate
-        redirect url. By default the reverses the ``allaccess-callback`` url name with
-        the passed provider name.
+        authentication. It is called by :py:meth:`OAuthRedirect.get_redirect_url` to construct 
+        the appropriate redirect url. By default the reverses the ``allaccess-callback``
+        url name with the passed provider name.
 
         You may want to override this method in your application if you wish to have
         a custom callback for a given provider or a different callback for login vs
@@ -62,14 +68,20 @@ OAuthCallback View
 ----------------------
 
 After the user has authenticated with the remote provider or denied access to your application
-request, they are returned to callback specifed in the initial redirect. ``OAuthCallback``
+request, they are returned to callback specifed in the initial redirect. :py:class:`OAuthCallback`
 defines the default behaviour on this callback. This view extends from the base
 `View <https://docs.djangoproject.com/en/1.4/ref/class-based-views/#view>`_ class.
-By default it is mapped to the ``allaccess-callback`` url name. Similar to the ``OAuthRedirect`` view, 
+By default it is mapped to the ``allaccess-callback`` url name. Similar to the :py:class:`OAuthRedirect` view, 
 this view takes one keyword argument ``provider`` which corresponds to the ``Provider.name`` 
 for an enabled provider. If no enabled provider is found for the name then this view will return a 404.
 
 .. class:: OAuthCallback()
+
+    .. attribute:: client_class
+    .. versionadded:: 0.5
+
+        Used to change the :py:class:`BaseOAuthClient` used by the view. See
+        :py:method:`OAuthCallback.get_client` for more details.
 
     .. method:: get_callback_url(provider)
 
@@ -84,15 +96,15 @@ for an enabled provider. If no enabled provider is found for the name then this 
         Here you can override the OAuth client class which is used to fetch the access
         token and user information. Another use case is to disable the enforcement of
         the OAuth 2.0 ``state`` parameter for providers which don't support it. If you 
-        are using the view for a single provider it would be easiest to set the ``client_class``
-        property on the class instead. 
+        are using the view for a single provider it would be easiest to set the 
+        :py:attr:`OAuthCallback.client_class` attribute on the class instead.
 
         You should be sure to use the same client class for the redirect view as well.
 
     .. method:: get_error_redirect(provider, reason)
         
         Returns the url to send the user in the case of an authentication failure. The
-        `reason` is a brief text description of the problem. By default this will return
+        ``reason`` is a brief text description of the problem. By default this will return
         the user to the original login url as defined by the ``LOGIN_URL`` setting.
 
     .. method:: get_login_redirect(provider, user, access, new=False)
@@ -103,12 +115,12 @@ for an enabled provider. If no enabled provider is found for the name then this 
 
     .. method:: get_or_create_user(provider, access, info)
 
-        This method is used by ``handle_new_user`` to construct a new user with a 
+        This method is used by :py:meth:`OAuthCallback.handle_new_user` to construct a new user with a 
         random username, no email and an unusable password. You may want to override 
         this user to complete more of their infomation or attempt to match them 
         to an existing user by either their username or email.
 
-        ``handle_new_user`` will connect the user to the ``access`` record and 
+        :py:meth:`OAuthCallback.handle_new_user` will connect the user to the ``access`` record and 
         does not need to be handled here.
 
         :note:
@@ -129,8 +141,8 @@ for an enabled provider. If no enabled provider is found for the name then this 
 
         At this point the ``user`` has been authenticated via their ``access`` model
         with this provider but they have not been logged in. This method will login
-        the user and redirect them to the url returned by ``get_login_redirect`` with
-        ``new=False``.
+        the user and redirect them to the url returned by 
+        :py:meth:`OAuthCallback.get_login_redirect` with ``new=False``.
 
         The user's profile info is passed to this method to allow for updating their
         data from their provider profile but this is not done by default.
@@ -140,7 +152,7 @@ for an enabled provider. If no enabled provider is found for the name then this 
         In the case of a failure to fetch the user's access token, remote profile information
         or determine their id from that info this method will be called. It attachs a
         brief error message to the request via ``contrib.messages`` and redirects the
-        user to the result of the ``get_error_redirect`` method. You should override 
+        user to the result of the :py:meth:`OAuthCallback.get_error_redirect` method. You should override 
         this function to add any additional logging or handling.
 
     .. method:: handle_new_user(provider, access, info)
@@ -148,9 +160,9 @@ for an enabled provider. If no enabled provider is found for the name then this 
         If the user could not be matched to an existing ``AccountAccess`` record for
         this provider or that record did not contain a user this method will be called.
         At this point the ``access`` record has already been saved but is not tied to
-        a user. This will call ``get_or_create_user`` to construct a new user record. 
-        The user is then logged in and redirected to the result of the ``get_login_redirect``
-        call with ``new=True``.
+        a user. This will call :py:meth:`OAuthCallback.get_or_create_user` to construct a new user record. 
+        The user is then logged in and redirected to the result of the 
+        :py:meth:`OAuthCallback.get_login_redirect` call with ``new=True``.
 
         You may want to override this user to complete more of their infomation or
         attempt to match them to an existing user by either their username or email.
@@ -162,7 +174,7 @@ for an enabled provider. If no enabled provider is found for the name then this 
 Additional Scope Example
 ----------------------------------
 
-As noted above the default ``OAuthRedirect`` redirect does not request any additional
+As noted above the default :py:class:`OAuthRedirect` redirect does not request any additional
 permissions from the provider. It is recommended by most providers that you limit
 the number of additional permissions that you request. The user will see the list
 of permissions you are requesting and if they see a long list of permissions they
@@ -186,7 +198,7 @@ additional parameters for various providers.
                 return {'scope': scope}
             return super(AdditionalPermissionsRedirect, self).get_additional_parameters(provider)
 
-This would be used instead of the default ``OAuthRedirect`` for the ``allaccess-login`` url.
+This would be used instead of the default :py:class:`OAuthRedirect` for the ``allaccess-login`` url.
 Remember that this logic can be based on the provider or even the current request. That
 would allow your project to A/B test requesting more or less permissions to see its
 impact on user regisitrations.
