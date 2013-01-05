@@ -3,6 +3,13 @@ Release History
 
 Release and change history for django-all-access
 
+
+v0.5.0 (TBD)
+------------------------------------
+
+- Fixed issue with including oauth_verifier in POST when fetching the access token
+
+
 v0.4.1 (2013-01-02)
 ------------------------------------
 
