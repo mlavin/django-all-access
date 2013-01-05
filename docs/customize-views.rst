@@ -19,14 +19,15 @@ will return a 404.
 
 .. class:: OAuthRedirect()
 
-    .. attribute:: client_class
     .. versionadded:: 0.5
+    .. attribute:: client_class
+    
 
         Used to change the :py:class:`BaseOAuthClient` used by the view. See
-        :py:method:`OAuthRedirect.get_client` for more details.
+        :py:meth:`OAuthRedirect.get_client` for more details.
 
-    .. method:: get_client(provider)
     .. versionadded:: 0.5
+    .. method:: get_client(provider)
         
         Here you can override the OAuth client class which is used to generate the
         redirect url. Another use case is to disable the enforcement of the OAuth 2.0
@@ -77,11 +78,12 @@ for an enabled provider. If no enabled provider is found for the name then this 
 
 .. class:: OAuthCallback()
 
-    .. attribute:: client_class
     .. versionadded:: 0.5
+    .. attribute:: client_class
+    
 
         Used to change the :py:class:`BaseOAuthClient` used by the view. See
-        :py:method:`OAuthCallback.get_client` for more details.
+        :py:meth:`OAuthCallback.get_client` for more details.
 
     .. method:: get_callback_url(provider)
 
@@ -90,8 +92,8 @@ for an enabled provider. If no enabled provider is found for the name then this 
         and this view will return ``None``. You will most likely not need to change this
         in your project.
 
-    .. method:: get_client(provider)
     .. versionadded:: 0.5
+    .. method:: get_client(provider)
         
         Here you can override the OAuth client class which is used to fetch the access
         token and user information. Another use case is to disable the enforcement of
