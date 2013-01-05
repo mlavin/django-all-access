@@ -20,7 +20,19 @@ from .models import Provider, AccountAccess
 logger = logging.getLogger('allaccess.views')
 
 
-class OAuthRedirect(RedirectView):
+class OAuthClientMixin(object):
+    "Mixin for getting OAuth client for a provider."
+
+    client_class = None
+
+    def get_client(self, provider):
+        "Get instance of the OAuth client for this provider."
+        if self.client_class is not None:
+            return self.client_class(provider)
+        return get_client(provider)
+
+
+class OAuthRedirect(OAuthClientMixin, RedirectView):
     "Redirect user to OAuth provider to enable access."
 
     permanent = False  
@@ -41,13 +53,13 @@ class OAuthRedirect(RedirectView):
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
-            client = get_client(provider)
+            client = self.get_client(provider)
             callback = self.get_callback_url(provider)
             params = self.get_additional_parameters(provider)
             return client.get_redirect_url(self.request, callback=callback, parameters=params)
 
 
-class OAuthCallback(View):
+class OAuthCallback(OAuthClientMixin, View):
     "Base OAuth callback view."
         
     def get(self, request, *args, **kwargs):
@@ -57,7 +69,7 @@ class OAuthCallback(View):
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
-            client = get_client(provider)
+            client = self.get_client(provider)
             callback = self.get_callback_url(provider)
             # Fetch access token
             raw_token = client.get_access_token(self.request, callback=callback)
