@@ -118,6 +118,8 @@ class OAuthClient(BaseOAuthClient):
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
+        if raw_token is None:
+            return (None, None)
         qs = parse_qs(raw_token)
         token = qs.get('oauth_token', [None])[0]
         secret = qs.get('oauth_token_secret', [None])[0]
@@ -207,6 +209,8 @@ class OAuth2Client(BaseOAuthClient):
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
+        if raw_token is None:
+            return (None, None)
         # Load as json first then parse as query string
         try:
             token_data = json.loads(raw_token)
