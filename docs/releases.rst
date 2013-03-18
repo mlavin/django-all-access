@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.5.0 (TBD)
+v0.5.0 (2013-03-18)
 ------------------------------------
 
 This release adds additional hooks for changing the OAuth client behaviors. It also

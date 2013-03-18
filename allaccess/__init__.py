@@ -4,7 +4,7 @@ from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 """
 
 
-__version__ = '0.5.0dev'
+__version__ = '0.5.0'
 
 
 import logging
@@ -12,7 +12,7 @@ import logging
 
 class NullHandler(logging.Handler):
     "No-op logging handler."
-    
+
     def emit(self, record):
         pass
 
