@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import base64
 import hashlib
 
@@ -26,7 +28,7 @@ class CustomCallback(OAuthCallback):
             digest = hashlib.sha1(str(access)).digest()
             # Base 64 encode to get below 30 characters
             # Removed padding characters
-            email = u'%s@example.com' % base64.urlsafe_b64encode(digest).replace('=', '')
+            email = '%s@example.com' % base64.urlsafe_b64encode(digest).replace('=', '')
         User = get_user_model()
         kwargs = {
             'email': email,
