@@ -10,6 +10,7 @@ v0.5.0 (TBD)
 - New view hooks for customizing the OAuth client
 - Fixed issue with including oauth_verifier in POST when fetching the access token
 - Documented the API for :py:class:`OAuthClient` and :py:class:`OAuth2Client`
+- Updated requirements to requests >= 1.0 and requests_oauthlib >= 0.3.0
 
 
 v0.4.1 (2013-01-02)
@@ -70,7 +71,7 @@ in your project you should update your ``LOGGING`` configuration to include the
         }
     }
 
-For more information on logging please see the 
+For more information on logging please see the
 `Django doucmentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
 or the `Python doucmentation <http://docs.python.org/library/logging.html>`_.
 

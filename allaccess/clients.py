@@ -20,7 +20,7 @@ logger = logging.getLogger('allaccess.clients')
 
 
 class BaseOAuthClient(object):
-    
+
     def __init__(self, provider, token=''):
         self.provider = provider
         self.token = token
@@ -38,13 +38,7 @@ class BaseOAuthClient(object):
             logger.error('Unable to fetch user profile: {0}'.format(e))
             return None
         else:
-            result = response.text
-            # Handle requests 1.0 and pre-1.0
-            if callable(response.json):
-                result = response.json() or result
-            elif response.json is not None:
-                result = response.json
-            return result
+            return response.json() or response.text
 
     def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
@@ -82,7 +76,7 @@ class OAuthClient(BaseOAuthClient):
             callback = request.build_absolute_uri(callback or request.path)
             callback = force_unicode(callback)
             try:
-                response = self.request('post', self.provider.access_token_url, 
+                response = self.request('post', self.provider.access_token_url,
                                         token=raw_token, data=data, oauth_callback=callback)
                 response.raise_for_status()
             except RequestException as e:
