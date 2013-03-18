@@ -40,3 +40,12 @@ except ImportError: # pragma: no cover
     from django.contrib.auth.models import User
     User.USERNAME_FIELD = 'username'
     get_user_model = lambda: User
+
+
+# urllib
+try:
+    from urllib.parse import urlencode, parse_qs
+except ImportError: # pragma: no cover
+    # Python 2.X
+    from urllib import urlencode
+    from urlparse import parse_qs

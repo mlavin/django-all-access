@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 import json
 import logging
-from urllib import urlencode
-from urlparse import parse_qs
 
 from django.core.urlresolvers import reverse
 from django.utils.crypto import constant_time_compare
@@ -13,7 +11,7 @@ from requests.api import request
 from requests_oauthlib import OAuth1
 from requests.exceptions import RequestException
 
-from .compat import get_random_string
+from .compat import get_random_string, urlencode, parse_qs
 
 
 logger = logging.getLogger('allaccess.clients')
