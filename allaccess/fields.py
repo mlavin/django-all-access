@@ -46,7 +46,7 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
                     binascii.a2b_hex(value[len(self.prefix):])
                 )
             ).split('\0')[0]
-        return value
+        return force_text(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         if self.null:
