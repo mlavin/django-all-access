@@ -32,7 +32,7 @@ It is easiest to install django-all-access from PyPi using pip::
     pip install django-all-access
 
 django-all-access requires Python 2.6 or 2.7 along with the following Python
-packages::
+packages. If you are using Django 1.5+ there is experimental support for Python 3.2+::
 
     django>=1.4.2
     pycrypto>=2.4

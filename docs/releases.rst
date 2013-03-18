@@ -7,6 +7,9 @@ Release and change history for django-all-access
 v0.5.0 (TBD)
 ------------------------------------
 
+This release adds additional hooks for changing the OAuth client behaviors. It also
+adds support for Python 3.2+.
+
 - New view hooks for customizing the OAuth client
 - Fixed issue with including oauth_verifier in POST when fetching the access token
 - Documented the API for :py:class:`OAuthClient` and :py:class:`OAuth2Client`
