@@ -41,9 +41,9 @@ class ProviderTestCase(AllAccessTestCase):
             select={'raw_key': 'key', 'raw_secret': 'secret'}
         ).get(pk=self.provider.pk)
         self.assertNotEqual(provider.raw_key, key)
-        self.assertTrue(provider.raw_key.startswith(b'$AES$'))
+        self.assertTrue(provider.raw_key.startswith('$AES$'))
         self.assertNotEqual(provider.raw_secret, secret)
-        self.assertTrue(provider.raw_secret.startswith(b'$AES$'))
+        self.assertTrue(provider.raw_secret.startswith('$AES$'))
 
     def test_encrypted_fetch(self):
         "Decrypt key/secret on save."
@@ -95,7 +95,7 @@ class AccountAccessTestCase(AllAccessTestCase):
             select={'raw_token': 'access_token'}
         ).get(pk=self.access.pk)
         self.assertNotEqual(access.raw_token, access_token)
-        self.assertTrue(access.raw_token.startswith(b'$AES$'))
+        self.assertTrue(access.raw_token.startswith('$AES$'))
         self.assertEqual(access.access_token, access_token, "Token should be unencrypted on fetch.")
 
     def test_encrypted_update(self):
@@ -106,7 +106,7 @@ class AccountAccessTestCase(AllAccessTestCase):
             select={'raw_token': 'access_token'}
         ).get(pk=self.access.pk)
         self.assertNotEqual(access.raw_token, access_token)
-        self.assertTrue(access.raw_token.startswith(b'$AES$'))
+        self.assertTrue(access.raw_token.startswith('$AES$'))
         self.assertEqual(access.access_token, access_token, "Token should be unencrypted on fetch.")
 
     def test_fetch_api_client(self):
