@@ -1,13 +1,11 @@
 from __future__ import unicode_literals
 
 import binascii
-import random
-import string
 
 from django.conf import settings
 from django.db import models
 
-from .compat import smart_bytes, force_text
+from .compat import smart_bytes, force_text, six
 
 try:
     import Crypto.Cipher.AES
@@ -15,23 +13,22 @@ except ImportError: # pragma: no cover
     raise ImportError('PyCrypto is required to use django-all-access.')
 
 
-class EncryptedField(models.TextField):
+class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     """
     This code is based on http://www.djangosnippets.org/snippets/1095/
     and django-fields https://github.com/svetlyak40wt/django-fields
     """
 
-    __metaclass__ = models.SubfieldBase
-
     cipher_class = Crypto.Cipher.AES
-    prefix = '$AES$'
+    prefix = b'$AES$'
 
     def __init__(self, *args, **kwargs):
-        self.cipher = self.cipher_class.new(settings.SECRET_KEY[:32])
+        self.cipher = self.cipher_class.new(smart_bytes(settings.SECRET_KEY)[:32])
         super(EncryptedField, self).__init__(*args, **kwargs)
 
     def _is_encrypted(self, value):
-        return isinstance(value, basestring) and value.startswith(self.prefix)
+
+        return value.startswith(self.prefix)
 
     def _get_padding(self, value):
         # We always want at least 2 chars of padding (including zero byte),
@@ -40,12 +37,15 @@ class EncryptedField(models.TextField):
         return self.cipher.block_size - mod + 2
 
     def to_python(self, value):
+        if value is None:
+            return value
+        value = smart_bytes(value)
         if self._is_encrypted(value):
             return force_text(
                 self.cipher.decrypt(
                     binascii.a2b_hex(value[len(self.prefix):])
-                ).split('\0')[0]
-            )
+                )
+            ).split('\0')[0]
         return value
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
@@ -58,8 +58,7 @@ class EncryptedField(models.TextField):
         if not self._is_encrypted(value):
             padding  = self._get_padding(value)
             if padding > 0:
-                value += '\0' + ''.join([random.choice(string.printable)
-                    for index in range(padding-1)])
+                value = value + b'\0' + b'*' * (padding - 1)
             value = self.prefix + binascii.b2a_hex(self.cipher.encrypt(value))
         return value
 

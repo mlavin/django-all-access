@@ -56,3 +56,9 @@ try:
 except ImportError: # pragma: no cover
     from django.utils.encoding import force_unicode as force_text
     from django.utils.encoding import smart_str as smart_bytes
+
+# Vendored six
+try:
+    from django.utils import six
+except:
+    from requests.packages.urllib3.packages import six
