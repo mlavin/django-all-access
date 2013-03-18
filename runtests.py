@@ -46,7 +46,7 @@ from django.test.utils import get_runner
 def runtests():
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True, failfast=False)
-    apps = ['allaccess', ]
+    apps = sys.argv[1:] or ['selectable', ]
     if SWAPPED:
         apps.append('custom')
     failures = test_runner.run_tests(apps)
