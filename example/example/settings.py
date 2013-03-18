@@ -214,3 +214,5 @@ if os.path.exists(ENV_FILE):
     TEMPLATE_DEBUG = DEBUG
 
     SECRET_KEY = env['SECRET_KEY']
+
+    ALLOWED_HOSTS = ['allaccess-mlavin.dotcloud.com', ]
