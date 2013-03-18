@@ -56,7 +56,11 @@ try:
 except ImportError: # pragma: no cover
     from django.utils.encoding import force_unicode as force_text
     from django.utils.encoding import smart_str as smart_bytes
-    from django.utils.encoding import force_str as force_bytes
+    try:
+        from django.utils.encoding import force_str as force_bytes
+    except ImportError:
+        # This didn't get back-ported to 1.4.X
+        force_bytes = smart_bytes
 
 # Vendored six
 try:
