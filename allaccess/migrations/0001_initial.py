@@ -29,7 +29,7 @@ class Migration(SchemaMigration):
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now=True, blank=True)),
-            ('access_token', self.gf('django.db.models.fields.TextField')(default=u'', blank=True)),
+            ('access_token', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
         ))
         db.send_create_signal('allaccess', ['AccountAccess'])
 
@@ -50,8 +50,8 @@ class Migration(SchemaMigration):
 
     models = {
         'allaccess.accountaccess': {
-            'Meta': {'unique_together': "((u'identifier', u'provider'),)", 'object_name': 'AccountAccess'},
-            'access_token': ('django.db.models.fields.TextField', [], {'default': "u''", 'blank': 'True'}),
+            'Meta': {'unique_together': "(('identifier', 'provider'),)", 'object_name': 'AccountAccess'},
+            'access_token': ('django.db.models.fields.TextField', [], {'default': "''", 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'identifier': ('django.db.models.fields.CharField', [], {'max_length': '255'}),

@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
 
     models = {
         'allaccess.accountaccess': {
-            'Meta': {'unique_together': "((u'identifier', u'provider'),)", 'object_name': 'AccountAccess'},
+            'Meta': {'unique_together': "(('identifier', 'provider'),)", 'object_name': 'AccountAccess'},
             'access_token': ('allaccess.fields.EncryptedField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now_add': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
