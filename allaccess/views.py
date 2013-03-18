@@ -13,7 +13,7 @@ from django.shortcuts import redirect
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
-from .compat import smart_bytes
+from .compat import smart_bytes, force_text
 from .compat import get_user_model
 from .models import Provider, AccountAccess
 
@@ -116,7 +116,7 @@ class OAuthCallback(OAuthClientMixin, View):
         digest = hashlib.sha1(smart_bytes(access)).digest()
         # Base 64 encode to get below 30 characters
         # Removed padding characters
-        username = base64.urlsafe_b64encode(digest).replace('=', '')
+        username = force_text(base64.urlsafe_b64encode(digest)).replace('=', '')
         User = get_user_model()
         kwargs = {
             User.USERNAME_FIELD: username,
