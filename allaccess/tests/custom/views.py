@@ -5,7 +5,7 @@ import hashlib
 
 from django.core.urlresolvers import reverse
 
-from allaccess.compat import get_user_model, smart_bytes
+from allaccess.compat import get_user_model, smart_bytes, force_text
 from allaccess.views import OAuthRedirect, OAuthCallback
 
 
@@ -28,7 +28,7 @@ class CustomCallback(OAuthCallback):
             digest = hashlib.sha1(smart_bytes(access)).digest()
             # Base 64 encode to get below 30 characters
             # Removed padding characters
-            email = '%s@example.com' % base64.urlsafe_b64encode(digest).replace('=', '')
+            email = '%s@example.com' % force_text(base64.urlsafe_b64encode(digest)).replace('=', '')
         User = get_user_model()
         kwargs = {
             'email': email,
