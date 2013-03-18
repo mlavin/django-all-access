@@ -21,13 +21,13 @@ class AllAccessTestCase(TestCase):
 
     def get_random_string(self, length=10):
         "Create a random string for generating test data."
-        return ''.join(random.choice(string.ascii_letters) for x in xrange(length))
+        return ''.join(random.choice(string.ascii_letters) for x in range(length))
 
     def get_random_email(self, domain='example.com'):
         "Create a random email for generating test data."
         local = self.get_random_string()
         return '{0}@{1}'.format(local, domain)
-    
+
     def get_random_url(self, domain='example.com'):
         "Create a random url for generating test data."
         path = self.get_random_string()

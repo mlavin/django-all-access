@@ -1,19 +1,18 @@
 "Redirect and callback view tests."
 from __future__ import unicode_literals
 
-from urlparse import urlparse, parse_qs
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from mock import patch, Mock
 
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
+from ..compat import urlparse, parse_qs
 
 
 class BaseViewTestCase(AllAccessTestCase):
     "Common view test functionality."
-    
+
     urls = 'allaccess.tests.urls'
     url_name = None
 

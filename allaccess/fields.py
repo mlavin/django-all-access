@@ -6,12 +6,13 @@ import string
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import smart_str, force_unicode
+
+from .compat import smart_bytes, force_text
 
 try:
     import Crypto.Cipher.AES
 except ImportError: # pragma: no cover
-    raise ImportError('PyCrypto is required to use django-all-access.') 
+    raise ImportError('PyCrypto is required to use django-all-access.')
 
 
 class EncryptedField(models.TextField):
@@ -21,7 +22,7 @@ class EncryptedField(models.TextField):
     """
 
     __metaclass__ = models.SubfieldBase
-    
+
     cipher_class = Crypto.Cipher.AES
     prefix = '$AES$'
 
@@ -40,7 +41,7 @@ class EncryptedField(models.TextField):
 
     def to_python(self, value):
         if self._is_encrypted(value):
-            return force_unicode(
+            return force_text(
                 self.cipher.decrypt(
                     binascii.a2b_hex(value[len(self.prefix):])
                 ).split('\0')[0]
@@ -53,7 +54,7 @@ class EncryptedField(models.TextField):
             value = value or None
         if value is None:
             return None
-        value = smart_str(value)
+        value = smart_bytes(value)
         if not self._is_encrypted(value):
             padding  = self._get_padding(value)
             if padding > 0:

@@ -44,8 +44,15 @@ except ImportError: # pragma: no cover
 
 # urllib
 try:
-    from urllib.parse import urlencode, parse_qs
+    from urllib.parse import urlencode, parse_qs, urlparse
 except ImportError: # pragma: no cover
     # Python 2.X
     from urllib import urlencode
-    from urlparse import parse_qs
+    from urlparse import parse_qs, urlparse
+
+
+try:
+    from django.utils.encoding import force_text, smart_bytes
+except ImportError: # pragma: no cover
+    from django.utils.encoding import force_unicode as force_text
+    from django.utils.encoding import smart_str as smart_bytes

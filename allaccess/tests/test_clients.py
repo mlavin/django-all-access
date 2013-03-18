@@ -1,15 +1,14 @@
 "OAuth 1.0 and 2.0 client tests."
 from __future__ import unicode_literals
 
-from urlparse import urlparse, parse_qs
-
 from django.test.client import RequestFactory
 
 from mock import patch, Mock
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
-from allaccess.clients import OAuthClient, OAuth2Client
+from ..clients import OAuthClient, OAuth2Client
+from ..compat import urlparse, parse_qs
 
 
 class BaseClientTestCase(AllAccessTestCase):
@@ -79,7 +78,7 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'post')        
+        self.assertEqual(method, 'post')
         self.assertEqual(url, self.provider.request_token_url)
 
     def test_request_token_response(self, requests, auth):
@@ -165,7 +164,7 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'post')        
+        self.assertEqual(method, 'post')
         self.assertEqual(url, self.provider.access_token_url)
 
     def test_access_token_response(self, requests, auth):
@@ -204,7 +203,7 @@ class OAuthClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'get')        
+        self.assertEqual(method, 'get')
         self.assertEqual(url, self.provider.profile_url)
 
     def test_profile_info_failure(self, requests, auth):
@@ -241,7 +240,7 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'post')        
+        self.assertEqual(method, 'post')
         self.assertEqual(url, self.provider.access_token_url)
 
     def test_access_token_parameters(self, requests):
@@ -313,7 +312,7 @@ class OAuth2ClientTestCase(BaseClientTestCase):
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
         method, url = args
-        self.assertEqual(method, 'get')        
+        self.assertEqual(method, 'get')
         self.assertEqual(url, self.provider.profile_url)
 
     def test_profile_info_failure(self, requests):
