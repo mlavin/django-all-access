@@ -1,5 +1,4 @@
 #!/bin/sh
 python manage.py syncdb --noinput
-python manage.py migrate
 mkdir -p /home/dotcloud/data/media /home/dotcloud/volatile/static
 python manage.py collectstatic --noinput

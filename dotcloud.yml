@@ -1,5 +1,7 @@
 www:
   approot: example
   type: python
+  config:
+    python_version: v3.2
 db:
   type: postgresql
