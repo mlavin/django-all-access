@@ -12,7 +12,7 @@ class ProviderAdmin(admin.ModelAdmin):
 class AccountAccessAdmin(admin.ModelAdmin):
     "Admin customization for accounts."
 
-    list_display = ('__unicode__', 'provider', 'user', 'created', 'modified', )
+    list_display = ('__str__', 'provider', 'user', 'created', 'modified', )
     list_filter = ('provider', 'created', 'modified', )
 
 
