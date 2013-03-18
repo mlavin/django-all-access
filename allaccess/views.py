@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
+from .compat import smart_bytes
 from .compat import get_user_model
 from .models import Provider, AccountAccess
 
@@ -35,7 +36,7 @@ class OAuthClientMixin(object):
 class OAuthRedirect(OAuthClientMixin, RedirectView):
     "Redirect user to OAuth provider to enable access."
 
-    permanent = False  
+    permanent = False
 
     def get_additional_parameters(self, provider):
         "Return additional redirect parameters for this provider."
@@ -44,7 +45,7 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
     def get_callback_url(self, provider):
         "Return the callback url for this provider."
         return reverse('allaccess-callback', kwargs={'provider': provider.name})
-        
+
     def get_redirect_url(self, **kwargs):
         "Build redirect url for a given provider."
         name = kwargs.get('provider', '')
@@ -61,7 +62,7 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
 
 class OAuthCallback(OAuthClientMixin, View):
     "Base OAuth callback view."
-        
+
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
         try:
@@ -112,7 +113,7 @@ class OAuthCallback(OAuthClientMixin, View):
 
     def get_or_create_user(self, provider, access, info):
         "Create a shell auth.User."
-        digest = hashlib.sha1(str(access)).digest()
+        digest = hashlib.sha1(smart_bytes(access)).digest()
         # Base 64 encode to get below 30 characters
         # Removed padding characters
         username = base64.urlsafe_b64encode(digest).replace('=', '')
