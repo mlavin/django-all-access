@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
 from .clients import get_client
 from .compat import AUTH_USER_MODEL
@@ -16,6 +17,7 @@ class ProviderManager(models.Manager):
         return super(ProviderManager, self).filter(key__isnull=False, secret__isnull=False)
 
 
+@python_2_unicode_compatible
 class Provider(models.Model):
     "Configuration for OAuth provider."
 
@@ -29,7 +31,7 @@ class Provider(models.Model):
 
     objects = ProviderManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -42,6 +44,7 @@ class Provider(models.Model):
     enabled.boolean = True
 
 
+@python_2_unicode_compatible
 class AccountAccess(models.Model):
     "Authorized remote OAuth provider."
 
@@ -49,13 +52,13 @@ class AccountAccess(models.Model):
     provider = models.ForeignKey(Provider)
     user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, default=datetime.now)
-    modified = models.DateTimeField(auto_now=True, default=datetime.now)    
+    modified = models.DateTimeField(auto_now=True, default=datetime.now)
     access_token = EncryptedField(blank=True, null=True, default=None)
 
     class Meta(object):
         unique_together = ('identifier', 'provider')
 
-    def __unicode__(self):
+    def __str__(self):
         return '{0} {1}'.format(self.provider, self.identifier)
 
     def save(self, *args, **kwargs):

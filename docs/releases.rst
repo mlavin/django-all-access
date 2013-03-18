@@ -13,6 +13,12 @@ v0.5.0 (TBD)
 - Updated requirements to requests >= 1.0 and requests_oauthlib >= 0.3.0
 - Updated requirement for PyCrypto >= 2.4
 
+Backwards Incompatible Changes
+__________________________________
+
+- Dropped support for requests < 1.0
+- Dropped support for Django < 1.4.2
+
 
 v0.4.1 (2013-01-02)
 ------------------------------------

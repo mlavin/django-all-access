@@ -4,8 +4,8 @@ django-all-access
 django-all-access is a reusable application for user registration and authentication
 from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 
-The goal of this project is to make it easy to create your own workflows for 
-authenticating with these remote APIs. django-all-access will provide the simple 
+The goal of this project is to make it easy to create your own workflows for
+authenticating with these remote APIs. django-all-access will provide the simple
 views with sane defaults along with hooks to override the default behavior.
 
 .. image::
@@ -33,25 +33,25 @@ It is easiest to install django-all-access from PyPi using pip::
 
 django-all-access requires Python 2.6 or 2.7 along with the following Python
 packages::
-    
-    django>=1.3
-    pycrypto>=2.3
-    requests>=0.13.0
-    requests_oauthlib>=0.2.0
-    oauthlib>=0.3.0
+
+    django>=1.4.2
+    pycrypto>=2.4
+    requests>=1.0
+    requests_oauthlib>=0.3
+    oauthlib>=0.3.4
 
 
 Documentation
 --------------------------------------
 
-Additional documentation on using django-all-access is available on 
+Additional documentation on using django-all-access is available on
 `Read The Docs <http://readthedocs.org/docs/django-all-access/>`_.
 
 
 License
 --------------------------------------
 
-django-all-access is released under the BSD License. See the 
+django-all-access is released under the BSD License. See the
 `LICENSE <https://github.com/mlavin/django-all-access/blob/master/LICENSE>`_ file for more details.
 
 
