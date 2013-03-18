@@ -64,9 +64,9 @@ class ProviderTestCase(AllAccessTestCase):
             select={'raw_key': 'key', 'raw_secret': 'secret'}
         ).get(pk=self.provider.pk)
         self.assertNotEqual(provider.raw_key, key)
-        self.assertTrue(provider.raw_key.startswith('$AES$'))
+        self.assertTrue(provider.raw_key.startswith(b'$AES$'))
         self.assertNotEqual(provider.raw_secret, secret)
-        self.assertTrue(provider.raw_secret.startswith('$AES$'))
+        self.assertTrue(provider.raw_secret.startswith(b'$AES$'))
 
     def test_enabled_filter(self):
         "Return only providers with key/secret pairs."
@@ -124,7 +124,7 @@ class AccountAccessTestCase(AllAccessTestCase):
             select={'raw_token': 'access_token'}
         ).get(pk=self.access.pk)
         self.assertNotEqual(access.raw_token, access_token)
-        self.assertTrue(access.raw_token.startswith('$AES$'))
+        self.assertTrue(access.raw_token.startswith(b'$AES$'))
 
     def test_fetch_api_client(self):
         "Get API client with the provider and user token set."
