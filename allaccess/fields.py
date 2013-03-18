@@ -5,7 +5,7 @@ import binascii
 from django.conf import settings
 from django.db import models
 
-from .compat import smart_bytes, force_text, six
+from .compat import force_bytes, force_text, six
 
 try:
     import Crypto.Cipher.AES
@@ -23,7 +23,7 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     prefix = b'$AES$'
 
     def __init__(self, *args, **kwargs):
-        self.cipher = self.cipher_class.new(smart_bytes(settings.SECRET_KEY)[:32])
+        self.cipher = self.cipher_class.new(force_bytes(settings.SECRET_KEY)[:32])
         super(EncryptedField, self).__init__(*args, **kwargs)
 
     def _is_encrypted(self, value):
@@ -39,13 +39,12 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     def to_python(self, value):
         if value is None:
             return value
-        value = smart_bytes(value)
+        value = force_bytes(value)
         if self._is_encrypted(value):
-            return force_text(
-                self.cipher.decrypt(
-                    binascii.a2b_hex(value[len(self.prefix):])
-                )
-            ).split('\0')[0]
+            hexdigest = value[len(self.prefix):]
+            encrypted = binascii.a2b_hex(hexdigest)
+            decrypted = self.cipher.decrypt(encrypted).split(b'\x00')[0]
+            return force_text(decrypted)
         return force_text(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
@@ -54,13 +53,13 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             value = value or None
         if value is None:
             return None
-        value = smart_bytes(value)
+        value = force_bytes(value)
         if not self._is_encrypted(value):
             padding  = self._get_padding(value)
             if padding > 0:
-                value = value + b'\0' + b'*' * (padding - 1)
+                value = value + b'\x00' + b'*' * (padding - 1)
             value = self.prefix + binascii.b2a_hex(self.cipher.encrypt(value))
-        return value
+        return force_text(value)
 
 
 # pragma: no cover

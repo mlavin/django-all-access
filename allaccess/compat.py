@@ -52,10 +52,11 @@ except ImportError: # pragma: no cover
 
 
 try:
-    from django.utils.encoding import force_text, smart_bytes
+    from django.utils.encoding import force_text, smart_bytes, force_bytes
 except ImportError: # pragma: no cover
     from django.utils.encoding import force_unicode as force_text
     from django.utils.encoding import smart_str as smart_bytes
+    from django.utils.encoding import force_str as force_bytes
 
 # Vendored six
 try:
