@@ -11,12 +11,13 @@ from ..clients import OAuthClient, OAuth2Client
 from ..compat import urlparse, parse_qs
 
 
-class BaseClientTestCase(AllAccessTestCase):
+class BaseClientTestCase(object):
     "Common client test functionality."
 
     oauth_client = None
 
     def setUp(self):
+        super(BaseClientTestCase, self).setUp()
         self.key = self.get_random_string()
         self.secret = self.get_random_string()
         self.provider = self.create_provider(key=self.key, secret=self.secret)
@@ -48,7 +49,7 @@ class BaseClientTestCase(AllAccessTestCase):
 
 @patch('allaccess.clients.OAuth1')
 @patch('allaccess.clients.request')
-class OAuthClientTestCase(BaseClientTestCase):
+class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
     "OAuth 1.0 client handling to match http://oauth.net/core/1.0/"
 
     oauth_client = OAuthClient
@@ -227,7 +228,7 @@ class OAuthClientTestCase(BaseClientTestCase):
 
 
 @patch('allaccess.clients.request')
-class OAuth2ClientTestCase(BaseClientTestCase):
+class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
     "OAuth 2.0 client handling."
 
     oauth_client = OAuth2Client

@@ -40,6 +40,7 @@ if SWAPPED:
     settings.INSTALLED_APPS.append('allaccess.tests.custom')
     settings.AUTH_USER_MODEL = 'custom.MyUser'
 
+from django import VERSION
 from django.test.utils import get_runner
 
 
@@ -47,7 +48,7 @@ def runtests():
     TestRunner = get_runner(settings)
     test_runner = TestRunner(verbosity=1, interactive=True, failfast=False)
     apps = sys.argv[1:] or ['allaccess', ]
-    if SWAPPED:
+    if SWAPPED and VERSION[0] == 1 and VERSION[1] < 6:
         apps.append('custom')
     failures = test_runner.run_tests(apps)
     sys.exit(failures)

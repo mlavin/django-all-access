@@ -1,8 +1,12 @@
 "Functional tests for using a swapped user model."
 
+from django.conf import settings
+from django.utils.unittest import skipUnless
+
 from .. import test_views
 
-
+@skipUnless('allaccess.tests.custom' in settings.INSTALLED_APPS,
+    'custom user is not installed for testing')
 class CustomizedCallbackTestCase(test_views.OAuthCallbackTestCase):
     "OAuth callback customized for swapped user."
 
