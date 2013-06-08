@@ -20,9 +20,6 @@ Features
 - Easy customization through class-based views
 - Built on the amazing `requests <http://docs.python-requests.org/>`_ library
 
-There is a simple demo application running on at http://allaccess-mlavin.dotcloud.com/
-The full source of this application is include in the repository.
-
 
 Installation
 ------------------------------------
