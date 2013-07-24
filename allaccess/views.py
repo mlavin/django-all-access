@@ -75,11 +75,11 @@ class OAuthCallback(OAuthClientMixin, View):
             # Fetch access token
             raw_token = client.get_access_token(self.request, callback=callback)
             if raw_token is None:
-                return self.handle_login_failure(provider, "Could not retrive token.")
+                return self.handle_login_failure(provider, "Could not retrieve token.")
             # Fetch profile info
             info = client.get_profile_info(raw_token)
             if info is None:
-                return self.handle_login_failure(provider, "Could not retrive profile.")
+                return self.handle_login_failure(provider, "Could not retrieve profile.")
             identifier = self.get_user_id(provider, info)
             if identifier is None:
                 return self.handle_login_failure(provider, "Could not determine id.")

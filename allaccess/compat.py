@@ -28,8 +28,8 @@ except ImportError: # pragma: no cover
         "Returns a securely generated random string."
         if not using_sysrandom:
             # Re-seed random
-            bytes = b"{0}{1}{2}".format(random.getstate(), time.time(), settings.SECRET_KEY)
-            random.seed(hashlib.sha256(bytes).digest())
+            data = b"{0}{1}{2}".format(random.getstate(), time.time(), settings.SECRET_KEY)
+            random.seed(hashlib.sha256(data).digest())
         return ''.join([random.choice(allowed_chars) for i in range(length)])
 
 
