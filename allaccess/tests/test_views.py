@@ -63,7 +63,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
             callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
             self.assertEqual(query['oauth_callback'][0], 'http://testserver' + callback)
 
-    def test_oauth_2_redirect(self):
+    def test_oauth_2_redirect_url(self):
         "Redirect url for OAuth 2.0 provider."
         self.provider.request_token_url = ''
         self.provider.save()
@@ -72,7 +72,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         scheme, netloc, path, params, query, fragment = urlparse(url)
         self.assertEqual('%s://%s%s' % (scheme, netloc, path), self.provider.authorization_url)
 
-    def test_oauth_2_redirect(self):
+    def test_oauth_2_redirect_parameters(self):
         "Redirect parameters for OAuth 2.0 provider."
         self.provider.request_token_url = ''
         self.provider.save()
