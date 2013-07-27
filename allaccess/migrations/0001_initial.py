@@ -4,7 +4,7 @@ from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
 
-from ..compat import get_user_model
+from ..compat import get_user_model, AUTH_USER_MODEL
     
 User = get_user_model()
 
@@ -30,7 +30,7 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('identifier', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('provider', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['allaccess.Provider'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=User, null=True, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm[AUTH_USER_MODEL], null=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now_add=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, auto_now=True, blank=True)),
             ('access_token', self.gf('django.db.models.fields.TextField')(default='', blank=True)),
@@ -61,7 +61,7 @@ class Migration(SchemaMigration):
             'identifier': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'auto_now': 'True', 'blank': 'True'}),
             'provider': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['allaccess.Provider']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'null': 'True', 'blank': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['%s']" % AUTH_USER_MODEL, 'null': 'True', 'blank': 'True'})
         },
         'allaccess.provider': {
             'Meta': {'object_name': 'Provider'},
@@ -87,8 +87,8 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
+        AUTH_USER_MODEL: {
+            'Meta': {'object_name': User.__name__, "db_table": "'%s'" % User._meta.db_table},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
