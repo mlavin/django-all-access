@@ -22,6 +22,7 @@ if not settings.configured:
             'django.contrib.messages',
             'django.contrib.staticfiles',
             'django.contrib.admin',
+            'south',
             'allaccess',
         ],
         AUTHENTICATION_BACKENDS=(
@@ -33,6 +34,7 @@ if not settings.configured:
         LOGIN_URL='/login/',
         LOGIN_REDIRECT_URL='/',
         USE_TZ=True,
+        SOUTH_TESTS_MIGRATE=True,
     )
 
 
@@ -42,14 +44,16 @@ if SWAPPED:
 
 from django import VERSION
 from django.test.utils import get_runner
+from south.management.commands import patch_for_test_db_setup
 
 
 def runtests():
-    TestRunner = get_runner(settings)
-    test_runner = TestRunner(verbosity=1, interactive=True, failfast=False)
+    patch_for_test_db_setup()
     apps = sys.argv[1:] or ['allaccess', ]
     if SWAPPED and VERSION[0] == 1 and VERSION[1] < 6:
         apps.append('custom')
+    TestRunner = get_runner(settings)
+    test_runner = TestRunner(verbosity=1, interactive=True, failfast=False)
     failures = test_runner.run_tests(apps)
     sys.exit(failures)
 
