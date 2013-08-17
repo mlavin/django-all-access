@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.5.1 (TBD)
+v0.5.1 (2013-08-16)
 ------------------------------------
 
 - Fix incompatibility with the existing South migrations and a customized User model. Thanks to Jharrod LaFon for the report and fix.
