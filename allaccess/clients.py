@@ -125,8 +125,8 @@ class OAuthClient(BaseOAuthClient):
         oauth = OAuth1(
             resource_owner_key=token,
             resource_owner_secret=secret,
-            client_key=self.provider.key,
-            client_secret=self.provider.secret,
+            client_key=self.provider.consumer_key,
+            client_secret=self.provider.consumer_secret,
             verifier=verifier,
             callback_uri=callback,
         )
@@ -162,9 +162,9 @@ class OAuth2Client(BaseOAuthClient):
             return None
         if 'code' in request.GET:
             args = {
-                'client_id': self.provider.key,
+                'client_id': self.provider.consumer_key,
                 'redirect_uri': callback,
-                'client_secret': self.provider.secret,
+                'client_secret': self.provider.consumer_secret,
                 'code': request.GET['code'],
                 'grant_type': 'authorization_code',
             }
@@ -188,7 +188,7 @@ class OAuth2Client(BaseOAuthClient):
         "Get request parameters for redirect url."
         callback = request.build_absolute_uri(callback)
         args = {
-            'client_id': self.provider.key,
+            'client_id': self.provider.consumer_key,
             'redirect_uri': callback,
             'response_type': 'code',
         }

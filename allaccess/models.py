@@ -14,7 +14,7 @@ class ProviderManager(models.Manager):
 
     def enabled(self):
         "Filter down providers which have key/secret pairs."
-        return super(ProviderManager, self).filter(key__isnull=False, secret__isnull=False)
+        return super(ProviderManager, self).filter(consumer_key__isnull=False, consumer_secret__isnull=False)
 
 
 @python_2_unicode_compatible
@@ -26,8 +26,8 @@ class Provider(models.Model):
     authorization_url = models.URLField()
     access_token_url = models.URLField()
     profile_url = models.URLField()
-    key = EncryptedField(blank=True, null=True, default=None)
-    secret = EncryptedField(blank=True, null=True, default=None)
+    consumer_key = EncryptedField(blank=True, null=True, default=None)
+    consumer_secret = EncryptedField(blank=True, null=True, default=None)
 
     objects = ProviderManager()
 
@@ -35,12 +35,12 @@ class Provider(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.key = self.key or None
-        self.secret = self.secret or None
+        self.consumer_key = self.consumer_key or None
+        self.consumer_secret = self.consumer_secret or None
         super(Provider, self).save(*args, **kwargs)
 
     def enabled(self):
-        return self.key is not None and self.secret is not None
+        return self.consumer_key is not None and self.consumer_secret is not None
     enabled.boolean = True
 
 

@@ -18,9 +18,9 @@ class BaseClientTestCase(object):
 
     def setUp(self):
         super(BaseClientTestCase, self).setUp()
-        self.key = self.get_random_string()
-        self.secret = self.get_random_string()
-        self.provider = self.create_provider(key=self.key, secret=self.secret)
+        self.consumer_key = self.get_random_string()
+        self.consumer_secret = self.get_random_string()
+        self.provider = self.create_provider(consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
         self.oauth = self.oauth_client(self.provider)
         self.factory = RequestFactory()
 
@@ -65,8 +65,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.get_request_token(request, callback='/callback/')
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], None)
         self.assertEqual(kwargs['resource_owner_secret'], None)
         self.assertEqual(kwargs['verifier'], None)
@@ -105,8 +105,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.get_access_token(request)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], 'token')
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
         self.assertEqual(kwargs['verifier'], 'verifier')
@@ -119,8 +119,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.get_access_token(request, callback='/other/')
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], 'token')
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
         self.assertEqual(kwargs['verifier'], 'verifier')
@@ -151,8 +151,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.get_access_token(request)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], None)
         self.assertEqual(kwargs['resource_owner_secret'], None)
         self.assertEqual(kwargs['verifier'], 'verifier')
@@ -192,8 +192,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], 'token')
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
 
@@ -221,8 +221,8 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.oauth.request('get', 'http://example.com/')
         self.assertTrue(auth.called)
         args, kwargs = auth.call_args
-        self.assertEqual(kwargs['client_key'], self.provider.key)
-        self.assertEqual(kwargs['client_secret'], self.provider.secret)
+        self.assertEqual(kwargs['client_key'], self.provider.consumer_key)
+        self.assertEqual(kwargs['client_secret'], self.provider.consumer_secret)
         self.assertEqual(kwargs['resource_owner_key'], 'token')
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
 
@@ -255,8 +255,8 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(params['redirect_uri'], 'http://testserver/callback/')
         self.assertEqual(params['code'], 'code')
         self.assertEqual(params['grant_type'], 'authorization_code')
-        self.assertEqual(params['client_id'], self.provider.key)
-        self.assertEqual(params['client_secret'], self.provider.secret)
+        self.assertEqual(params['client_id'], self.provider.consumer_key)
+        self.assertEqual(params['client_secret'], self.provider.consumer_secret)
 
     def test_access_token_custom_callback(self, requests):
         "Check parameters used with custom callback."
@@ -269,8 +269,8 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(params['redirect_uri'], 'http://testserver/other/')
         self.assertEqual(params['code'], 'code')
         self.assertEqual(params['grant_type'], 'authorization_code')
-        self.assertEqual(params['client_id'], self.provider.key)
-        self.assertEqual(params['client_secret'], self.provider.secret)
+        self.assertEqual(params['client_id'], self.provider.consumer_key)
+        self.assertEqual(params['client_secret'], self.provider.consumer_secret)
 
     def test_access_token_no_code(self, requests):
         "Don't request token if no code was given to the callback."
