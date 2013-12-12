@@ -11,9 +11,9 @@ class AvailableProvidersTestCase(AllAccessTestCase):
 
     def setUp(self):
         self.enabled_provider = self.create_provider(
-            key=self.get_random_string(), secret=self.get_random_string()
+            consumer_key=self.get_random_string(), consumer_secret=self.get_random_string()
         )
-        self.disabled_provider = self.create_provider(key=None, secret=None)
+        self.disabled_provider = self.create_provider(consumer_key=None, consumer_secret=None)
         self.factory = RequestFactory()
 
     def test_enabled_filter(self):

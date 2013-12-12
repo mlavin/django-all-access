@@ -17,9 +17,9 @@ class BaseViewTestCase(AllAccessTestCase):
     url_name = None
 
     def setUp(self):
-        self.key = self.get_random_string()
-        self.secret = self.get_random_string()
-        self.provider = self.create_provider(key=self.key, secret=self.secret)
+        self.consumer_key = self.get_random_string()
+        self.consumer_secret = self.get_random_string()
+        self.provider = self.create_provider(consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
         self.url = reverse(self.url_name, kwargs={'provider': self.provider.name})
         # Replace exsiting settings
         self.LOGIN_URL = settings.LOGIN_URL
@@ -83,7 +83,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         callback = reverse('allaccess-callback', kwargs={'provider': self.provider.name})
         self.assertEqual(query['redirect_uri'][0], 'http://testserver' + callback)
         self.assertEqual(query['response_type'][0], 'code')
-        self.assertEqual(query['client_id'][0], self.provider.key)
+        self.assertEqual(query['client_id'][0], self.provider.consumer_key)
         # State should be stored in the session and passed to the provider
         key = 'allaccess-{0}-request-state'.format(self.provider.name)
         state = self.client.session[key]
@@ -97,8 +97,8 @@ class OAuthRedirectTestCase(BaseViewTestCase):
 
     def test_disabled_provider(self):
         "Return a 404 if provider does not have key/secret set."
-        self.provider.key = None
-        self.provider.secret = None
+        self.provider.consumer_key = None
+        self.provider.consumer_secret = None
         self.provider.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
@@ -129,8 +129,8 @@ class OAuthCallbackTestCase(BaseViewTestCase):
 
     def test_disabled_provider(self):
         "Return a 404 if provider does not have key/secret set."
-        self.provider.key = None
-        self.provider.secret = None
+        self.provider.consumer_key = None
+        self.provider.consumer_secret = None
         self.provider.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
