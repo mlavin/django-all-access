@@ -13,3 +13,12 @@
     authorization_url: https://accounts.google.com/o/oauth2/auth
     access_token_url: https://accounts.google.com/o/oauth2/token
     profile_url: https://www.googleapis.com/oauth2/v1/userinfo
+
+- model: allaccess.Provider
+  pk: 3
+  fields:
+    name: twitter
+    request_token_url: https://api.twitter.com/oauth/request_token
+    authorization_url: https://api.twitter.com/oauth/authenticate
+    access_token_url: https://api.twitter.com/oauth/access_token
+    profile_url: https://api.twitter.com/1.1/account/verify_credentials.json
