@@ -22,10 +22,10 @@ class Provider(models.Model):
     "Configuration for OAuth provider."
 
     name = models.CharField(max_length=50, unique=True)
-    request_token_url = models.URLField(blank=True)
-    authorization_url = models.URLField()
-    access_token_url = models.URLField()
-    profile_url = models.URLField()
+    request_token_url = models.CharField(blank=True, max_length=255)
+    authorization_url = models.CharField(max_length=255)
+    access_token_url = models.CharField(max_length=255)
+    profile_url = models.CharField(max_length=255)
     consumer_key = EncryptedField(blank=True, null=True, default=None)
     consumer_secret = EncryptedField(blank=True, null=True, default=None)
 
