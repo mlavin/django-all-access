@@ -5,3 +5,11 @@
     authorization_url: https://www.facebook.com/dialog/oauth
     access_token_url: https://graph.facebook.com/oauth/access_token
     profile_url: https://graph.facebook.com/me
+
+- model: allaccess.Provider
+  pk: 2
+  fields:
+    name: google
+    authorization_url: https://accounts.google.com/o/oauth2/auth
+    access_token_url: https://accounts.google.com/o/oauth2/token
+    profile_url: https://www.googleapis.com/oauth2/v1/userinfo
