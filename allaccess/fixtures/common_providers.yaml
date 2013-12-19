@@ -22,3 +22,11 @@
     authorization_url: https://api.twitter.com/oauth/authenticate
     access_token_url: https://api.twitter.com/oauth/access_token
     profile_url: https://api.twitter.com/1.1/account/verify_credentials.json
+
+- model: allaccess.Provider
+  pk: 4
+  fields:
+    name: microsoft
+    authorization_url: https:­//l­ogi­n.l­ive.co­m/o­aut­h20­_au­tho­riz­e.srf
+    access_token_url: https:­//l­ogi­n.l­ive.co­m/o­aut­h20­_to­ken.srf
+    profile_url: https:­//a­pis.li­ve.n­et­/v5.0/­me
