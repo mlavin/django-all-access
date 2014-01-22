@@ -27,4 +27,4 @@ class Command(NoArgsCommand):
                 }
                 provider, created = Provider.objects.get_or_create(name=name, defaults=defaults)
                 if created:
-                    self.stdout('New provider created from "%s" backend.' % name)
+                    self.stdout.write('New provider created from "%s" backend.\n' % name)
