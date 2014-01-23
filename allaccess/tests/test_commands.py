@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.management import call_command
 
 from .base import AllAccessTestCase, Provider, AccountAccess, skipIf
+from ..compat import six
 
 try:
     import social_auth
@@ -20,14 +21,14 @@ class MigrateProvidersTestCase(AllAccessTestCase):
         """Providers which aren't enabled won't be created."""
         with self.settings(AUTHENTICATION_BACKENDS=['social_auth.backends.facebook.FacebookBackend'],
             FACEBOOK_APP_ID=None, FACEBOOK_API_SECRET=None):
-            call_command('migrate_social_providers')
+            call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertRaises(Provider.DoesNotExist, Provider.objects.get, name='facebook')
 
     def test_create_providers(self):
         """Create provider records from django-social-auth backends."""
         with self.settings(AUTHENTICATION_BACKENDS=['social_auth.backends.facebook.FacebookBackend'],
             FACEBOOK_APP_ID='XXX', FACEBOOK_API_SECRET='YYY'):
-            call_command('migrate_social_providers')
+            call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         facebook = Provider.objects.get(name='facebook')
         self.assertEqual(facebook.key, 'XXX')
         self.assertEqual(facebook.secret, 'YYY')
@@ -37,7 +38,7 @@ class MigrateProvidersTestCase(AllAccessTestCase):
         self.create_provider(name='facebook', key='ABC', secret='XYZ')
         with self.settings(AUTHENTICATION_BACKENDS=['social_auth.backends.facebook.FacebookBackend'],
             FACEBOOK_APP_ID='XXX', FACEBOOK_API_SECRET='YYY'):
-            call_command('migrate_social_providers')
+            call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         facebook = Provider.objects.get(name='facebook')
         self.assertEqual(facebook.key, 'ABC')
         self.assertEqual(facebook.secret, 'XYZ')
@@ -61,14 +62,14 @@ class MigrateAccountsTestCase(AllAccessTestCase):
     def test_unknown_provider(self):
         """Associations to unknown providers are skipped."""
         self.create_user_social_auth(provider='facebook')
-        call_command('migrate_social_accounts')
+        call_command('migrate_social_accounts', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertEqual(AccountAccess.objects.count(), 0)
 
     def test_create_association(self):
         """Create a new AccountAccess from an existing UserSocialAuth."""
         provider = self.create_provider(name='facebook')
         auth = self.create_user_social_auth(provider='facebook')
-        call_command('migrate_social_accounts')
+        call_command('migrate_social_accounts', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertEqual(AccountAccess.objects.count(), 1)
         access = AccountAccess.objects.latest('pk')
         self.assertEqual(access.identifier, auth.uid)
@@ -81,7 +82,7 @@ class MigrateAccountsTestCase(AllAccessTestCase):
         access = self.create_access(provider=provider)
         auth = self.create_user_social_auth(provider='facebook', uid=access.identifier)
         self.assertNotEqual(access.user, auth.user)
-        call_command('migrate_social_accounts')
+        call_command('migrate_social_accounts', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertEqual(AccountAccess.objects.count(), 1)
         access = AccountAccess.objects.get(pk=access.pk)
         self.assertNotEqual(access.user, auth.user)

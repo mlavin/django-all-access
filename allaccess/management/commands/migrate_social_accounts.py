@@ -9,6 +9,7 @@ class Command(NoArgsCommand):
     "Convert existing associations from django-social-auth to django-all-access."
 
     def handle_noargs(self, **options):
+        verbosity = int(options.get('verbosity'))
         try:
             from social_auth.models import UserSocialAuth
         except ImportError:
@@ -25,7 +26,8 @@ class Command(NoArgsCommand):
                     provider = Provider.objects.get(name=social.provider)
                 except Provider.DoesNotExist:
                     providers[social.provider] = missing
-                    self.stdout.write('No "%s" provider found.\n' % social.provider)
+                    if verbosity > 0:
+                        self.stdout.write('No "%s" provider found.\n' % social.provider)
                 else:
                     providers[provider.name] = provider
             if provider is not None:
@@ -41,6 +43,7 @@ class Command(NoArgsCommand):
                     total_exiting += 1
             else:
                 total_skipped += 1
-            self.stdout.write('%s associations created.\n' % total_created)
-            self.stdout.write('%s associations alrady existed.\n' % total_exiting)
-            self.stdout.write('%s associations skipped.\n' % total_skipped)
+            if verbosity > 0:
+                self.stdout.write('%s associations created.\n' % total_created)
+                self.stdout.write('%s associations alrady existed.\n' % total_exiting)
+                self.stdout.write('%s associations skipped.\n' % total_skipped)

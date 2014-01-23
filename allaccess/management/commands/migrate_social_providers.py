@@ -9,6 +9,7 @@ class Command(NoArgsCommand):
     "Convert existing providers from django-social-auth to django-all-access."
 
     def handle_noargs(self, **options):
+        verbosity = int(options.get('verbosity'))
         try:
             from social_auth.backends import get_backends, BaseOAuth
         except ImportError:
@@ -26,5 +27,5 @@ class Command(NoArgsCommand):
                     'secret': secret or None,
                 }
                 provider, created = Provider.objects.get_or_create(name=name, defaults=defaults)
-                if created:
+                if created and verbosity > 0:
                     self.stdout.write('New provider created from "%s" backend.\n' % name)
