@@ -12,7 +12,7 @@ class Command(NoArgsCommand):
         verbosity = int(options.get('verbosity'))
         try:
             from social_auth.backends import get_backends, BaseOAuth
-        except ImportError:
+        except ImportError: # pragma: no cover
             raise CommandError("django-social-auth is not installed.")
         for name, backend in get_backends(force_load=True).items():
             if issubclass(backend, BaseOAuth) and backend.enabled():

@@ -12,7 +12,7 @@ class Command(NoArgsCommand):
         verbosity = int(options.get('verbosity'))
         try:
             from social_auth.models import UserSocialAuth
-        except ImportError:
+        except ImportError: # pragma: no cover
             raise CommandError("django-social-auth is not installed.")
         providers = {}
         missing = object()
