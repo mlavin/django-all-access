@@ -14,7 +14,7 @@ class Command(NoArgsCommand):
             from social_auth.backends import get_backends, BaseOAuth
         except ImportError: # pragma: no cover
             raise CommandError("django-social-auth is not installed.")
-        for name, backend in get_backends(force_load=True).items():
+        for name, backend in get_backends().items():
             if issubclass(backend, BaseOAuth) and backend.enabled():
                 # Create providers if they don't already exist
                 key, secret = backend.get_key_and_secret()
