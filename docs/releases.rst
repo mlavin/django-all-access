@@ -4,6 +4,12 @@ Release History
 Release and change history for django-all-access
 
 
+v0.6.0 (TBD)
+------------------------------------
+
+- Added ``migrate_social_accounts`` and ``migrate_social_providers`` management commands to help migrate data from django-social-auth.
+
+
 v0.5.1 (2013-08-16)
 ------------------------------------
 
