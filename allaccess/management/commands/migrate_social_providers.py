@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.core.management.base import NoArgsCommand, CommandError
+from django.test.client import RequestFactory
 
 from allaccess.models import Provider 
 
@@ -11,17 +12,22 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         verbosity = int(options.get('verbosity'))
         try:
+            from social_auth import version
             from social_auth.backends import get_backends, BaseOAuth
         except ImportError: # pragma: no cover
             raise CommandError("django-social-auth is not installed.")
+        request = RequestFactory().get('/')
         for name, backend in get_backends().items():
             if issubclass(backend, BaseOAuth) and backend.enabled():
+                if version < (0, 7):
+                    # Prior to 0.7 get_key_and_secret was an instance method
+                    backend = backend(request, '/')
                 # Create providers if they don't already exist
                 key, secret = backend.get_key_and_secret()
                 defaults = {
-                    'request_token_url': getattr(backend, 'REQUEST_TOKEN_URL', ''),
-                    'authorization_url': getattr(backend, 'AUTHORIZATION_URL', ''),
-                    'access_token_url': getattr(backend, 'ACCESS_TOKEN_URL', ''),
+                    'request_token_url': getattr(backend, 'REQUEST_TOKEN_URL', '') or '',
+                    'authorization_url': getattr(backend, 'AUTHORIZATION_URL', '') or '',
+                    'access_token_url': getattr(backend, 'ACCESS_TOKEN_URL', '') or '',
                     'profile_url': '',
                     'key': key or None,
                     'secret': secret or None,

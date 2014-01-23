@@ -21,6 +21,8 @@ class MigrateProvidersTestCase(AllAccessTestCase):
         """Providers which aren't enabled won't be created."""
         with self.settings(AUTHENTICATION_BACKENDS=['social_auth.backends.facebook.FacebookBackend'],
             FACEBOOK_APP_ID=None, FACEBOOK_API_SECRET=None):
+            del settings.FACEBOOK_APP_ID
+            del settings.FACEBOOK_API_SECRET
             call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertRaises(Provider.DoesNotExist, Provider.objects.get, name='facebook')
 
