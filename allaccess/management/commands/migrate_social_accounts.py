@@ -25,7 +25,7 @@ class Command(NoArgsCommand):
                     provider = Provider.objects.get(name=social.provider)
                 except Provider.DoesNotExist:
                     providers[social.provider] = missing
-                    self.stdout.write('No "%s" provider found.\n' % name)
+                    self.stdout.write('No "%s" provider found.\n' % social.provider)
                 else:
                     providers[provider.name] = provider
             if provider is not None:
