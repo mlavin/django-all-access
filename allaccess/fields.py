@@ -4,8 +4,9 @@ import binascii
 
 from django.conf import settings
 from django.db import models
+from django.utils import six
 
-from .compat import force_bytes, force_text, six
+from .compat import force_bytes, force_text
 
 try:
     import Crypto.Cipher.AES

@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.management import call_command
+from django.utils import six
 
 from .base import AllAccessTestCase, Provider, AccountAccess, skipIf
-from ..compat import six
 
 try:
     import social_auth

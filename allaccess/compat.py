@@ -35,9 +35,3 @@ except ImportError: # pragma: no cover
     except ImportError:
         # This didn't get back-ported to 1.4.X
         force_bytes = smart_bytes
-
-# Vendored six
-try:
-    from django.utils import six
-except:
-    from requests.packages.urllib3.packages import six
