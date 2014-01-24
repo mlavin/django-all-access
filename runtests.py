@@ -4,7 +4,27 @@ import sys
 
 from django.conf import settings
 
+try:
+    import social_auth
+except ImportError:
+    social_auth = None
+
 SWAPPED = os.environ.get('SWAPPED', False)
+
+INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'south',
+    'allaccess',
+]
+
+if social_auth is not None:
+    INSTALLED_APPS.append('social_auth')
 
 if not settings.configured:
     settings.configure(
@@ -14,17 +34,7 @@ if not settings.configured:
                 'NAME': ':memory:',
             }
         },
-        INSTALLED_APPS=[
-            'django.contrib.auth',
-            'django.contrib.contenttypes',
-            'django.contrib.sessions',
-            'django.contrib.sites',
-            'django.contrib.messages',
-            'django.contrib.staticfiles',
-            'django.contrib.admin',
-            'south',
-            'allaccess',
-        ],
+        INSTALLED_APPS=INSTALLED_APPS,
         AUTHENTICATION_BACKENDS=(
             'allaccess.backends.AuthorizedServiceBackend',
         ),
