@@ -4,13 +4,13 @@ import json
 import logging
 
 from django.core.urlresolvers import reverse
-from django.utils.crypto import constant_time_compare
+from django.utils.crypto import constant_time_compare, get_random_string
 
 from requests.api import request
 from requests_oauthlib import OAuth1
 from requests.exceptions import RequestException
 
-from .compat import get_random_string, urlencode, parse_qs, force_text
+from .compat import urlencode, parse_qs, force_text
 
 
 logger = logging.getLogger('allaccess.clients')
