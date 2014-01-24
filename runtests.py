@@ -2,12 +2,18 @@
 import os
 import sys
 
+import django
 from django.conf import settings
 
 try:
     import social_auth
 except ImportError:
     social_auth = None
+
+try:
+    import south
+except ImportError:
+    south = None
 
 SWAPPED = os.environ.get('SWAPPED', False)
 
@@ -19,9 +25,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'south',
     'allaccess',
 ]
+
+if south is not None:
+    INSTALLED_APPS.append('south')
 
 if social_auth is not None:
     INSTALLED_APPS.append('social_auth')
@@ -54,10 +62,15 @@ if SWAPPED:
 
 from django import VERSION
 from django.test.utils import get_runner
-from south.management.commands import patch_for_test_db_setup
+try:
+    from south.management.commands import patch_for_test_db_setup
+except ImportError:
+    patch_for_test_db_setup = lambda: None
 
 
 def runtests():
+    if hasattr(django, 'setup'):
+        django.setup()
     patch_for_test_db_setup()
     apps = sys.argv[1:] or ['allaccess', ]
     if SWAPPED and VERSION[0] == 1 and VERSION[1] < 6:
