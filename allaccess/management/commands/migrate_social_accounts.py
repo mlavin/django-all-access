@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.core.management.base import NoArgsCommand, CommandError
 
-from allaccess.models import Provider, AccountAccess 
+from allaccess.models import Provider, AccountAccess
 
 
 class Command(NoArgsCommand):

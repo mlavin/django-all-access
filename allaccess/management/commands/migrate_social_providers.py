@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.core.management.base import NoArgsCommand, CommandError
 from django.test.client import RequestFactory
 
-from allaccess.models import Provider 
+from allaccess.models import Provider
 
 
 class Command(NoArgsCommand):
