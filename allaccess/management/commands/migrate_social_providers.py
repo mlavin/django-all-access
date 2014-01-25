@@ -29,8 +29,8 @@ class Command(NoArgsCommand):
                     'authorization_url': getattr(backend, 'AUTHORIZATION_URL', '') or '',
                     'access_token_url': getattr(backend, 'ACCESS_TOKEN_URL', '') or '',
                     'profile_url': '',
-                    'key': key or None,
-                    'secret': secret or None,
+                    'consumer_key': key or None,
+                    'consumer_secret': secret or None,
                 }
                 provider, created = Provider.objects.get_or_create(name=name, defaults=defaults)
                 if created and verbosity > 0:

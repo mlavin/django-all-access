@@ -12,33 +12,33 @@ class ProviderTestCase(AllAccessTestCase):
 
     def test_save_empty_key(self):
         "None/blank key should normalize to None which is not encrypted."
-        self.provider.key = ''
+        self.provider.consumer_key = ''
         self.provider.save()
-        self.assertEqual(self.provider.key, None)
+        self.assertEqual(self.provider.consumer_key, None)
 
-        self.provider.key = None
+        self.provider.consumer_key = None
         self.provider.save()
-        self.assertEqual(self.provider.key, None)
+        self.assertEqual(self.provider.consumer_key, None)
 
     def test_save_empty_secret(self):
         "None/blank secret should normalize to None which is not encrypted."
-        self.provider.secret = ''
+        self.provider.consumer_secret = ''
         self.provider.save()
-        self.assertEqual(self.provider.secret, None)
+        self.assertEqual(self.provider.consumer_secret, None)
 
-        self.provider.secret = None
+        self.provider.consumer_secret = None
         self.provider.save()
-        self.assertEqual(self.provider.secret, None)
+        self.assertEqual(self.provider.consumer_secret, None)
 
     def test_encrypted_save(self):
         "Encrypt key/secret on save."
         key = self.get_random_string()
         secret = self.get_random_string()
-        self.provider.key = key
-        self.provider.secret = secret
+        self.provider.consumer_key = key
+        self.provider.consumer_secret = secret
         self.provider.save()
         provider = Provider.objects.extra(
-            select={'raw_key': 'key', 'raw_secret': 'secret'}
+            select={'raw_key': 'consumer_key', 'raw_secret': 'consumer_secret'}
         ).get(pk=self.provider.pk)
         self.assertNotEqual(provider.raw_key, key)
         self.assertTrue(provider.raw_key.startswith('$AES$'))
@@ -49,21 +49,21 @@ class ProviderTestCase(AllAccessTestCase):
         "Decrypt key/secret on save."
         key = self.get_random_string()
         secret = self.get_random_string()
-        self.provider.key = key
-        self.provider.secret = secret
+        self.provider.consumer_key = key
+        self.provider.consumer_secret = secret
         self.provider.save()
         provider = Provider.objects.get(pk=self.provider.pk)
-        self.assertEqual(provider.key, key, "Could not decrypt key.")
-        self.assertEqual(provider.secret, secret, "Could not decrypt secret.")
+        self.assertEqual(provider.consumer_key, key, "Could not decrypt key.")
+        self.assertEqual(provider.consumer_secret, secret, "Could not decrypt secret.")
 
     def test_enabled_filter(self):
         "Return only providers with key/secret pairs."
         key = self.get_random_string()
         secret = self.get_random_string()
-        self.provider.key = key
-        self.provider.secret = secret
+        self.provider.consumer_key = key
+        self.provider.consumer_secret = secret
         self.provider.save()
-        other_provider = self.create_provider(key=None, secret=None)
+        other_provider = self.create_provider(consumer_key=None, consumer_secret=None)
         self.assertTrue(self.provider.enabled())
         self.assertTrue(self.provider in Provider.objects.enabled())
         self.assertFalse(other_provider.enabled())

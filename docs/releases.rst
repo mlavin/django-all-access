@@ -7,7 +7,23 @@ Release and change history for django-all-access
 v0.6.0 (TBD)
 ------------------------------------
 
+This release adds a better migration path from moving from django-social-auth and includes changes to support
+running on the Google App Engine. There is a South migration included with this release. To upgrade you should run::
+
+    python manage.py migrate allaccess
+
+More details for this change are noted under the "Backwards Incompatible Changes".
+
 - Added ``migrate_social_accounts`` and ``migrate_social_providers`` management commands to help migrate data from django-social-auth.
+- Update ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
+
+
+Backwards Incompatible Changes
+__________________________________
+
+- The ``key`` and ``secret`` columns on ``Provider`` were renamed to ``consumer_key`` and ``consumer_secret``. ``key`` is a reserved property
+name when using Google App Engine and ``secret`` was changed as well for consistency. A migration has been added for the change but
+if you were referencing the ``key``/``secret`` explicitly in your code those references need to be updated as well.
 
 
 v0.5.1 (2013-08-16)
