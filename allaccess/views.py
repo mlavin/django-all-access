@@ -50,7 +50,7 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
         "Build redirect url for a given provider."
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.enabled().get(name=name)
+            provider = Provider.objects.get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -66,7 +66,7 @@ class OAuthCallback(OAuthClientMixin, View):
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.enabled().get(name=name)
+            provider = Provider.objects.get(name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:

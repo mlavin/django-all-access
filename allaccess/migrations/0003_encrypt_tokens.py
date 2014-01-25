@@ -37,11 +37,11 @@ class Migration(DataMigration):
             'access_token_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'authorization_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('allaccess.fields.EncryptedField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
+            'consumer_key': ('allaccess.fields.EncryptedField', [], {'default': 'None', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
             'profile_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'request_token_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'secret': ('allaccess.fields.EncryptedField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
+            'consumer_secret': ('allaccess.fields.EncryptedField', [], {'default': 'None', 'null': 'True', 'blank': 'True'})
         },
         'auth.group': {
             'Meta': {'object_name': 'Group'},

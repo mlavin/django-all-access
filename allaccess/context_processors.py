@@ -6,4 +6,4 @@ from .models import Provider
 
 def available_providers(request):
     "Adds the list of enabled providers to the context."
-    return {'allaccess_providers':  Provider.objects.enabled()}
+    return {'allaccess_providers':  Provider.objects}
