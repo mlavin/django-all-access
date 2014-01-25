@@ -32,18 +32,18 @@ class MigrateProvidersTestCase(AllAccessTestCase):
             FACEBOOK_APP_ID='XXX', FACEBOOK_API_SECRET='YYY'):
             call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         facebook = Provider.objects.get(name='facebook')
-        self.assertEqual(facebook.key, 'XXX')
-        self.assertEqual(facebook.secret, 'YYY')
+        self.assertEqual(facebook.consumer_key, 'XXX')
+        self.assertEqual(facebook.consumer_secret, 'YYY')
 
     def test_existing_providers(self):
         """Do not change settings for existing providers."""
-        self.create_provider(name='facebook', key='ABC', secret='XYZ')
+        self.create_provider(name='facebook', consumer_key='ABC', consumer_secret='XYZ')
         with self.settings(AUTHENTICATION_BACKENDS=['social_auth.backends.facebook.FacebookBackend'],
             FACEBOOK_APP_ID='XXX', FACEBOOK_API_SECRET='YYY'):
             call_command('migrate_social_providers', stdout=six.StringIO(), stderr=six.StringIO())
         facebook = Provider.objects.get(name='facebook')
-        self.assertEqual(facebook.key, 'ABC')
-        self.assertEqual(facebook.secret, 'XYZ')
+        self.assertEqual(facebook.consumer_key, 'ABC')
+        self.assertEqual(facebook.consumer_secret, 'XYZ')
 
 
 @skipIf(SOCIAL_AUTH_MISSING, 'django-social-auth is not installed.')
