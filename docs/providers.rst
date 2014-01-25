@@ -18,6 +18,22 @@ you should refer to the provider's API documentation for more information.
     this setting secret as its name would imply.
 
 
+.. versionadded:: 0.6
+Common Providers
+------------------------------------
+
+To get you started there is an initial fixture of commonly used providers. This includes
+the urls needed for Facebook, Twitter, Google, Microsoft Live, Github and Bitbucket. Once you've
+added ``allaccess`` to your ``INSTALLED_APP`` and created the tables with ``syncdb``/``migrate``
+then you can load this fixture via::
+
+    python manage.py loaddata common_providers.json
+
+This does not include the consumer id/key or secret which will still need to be added
+to the records. The below examples will help you understand what these values mean
+and how they would be populated for additional providers you might want to use.
+
+
 OAuth 1.0 Providers
 ------------------------------------
 

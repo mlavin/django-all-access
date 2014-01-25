@@ -8,14 +8,17 @@ v0.6.0 (TBD)
 ------------------------------------
 
 This release adds a better migration path from moving from django-social-auth and includes changes to support
-running on the Google App Engine. There is a South migration included with this release. To upgrade you should run::
+running on the Google App Engine. There are two South migration included with this release. To upgrade you should run::
 
     python manage.py migrate allaccess
 
 More details for this change are noted under the "Backwards Incompatible Changes".
 
 - Added ``migrate_social_accounts`` and ``migrate_social_providers`` management commands to help migrate data from django-social-auth.
-- Update ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
+- Updated ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
+- Increased the url lengths for the fields on the ``Provider`` model. Thanks to Marco Seguri for the fix.
+- Added support for serialization of ``Provider`` and ``AccountAccess`` records by natural keys.
+- Included a fixture of common providers (Facebook, Twitter, Google, Microsoft Live, Github and Bitbucket). Thanks to Marco Seguri for the initial patch.
 
 
 Backwards Incompatible Changes
