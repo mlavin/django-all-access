@@ -35,3 +35,10 @@ except ImportError: # pragma: no cover
     except ImportError:
         # This didn't get back-ported to 1.4.X
         force_bytes = smart_bytes
+
+
+try: # pragma: no cover
+    from google.appengine.ext import db
+    APPENGINE = True
+except ImportError:
+    APPENGINE = False
