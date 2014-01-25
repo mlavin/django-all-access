@@ -18,6 +18,7 @@ More details for this change are noted under the "Backwards Incompatible Changes
 - Updated ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
 - Increased the url lengths for the fields on the ``Provider`` model. Thanks to Marco Seguri for the fix.
 - Added support for serialization of ``Provider`` and ``AccountAccess`` records by natural keys.
+- Included a fixture of common providers (Facebook, Twitter, Google, Microsoft Live, Github and Bitbucket). Thanks to Marco Seguri for the initial patch.
 
 
 Backwards Incompatible Changes
