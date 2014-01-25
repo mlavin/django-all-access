@@ -17,6 +17,7 @@ More details for this change are noted under the "Backwards Incompatible Changes
 - Added ``migrate_social_accounts`` and ``migrate_social_providers`` management commands to help migrate data from django-social-auth.
 - Updated ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
 - Increased the url lengths for the fields on the ``Provider`` model. Thanks to Marco Seguri for the fix.
+- Added support for serialization of ``Provider`` and ``AccountAccess`` records by natural keys.
 
 
 Backwards Incompatible Changes

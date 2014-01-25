@@ -12,6 +12,9 @@ from .fields import EncryptedField
 class ProviderManager(models.Manager):
     "Additional manager methods for Providers."
 
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
     def enabled(self):
         "Filter down providers which have key/secret pairs."
         return super(ProviderManager, self).filter(consumer_key__isnull=False, consumer_secret__isnull=False)
@@ -39,9 +42,20 @@ class Provider(models.Model):
         self.consumer_secret = self.consumer_secret or None
         super(Provider, self).save(*args, **kwargs)
 
+    def natural_key(self):
+        return (self.name, )
+
     def enabled(self):
         return self.consumer_key is not None and self.consumer_secret is not None
     enabled.boolean = True
+
+
+class AccountAccessManager(models.Manager):
+    "Additional manager for AccountAccess models."
+
+    def get_by_natural_key(self, identifier, provider):
+        provider = Provider.objects.get_by_natural_key(provider)
+        return self.get(identifier=identifier, provider=provider)
 
 
 @python_2_unicode_compatible
@@ -55,6 +69,8 @@ class AccountAccess(models.Model):
     modified = models.DateTimeField(auto_now=True, default=datetime.now)
     access_token = EncryptedField(blank=True, null=True, default=None)
 
+    objects = AccountAccessManager()
+
     class Meta(object):
         unique_together = ('identifier', 'provider')
 
@@ -64,6 +80,10 @@ class AccountAccess(models.Model):
     def save(self, *args, **kwargs):
         self.access_token = self.access_token or None
         super(AccountAccess, self).save(*args, **kwargs)
+
+    def natural_key(self):
+        return (self.identifier, ) + self.provider.natural_key()
+    natural_key.dependencies = ['allaccess.provider']
 
     @property
     def api_client(self):
