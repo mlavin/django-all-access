@@ -19,6 +19,7 @@ you should refer to the provider's API documentation for more information.
 
 
 .. versionadded:: 0.6
+
 Common Providers
 ------------------------------------
 
@@ -105,5 +106,5 @@ authentication. The below ``Provider`` record will enable Facebook authenticatio
 As you can see the ``request_token_url`` is not included because it is not needed.
 After adding your consumer key and secret to this record you should now be able
 to authenticate with Facebook by visiting ``/accounts/login/facebook/``.
-Facebook also has a `developer site <http://developers.facebook.com/docs/>`_
+Facebook also has a `developer docs <http://developers.facebook.com/docs/>`_
 for additional information on using their API.
