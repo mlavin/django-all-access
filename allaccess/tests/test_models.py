@@ -56,19 +56,6 @@ class ProviderTestCase(AllAccessTestCase):
         self.assertEqual(provider.consumer_key, key, "Could not decrypt key.")
         self.assertEqual(provider.consumer_secret, secret, "Could not decrypt secret.")
 
-    def test_enabled_filter(self):
-        "Return only providers with key/secret pairs."
-        key = self.get_random_string()
-        secret = self.get_random_string()
-        self.provider.consumer_key = key
-        self.provider.consumer_secret = secret
-        self.provider.save()
-        other_provider = self.create_provider(consumer_key=None, consumer_secret=None)
-        self.assertTrue(self.provider.enabled())
-        self.assertTrue(self.provider in Provider.objects.enabled())
-        self.assertFalse(other_provider.enabled())
-        self.assertFalse(other_provider in Provider.objects.enabled())
-
 
 class AccountAccessTestCase(AllAccessTestCase):
     "Custom AccountAccess methods and access token encryption."

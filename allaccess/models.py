@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 from .clients import get_client
-from .compat import AUTH_USER_MODEL, APPENGINE
+from .compat import AUTH_USER_MODEL
 from .fields import EncryptedField
 
 
@@ -14,20 +14,6 @@ class ProviderManager(models.Manager):
 
     def get_by_natural_key(self, name):
         return self.get(name=name)
-
-    def enabled(self):
-        """Filter down providers which have key/secret pairs.
-
-        Note: AppEngine inequality queries are limited to one property so only the value
-        of consumer_secret is checked. This adds an edge case where consumer_secret is set
-        but consumer_key is not. Sorry AppEngine users.
-
-        See https://developers.google.com/appengine/docs/python/datastore/queries#Python_Restrictions_on_queries
-        """
-        q = {'consumer_secret__isnull': False}
-        if not APPENGINE:
-            q['consumer_key__isnull'] = False
-        return super(ProviderManager, self).filter(**q)
 
 
 @python_2_unicode_compatible
