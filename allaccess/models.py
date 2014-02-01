@@ -15,10 +15,6 @@ class ProviderManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
 
-    def enabled(self):
-        "Filter down providers which have key/secret pairs."
-        return super(ProviderManager, self).filter(consumer_key__isnull=False, consumer_secret__isnull=False)
-
 
 @python_2_unicode_compatible
 class Provider(models.Model):
