@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.6.0 (TBD)
+v0.6.0 (2014-02-01)
 ------------------------------------
 
 This release adds a better migration path from moving from django-social-auth and includes changes to support
