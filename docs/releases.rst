@@ -4,6 +4,12 @@ Release History
 Release and change history for django-all-access
 
 
+v0.7.0 (TBD)
+------------------------------------
+
+This release adds support for 1.7 and the new style migrations.
+
+
 v0.6.0 (2014-02-01)
 ------------------------------------
 
