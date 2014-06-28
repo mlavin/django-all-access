@@ -1,3 +1,3 @@
 [run]
 source = allaccess
-omit = */tests*,*/migrations/*
+omit = */tests*,*/migrations/*,*/south_migrations/*
