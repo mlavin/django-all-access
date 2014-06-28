@@ -7,7 +7,21 @@ Release and change history for django-all-access
 v0.7.0 (TBD)
 ------------------------------------
 
-This release adds support for 1.7 and the new style migrations.
+This release adds support for 1.7 and the new style migrations. For those using Django < 1.7 and South you'll need
+to add the ``SOUTH_MIGRATION_MODULES`` setting to point to the old South migrations.
+
+.. code-block:: python
+
+    SOUTH_MIGRATION_MODULES = {
+        'allaccess': 'allaccess.south_migrations',
+    }
+
+No new migrations were added for this release but this will be the new location for future migrations. If your
+DB tables are up to date from v0.6 then upgrading to 1.7 and running::
+
+    python manage.py migrate allaccess
+
+should automatically fake the initial migration using the new-style migrations.
 
 
 v0.6.0 (2014-02-01)

@@ -60,6 +60,9 @@ if not settings.configured:
         LOGIN_REDIRECT_URL='/',
         USE_TZ=True,
         SOUTH_TESTS_MIGRATE=True,
+        SOUTH_MIGRATION_MODULES={
+            'allaccess': 'allaccess.south_migrations',
+        }
     )
 
 

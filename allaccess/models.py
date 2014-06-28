@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
-from datetime import datetime
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.timezone import now
 
 from .clients import get_client
 from .compat import AUTH_USER_MODEL
@@ -61,8 +61,8 @@ class AccountAccess(models.Model):
     identifier = models.CharField(max_length=255)
     provider = models.ForeignKey(Provider)
     user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, default=datetime.now)
-    modified = models.DateTimeField(auto_now=True, default=datetime.now)
+    created = models.DateTimeField(auto_now_add=True, default=now)
+    modified = models.DateTimeField(auto_now=True, default=now)
     access_token = EncryptedField(blank=True, null=True, default=None)
 
     objects = AccountAccessManager()
