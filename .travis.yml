@@ -13,7 +13,7 @@ env:
   - TOXENV=py27-1.7.X-swapped,py32-1.7.X-swapped
 
 install:
-  - pip install tox --use-mirrors
+  - pip install tox
 
 script:
     - tox
