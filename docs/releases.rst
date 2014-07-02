@@ -7,7 +7,10 @@ Release and change history for django-all-access
 v0.7.0 (TBD)
 ------------------------------------
 
-This release adds support for 1.7 and the new style migrations. For those using Django < 1.7 and South you'll need
+This release adds support for 1.7 and the new style migrations. If you are using Django < 1.7
+and South >= 1.0 this should continue to work without issue.
+
+For those using Django < 1.7 and South < 1.0 you'll need
 to add the ``SOUTH_MIGRATION_MODULES`` setting to point to the old South migrations.
 
 .. code-block:: python
