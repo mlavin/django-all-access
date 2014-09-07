@@ -22,7 +22,6 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(default=django.utils.timezone.now, auto_now_add=True)),
                 ('modified', models.DateTimeField(default=django.utils.timezone.now, auto_now=True)),
                 ('access_token', allaccess.fields.EncryptedField(default=None, null=True, blank=True)),
-                ('user', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
             },
@@ -48,6 +47,12 @@ class Migration(migrations.Migration):
             model_name='accountaccess',
             name='provider',
             field=models.ForeignKey(to='allaccess.Provider'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='accountaccess',
+            name='user',
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
