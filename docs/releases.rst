@@ -27,6 +27,12 @@ DB tables are up to date from v0.6 then upgrading to 1.7 and running::
 should automatically fake the initial migration using the new-style migrations.
 
 
+Backwards Incompatible Changes
+__________________________________
+
+- Python 2.6 is no officially supported or tested.
+
+
 v0.6.0 (2014-02-01)
 ------------------------------------
 
