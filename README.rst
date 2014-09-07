@@ -8,10 +8,8 @@ The goal of this project is to make it easy to create your own workflows for
 authenticating with these remote APIs. django-all-access will provide the simple
 views with sane defaults along with hooks to override the default behavior.
 
-.. image::
-    https://secure.travis-ci.org/mlavin/django-all-access.png?branch=master
-    :alt: Build Status
-        :target: https://secure.travis-ci.org/mlavin/django-all-access
+.. image:: https://travis-ci.org/mlavin/django-all-access.svg?branch=master
+    :target: https://travis-ci.org/mlavin/django-all-access
 
 Features
 ------------------------------------
