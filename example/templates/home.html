@@ -1,4 +1,4 @@
-{% load url from future %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
@@ -8,7 +8,7 @@
     <meta name="description" content="{% block meta-description %}{% endblock %}">
     <meta name="author" content="{% block meta-author %}{% endblock %}">
     <meta name="keywords" content="{% block meta-keywords %}{% endblock %}">
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/site.css">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
 </head>
 <body id="{% block body-id %}body{% endblock %}" class="{% block body-class %}body{% endblock %}">
     <div class="main">
@@ -34,7 +34,5 @@
         {% endif %}
     </div>
     <a href="https://github.com/mlavin/django-all-access"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    {% block extra-js %}{% endblock %}
 </body>
 </html>

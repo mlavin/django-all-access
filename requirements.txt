@@ -1,0 +1,11 @@
+# Deployment requirements
+django-all-access==0.7
+requests-oauthlib==0.4.2
+requests==2.4.3
+oauthlib==0.7.2
+Django==1.7.1
+gunicorn>=19.1,<19.2
+dj-database-url==0.3.0
+dj-static==0.0.6
+static3==0.5.1
+psycopg2==2.5.4

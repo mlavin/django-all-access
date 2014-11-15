@@ -1,21 +1,18 @@
 # Django settings for example project.
-import json
 import os
+import dj_database_url
+
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'on') == 'on'
+
 TEMPLATE_DEBUG = DEBUG
 
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(';')
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'allaccess',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+    'default': dj_database_url.config(default='postgres:///allaccess'),
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -25,7 +22,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -55,7 +52,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(BASE_DIR, os.pardir, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -69,16 +66,10 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-# List of finder classes that know how to find static files in
-# various locations.
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
-
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '&amp;k9%jt6ozi$7o+xalyhx9=^e6+*mtb*s9)crr9mhp=ti8utykl'
+DEFAULT_SECRET_KEY = '&amp;k9%jt6ozi$7o+xalyhx9=^e6+*mtb*s9)crr9mhp=ti8utykl'
+
+SECRET_KEY = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 
 
 MIDDLEWARE_CLASSES = (
