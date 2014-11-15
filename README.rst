@@ -11,6 +11,8 @@ views with sane defaults along with hooks to override the default behavior.
 .. image:: https://travis-ci.org/mlavin/django-all-access.svg?branch=master
     :target: https://travis-ci.org/mlavin/django-all-access
 
+You can find a basic demo application running at http://django-all-access.mlavin.org/
+
 Features
 ------------------------------------
 
