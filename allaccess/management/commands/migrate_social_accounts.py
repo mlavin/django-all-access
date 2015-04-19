@@ -30,7 +30,7 @@ class Command(NoArgsCommand):
                         self.stdout.write('No "%s" provider found.\n' % social.provider)
                 else:
                     providers[provider.name] = provider
-            if provider is not None:
+            if provider is not None and provider is not missing:
                 defaults = {
                     'user': social.user,
                 }
