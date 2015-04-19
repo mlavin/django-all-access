@@ -30,7 +30,7 @@ class Command(NoArgsCommand):
                         self.stdout.write('No "%s" provider found.\n' % social.provider)
                 else:
                     providers[provider.name] = provider
-            if provider is not None:
+            if provider is not None and provider is not missing:
                 defaults = {
                     'user': social.user,
                 }
@@ -43,7 +43,7 @@ class Command(NoArgsCommand):
                     total_exiting += 1
             else:
                 total_skipped += 1
-            if verbosity > 0:
-                self.stdout.write('%s associations created.\n' % total_created)
-                self.stdout.write('%s associations alrady existed.\n' % total_exiting)
-                self.stdout.write('%s associations skipped.\n' % total_skipped)
+        if verbosity > 0:
+            self.stdout.write('%s associations created.\n' % total_created)
+            self.stdout.write('%s associations already existed.\n' % total_exiting)
+            self.stdout.write('%s associations skipped.\n' % total_skipped)

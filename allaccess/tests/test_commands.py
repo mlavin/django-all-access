@@ -64,6 +64,7 @@ class MigrateAccountsTestCase(AllAccessTestCase):
     def test_unknown_provider(self):
         """Associations to unknown providers are skipped."""
         self.create_user_social_auth(provider='facebook')
+        self.create_user_social_auth(provider='facebook')
         call_command('migrate_social_accounts', stdout=six.StringIO(), stderr=six.StringIO())
         self.assertEqual(AccountAccess.objects.count(), 0)
 
@@ -78,7 +79,7 @@ class MigrateAccountsTestCase(AllAccessTestCase):
         self.assertEqual(access.provider, provider)
         self.assertEqual(access.user, auth.user)
 
-    def test_existin_association(self):
+    def test_existing_association(self):
         """Existing AccountAccess records should not be modified."""
         provider = self.create_provider(name='facebook')
         access = self.create_access(provider=provider)
