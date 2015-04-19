@@ -45,5 +45,5 @@ class Command(NoArgsCommand):
                 total_skipped += 1
         if verbosity > 0:
             self.stdout.write('%s associations created.\n' % total_created)
-            self.stdout.write('%s associations alrady existed.\n' % total_exiting)
+            self.stdout.write('%s associations already existed.\n' % total_exiting)
             self.stdout.write('%s associations skipped.\n' % total_skipped)
