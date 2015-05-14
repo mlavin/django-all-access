@@ -11,6 +11,8 @@ env:
   - TOXENV=py27-1.6.X-swapped,py32-1.6.X-swapped
   - TOXENV=py27-1.7.X,py32-1.7.X
   - TOXENV=py27-1.7.X-swapped,py32-1.7.X-swapped
+  - TOXENV=py27-1.8.X,py32-1.8.X
+  - TOXENV=py27-1.8.X-swapped,py32-1.8.X-swapped
 
 install:
   - pip install tox
