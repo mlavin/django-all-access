@@ -65,7 +65,7 @@ an important part of the project. Useful examples and notes on common use cases 
 way to contribute and improve the documentation.
 
 The docs are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
-and built using `Sphinx <http://sphinx.pocoo.org/>`_. As noted above you can use
+and built using `Sphinx <http://sphinx.pocoo.org/>`_. As noted above, you can use
 tox to build the documentation or you can build them on their own via::
 
     tox -e docs
@@ -94,19 +94,19 @@ For information on submitting a pull request you can read the Github help page
 https://help.github.com/articles/using-pull-requests.
 
 Pull requests are a place for the code to be reviewed before it is merged. This review
-will go over the coding style as well as if it solves the problem indended and fits
+will go over the coding style as well as if it solves the problem intended and fits
 in the scope of the project. It may be a long discussion or it might just be a simple
 thank you.
 
 Not necessarily every request will be merged but you should not take it personally
-if you change is not accepted. If you want to increase the chances of your change
-being incorporated then here are some tips.
+if your change is not accepted. If you want to increase the chances of your change
+being incorporated, here are some tips.
 
 - Address a known issue. Preference is given to a request that fixes a currently open issue.
-- Include documentation and tests when appropriate. New features should be tested and documented. Bugfixes should include tests which demostrate the problem.
-- Keep it simple. It's difficult to review a large block of code so try to keep the scope of the change small.
+- Include documentation and tests when appropriate. New features should be tested and documented. Bugfixes should include tests which demonstrate the problem.
+- Keep it simple. It's difficult to review a large block of code, so try to keep the scope of the change small.
 
-If you aren't sure if a particular change is a good idea or if it would be helpful to
-other users then `just ask <http://groups.google.com/group/django-all-access>`_. You should
+If you aren't sure if a particular change is a good idea, or if it would be helpful to
+other users, `just ask <http://groups.google.com/group/django-all-access>`_. You should
 also feel free to ask for help writing tests or writing documentation if you aren't sure
 how to go about it.

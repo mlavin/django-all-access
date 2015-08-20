@@ -32,8 +32,8 @@ to add the ``SOUTH_MIGRATION_MODULES`` setting to point to the old South migrati
         'allaccess': 'allaccess.south_migrations',
     }
 
-No new migrations were added for this release but this will be the new location for future migrations. If your
-DB tables are up to date from v0.6 then upgrading to 1.7 and running::
+No new migrations were added for this release, but this will be the new location for future migrations. If your
+DB tables are up to date from v0.6, upgrading to 1.7 and running::
 
     python manage.py migrate allaccess
 
@@ -49,8 +49,8 @@ __________________________________
 v0.6.0 (2014-02-01)
 ------------------------------------
 
-This release adds a better migration path from moving from django-social-auth and includes changes to support
-running on the Google App Engine. There are two South migration included with this release. To upgrade you should run::
+This release adds a better migration path for moving from django-social-auth and includes changes to support
+running on the Google App Engine. There are two South migrations included with this release. To upgrade, you should run::
 
     python manage.py migrate allaccess
 
@@ -58,7 +58,7 @@ More details for this change are noted under the "Backwards Incompatible Changes
 
 - Added ``migrate_social_accounts`` and ``migrate_social_providers`` management commands to help migrate data from django-social-auth.
 - Updated ``Provider`` model for compatibility with running on the Google App Engine. Thanks to Marco Seguri for the report and fix.
-- Increased the url lengths for the fields on the ``Provider`` model. Thanks to Marco Seguri for the fix.
+- Increased the URL lengths for the fields on the ``Provider`` model. Thanks to Marco Seguri for the fix.
 - Added support for serialization of ``Provider`` and ``AccountAccess`` records by natural keys.
 - Included a fixture of common providers (Facebook, Twitter, Google, Microsoft Live, Github and Bitbucket). Thanks to Marco Seguri for the initial patch.
 
@@ -127,7 +127,7 @@ v0.3.0 (2012-07-13)
 ------------------------------------
 
 This release added some basic logging to django-all-access. To enable this logging
-in your project you should update your ``LOGGING`` configuration to include the
+in your project, you should update your ``LOGGING`` configuration to include
 ``allaccess`` in the ``loggers`` section. Below is an example:
 
 .. code-block:: python
@@ -158,8 +158,8 @@ in your project you should update your ``LOGGING`` configuration to include the
     }
 
 For more information on logging please see the
-`Django doucmentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
-or the `Python doucmentation <http://docs.python.org/library/logging.html>`_.
+`Django documentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
+or the `Python documentation <http://docs.python.org/library/logging.html>`_.
 
 
 Features
@@ -187,8 +187,8 @@ There are two South migrations included with this release. To upgrade you should
 
     python manage.py migrate allaccess
 
-If you are not using South you will not need to change your database schema because
-the underlying field type did not change. However you should re-save all existing
+If you are not using South, you will not need to change your database schema because
+the underlying field type did not change. However, you should re-save all existing
 ``AccountAccess`` instances to ensure that their access tokens go through the encryption step
 
 .. code-block:: python
@@ -202,7 +202,7 @@ the underlying field type did not change. However you should re-save all existin
 Features
 _________________
 
-- ``OAuthRedirect`` view can now specify a callback url
+- ``OAuthRedirect`` view can now specify a callback URL
 - ``OAuthRedirect`` view can now specify additional permissions
 - Context processor for adding enabled providers to the template context
 - User access tokens are stored with AES encryption
