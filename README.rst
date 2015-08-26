@@ -20,6 +20,13 @@ Features
 - Easy customization through class-based views
 - Built on the amazing `requests <http://docs.python-requests.org/>`_ library
 
+Why this branche
+===================
+This code is a branch from https://github.com/mlavin/django-all-access
+this branch add the ability for a provider to be linked to a Site.
+Is you use many sites on Django and you want to use Facebook provider, you will need this branche. 
+Facebook authorize only one url and domain, if you use many domain you will need to create one facebook apps per domaine (AKA per site) and attach you facebook provider to the right site with the right credentials. 
+
 
 Installation
 ------------------------------------
