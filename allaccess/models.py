@@ -22,7 +22,7 @@ class Provider(models.Model):
 
     "Configuration for OAuth provider."
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     request_token_url = models.CharField(blank=True, max_length=255)
     authorization_url = models.CharField(max_length=255)
     access_token_url = models.CharField(max_length=255)
@@ -32,6 +32,9 @@ class Provider(models.Model):
     site = models.ForeignKey(Site, blank=True, null=True, default=None)
 
     objects = ProviderManager()
+
+    class Meta:
+        unique_together = (("name", "site"),)
 
     def __str__(self):
         return self.name
