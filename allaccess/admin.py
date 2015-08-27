@@ -8,7 +8,7 @@ class ProviderAdmin(admin.ModelAdmin):
     "Admin customization for OAuth providers."
 
     list_display = ('name', 'enabled', 'site',)
-    list_filter = ('name', 'enabled', 'site', )
+    list_filter = ('name', 'site', )
 
 
 class AccountAccessAdmin(admin.ModelAdmin):
