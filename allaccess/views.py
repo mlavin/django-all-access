@@ -7,21 +7,22 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
-from django.shortcuts import redirect
+from django.db.models import Q
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
-from .compat import smart_bytes, force_text
-from .compat import get_user_model
-from .models import Provider, AccountAccess
-
+from .compat import force_text, get_user_model, smart_bytes
+from .models import AccountAccess, Provider
 
 logger = logging.getLogger('allaccess.views')
 
 
 class OAuthClientMixin(object):
+
     "Mixin for getting OAuth client for a provider."
 
     client_class = None
@@ -34,6 +35,7 @@ class OAuthClientMixin(object):
 
 
 class OAuthRedirect(OAuthClientMixin, RedirectView):
+
     "Redirect user to OAuth provider to enable access."
 
     permanent = False
@@ -50,7 +52,10 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
         "Build redirect url for a given provider."
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.get(name=name)
+            site = get_current_site(self.request)
+            provider = Provider.objects.get(
+                Q(site=site) | Q(site__isnull=True),
+                name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -59,16 +64,21 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
             client = self.get_client(provider)
             callback = self.get_callback_url(provider)
             params = self.get_additional_parameters(provider)
-            return client.get_redirect_url(self.request, callback=callback, parameters=params)
+            return client.get_redirect_url(self.request, callback=callback,
+                                           parameters=params)
 
 
 class OAuthCallback(OAuthClientMixin, View):
+
     "Base OAuth callback view."
 
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
         try:
-            provider = Provider.objects.get(name=name)
+            site = get_current_site(self.request)
+            provider = Provider.objects.get(
+                Q(site=site) | Q(site__isnull=True),
+                name=name)
         except Provider.DoesNotExist:
             raise Http404('Unknown OAuth provider.')
         else:
@@ -151,6 +161,7 @@ class OAuthCallback(OAuthClientMixin, View):
         user = self.get_or_create_user(provider, access, info)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
-        user = authenticate(provider=access.provider, identifier=access.identifier)
+        user = authenticate(
+            provider=access.provider, identifier=access.identifier)
         login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access, True))

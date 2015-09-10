@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -9,6 +10,7 @@ from .fields import EncryptedField
 
 
 class ProviderManager(models.Manager):
+
     "Additional manager methods for Providers."
 
     def get_by_natural_key(self, name):
@@ -17,17 +19,22 @@ class ProviderManager(models.Manager):
 
 @python_2_unicode_compatible
 class Provider(models.Model):
+
     "Configuration for OAuth provider."
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     request_token_url = models.CharField(blank=True, max_length=255)
     authorization_url = models.CharField(max_length=255)
     access_token_url = models.CharField(max_length=255)
     profile_url = models.CharField(max_length=255)
     consumer_key = EncryptedField(blank=True, null=True, default=None)
     consumer_secret = EncryptedField(blank=True, null=True, default=None)
+    site = models.ForeignKey(Site, blank=True, null=True, default=None)
 
     objects = ProviderManager()
+
+    class Meta:
+        unique_together = (("name", "site"),)
 
     def __str__(self):
         return self.name
@@ -46,6 +53,7 @@ class Provider(models.Model):
 
 
 class AccountAccessManager(models.Manager):
+
     "Additional manager for AccountAccess models."
 
     def get_by_natural_key(self, identifier, provider):
@@ -55,6 +63,7 @@ class AccountAccessManager(models.Manager):
 
 @python_2_unicode_compatible
 class AccountAccess(models.Model):
+
     "Authorized remote OAuth provider."
 
     identifier = models.CharField(max_length=255)

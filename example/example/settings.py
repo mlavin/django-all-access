@@ -1,7 +1,5 @@
 # Django settings for example project.
 import os
-import dj_database_url
-
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
@@ -11,8 +9,14 @@ TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(';')
 
+# DATABASES = {
+#     'default': dj_database_url.config(default='postgres:///allaccess'),
+# }
 DATABASES = {
-    'default': dj_database_url.config(default='postgres:///allaccess'),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'allacces',
+    }
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -100,6 +104,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.sites',
     'allaccess',
 )
 
@@ -117,9 +122,9 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
