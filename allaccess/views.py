@@ -101,7 +101,7 @@ class OAuthCallback(OAuthClientMixin, View):
             if user is None:
                 return self.handle_new_user(provider, access, info)
             else:
-                return self.handle_existing_user(provider, user, access, info)
+                return self.handle_existing_user(provider, user, access)
 
     def get_callback_url(self, provider):
         "Return callback url if different than the current url."
@@ -135,7 +135,7 @@ class OAuthCallback(OAuthClientMixin, View):
             return info.get('id')
         return None
 
-    def handle_existing_user(self, provider, user, access, info):
+    def handle_existing_user(self, provider, user, access):
         "Login user and redirect."
         login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access))
