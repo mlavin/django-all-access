@@ -98,10 +98,8 @@ class OAuthCallback(OAuthClientMixin, View):
                 access.access_token = raw_token
                 AccountAccess.objects.filter(pk=access.pk).update(**defaults)
             user = authenticate(provider=provider, identifier=identifier)
-            if user is None:
-                return self.handle_new_user(provider, access, info)
-            else:
-                return self.handle_existing_user(provider, user, access)
+
+            return self.handle_user(provider, access, user, info)
 
     def get_callback_url(self, provider):
         "Return callback url if different than the current url."
@@ -135,22 +133,28 @@ class OAuthCallback(OAuthClientMixin, View):
             return info.get('id')
         return None
 
-    def handle_existing_user(self, provider, user, access):
-        "Login user and redirect."
-        login(self.request, user)
-        return redirect(self.get_login_redirect(provider, user, access))
-
     def handle_login_failure(self, provider, reason):
         "Message user and redirect on error."
         logger.error('Authenication Failure: {0}'.format(reason))
         messages.error(self.request, 'Authenication Failed.')
         return redirect(self.get_error_redirect(provider, reason))
 
-    def handle_new_user(self, provider, access, info):
-        "Create a shell auth.User and redirect."
-        user = self.get_or_create_user(provider, access, info)
-        access.user = user
-        AccountAccess.objects.filter(pk=access.pk).update(user=user)
-        user = authenticate(provider=access.provider, identifier=access.identifier)
-        login(self.request, user)
-        return redirect(self.get_login_redirect(provider, user, access, True))
+    def handle_user(self, provider, access, user, info):
+        """
+        If we have an existing user, do the login and redirect. Otherwise, 
+        we create a shell auth.User and redirect
+        """
+
+        if user: # We have an existing user
+            login(self.request, user)
+            return redirect(self.get_login_redirect(provider, user, access))
+        else:
+            user = self.get_or_create_user(provider, access, info)
+            access.user = user
+            AccountAccess.objects.filter(pk=access.pk).update(user=user)
+            # Authenticate, do the login and redirect 
+            user = authenticate(provider=access.provider, 
+                                identifier=access.identifier)
+            login(self.request, user)
+            return redirect(self.get_login_redirect(provider, user, 
+                            access, True))
