@@ -4,6 +4,20 @@ Release History
 Release and change history for django-all-access
 
 
+v0.8.0 (TBD)
+-----------------------------------
+
+Minor clean up release which drops support for outdated versions of Django. As
+such it also removes the old South migrations.
+
+
+Backwards Incompatible Changes
+__________________________________
+
+- Python 3.2 is no longer officially supported or tested.
+- Django < 1.7 is no longer officially supported or tested.
+
+
 v0.7.2 (2015-05-13)
 ------------------------------------
 
@@ -43,7 +57,7 @@ should automatically fake the initial migration using the new-style migrations.
 Backwards Incompatible Changes
 __________________________________
 
-- Python 2.6 is no officially supported or tested.
+- Python 2.6 is no longer officially supported or tested.
 
 
 v0.6.0 (2014-02-01)
