@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 from .clients import get_client
-from .compat import AUTH_USER_MODEL
 from .fields import EncryptedField
 
 
@@ -59,7 +59,7 @@ class AccountAccess(models.Model):
 
     identifier = models.CharField(max_length=255)
     provider = models.ForeignKey(Provider)
-    user = models.ForeignKey(AUTH_USER_MODEL, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     access_token = EncryptedField(blank=True, null=True, default=None)

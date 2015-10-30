@@ -6,15 +6,14 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.encoding import smart_bytes, force_text
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
-from .compat import smart_bytes, force_text
-from .compat import get_user_model
 from .models import Provider, AccountAccess
 
 
