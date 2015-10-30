@@ -9,7 +9,7 @@ AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 try:
     from django.contrib.auth import get_user_model
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     # Django < 1.5
     from django.contrib.auth.models import User
     User.USERNAME_FIELD = 'username'
@@ -19,7 +19,7 @@ except ImportError: # pragma: no cover
 # urllib
 try:
     from urllib.parse import urlencode, parse_qs, urlparse
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     # Python 2.X
     from urllib import urlencode
     from urlparse import parse_qs, urlparse
@@ -27,7 +27,7 @@ except ImportError: # pragma: no cover
 
 try:
     from django.utils.encoding import force_text, smart_bytes, force_bytes
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     from django.utils.encoding import force_unicode as force_text
     from django.utils.encoding import smart_str as smart_bytes
     try:
@@ -37,8 +37,14 @@ except ImportError: # pragma: no cover
         force_bytes = smart_bytes
 
 
-try: # pragma: no cover
+try:  # pragma: no cover
     from google.appengine.ext import db
     APPENGINE = True
 except ImportError:
     APPENGINE = False
+
+
+try:  # pragma: no cover
+    from unittest.mock import patch, Mock
+except ImportError:
+    from mock import patch, Mock

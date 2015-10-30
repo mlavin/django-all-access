@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.test.client import RequestFactory
 
 from .base import AllAccessTestCase
-from allaccess.context_processors import available_providers
+from ..context_processors import available_providers
 
 
 class AvailableProvidersTestCase(AllAccessTestCase):
@@ -29,4 +29,4 @@ class AvailableProvidersTestCase(AllAccessTestCase):
         "Context processor should not execute any queries (only lazy queryset)."
         request = self.factory.get("/")
         with self.assertNumQueries(0):
-            context = available_providers(request)
+            available_providers(request)
