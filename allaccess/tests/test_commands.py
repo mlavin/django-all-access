@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
 
+import unittest
+
 from django.conf import settings
 from django.core.management import call_command
 from django.utils import six
 
-from .base import AllAccessTestCase, Provider, AccountAccess, skipIf
+from .base import AllAccessTestCase, Provider, AccountAccess
 
 try:
     import social_auth
@@ -13,7 +15,7 @@ except ImportError:
     SOCIAL_AUTH_MISSING = True
 
 
-@skipIf(SOCIAL_AUTH_MISSING, 'django-social-auth is not installed.')
+@unittest.skipIf(SOCIAL_AUTH_MISSING, 'django-social-auth is not installed.')
 class MigrateProvidersTestCase(AllAccessTestCase):
     """Management command to migrate providers from django-social-auth."""
 
@@ -46,7 +48,7 @@ class MigrateProvidersTestCase(AllAccessTestCase):
         self.assertEqual(facebook.consumer_secret, 'XYZ')
 
 
-@skipIf(SOCIAL_AUTH_MISSING, 'django-social-auth is not installed.')
+@unittest.skipIf(SOCIAL_AUTH_MISSING, 'django-social-auth is not installed.')
 class MigrateAccountsTestCase(AllAccessTestCase):
     """Management command to migrate accounts from django-social-auth."""
 

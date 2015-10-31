@@ -32,7 +32,7 @@ def test_500(request):
 urlpatterns = [
     url(r'^allaccess/', include('allaccess.urls')),
     url(r'^allaccess/', include('allaccess.tests.custom.urls')),
-    url(r'^error/$', error),
-    url(r'^login/$', login),
-    url(r'^$', home),
+    url(r'^error/$', error, name='test-error'),
+    url(r'^login/$', login, name='test-login'),
+    url(r'^$', home, name='test-home'),
 ]

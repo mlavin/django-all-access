@@ -3,18 +3,19 @@ from __future__ import unicode_literals
 
 import random
 import string
+import unittest
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.utils.unittest import skipIf
 
 from allaccess.models import Provider, AccountAccess
 
 
 def skipIfCustomUser(test_func):
     "Tweaked version of check for replaced auth.User"
-    return skipIf(settings.AUTH_USER_MODEL != 'auth.User', 'Custom user model in use')(test_func)
+    return unittest.skipIf(
+        settings.AUTH_USER_MODEL != 'auth.User', 'Custom user model in use')(test_func)
 
 
 class AllAccessTestCase(TestCase):
