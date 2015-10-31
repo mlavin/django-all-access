@@ -51,7 +51,7 @@ Python 2.6.::
     # Build all environments
     tox
     # Build a single environment
-    tox -e py26-1.3.X
+    tox -e py27-django18-normal
 
 Building all environments will also build the documentation. More on that in the next
 section.
@@ -74,7 +74,7 @@ or::
 
     make html
 
-from inside the ``docs/`` directory. 
+from inside the ``docs/`` directory.
 
 
 Coding Standards

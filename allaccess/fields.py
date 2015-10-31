@@ -5,12 +5,11 @@ import binascii
 from django.conf import settings
 from django.db import models
 from django.utils import six
-
-from .compat import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_text
 
 try:
     import Crypto.Cipher.AES
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     raise ImportError('PyCrypto is required to use django-all-access.')
 
 
@@ -56,18 +55,8 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             return None
         value = force_bytes(value)
         if not self._is_encrypted(value):
-            padding  = self._get_padding(value)
+            padding = self._get_padding(value)
             if padding > 0:
                 value = value + b'\x00' + b'*' * (padding - 1)
             value = self.prefix + binascii.b2a_hex(self.cipher.encrypt(value))
         return force_text(value)
-
-
-# pragma: no cover
-try:
-    from south.modelsinspector import add_introspection_rules
-except ImportError: # pragma: no cover
-    # South not installed
-    pass
-else:
-    add_introspection_rules([], ["^allaccess\.fields\.EncryptedField"])

@@ -22,7 +22,7 @@ class AuthBackendTestCase(AllAccessTestCase):
         provider = self.access.provider.name
         identifier = self.access.identifier
         user = authenticate(provider=provider, identifier=identifier)
-        self.assertEqual(user, self.user, "Correct user was not returned.")        
+        self.assertEqual(user, self.user, "Correct user was not returned.")
 
     def test_failed_authentication(self):
         "No matches found for the provider/id pair."

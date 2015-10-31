@@ -3,12 +3,11 @@ from __future__ import unicode_literals
 
 from django.test.client import RequestFactory
 
-from mock import patch, Mock
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
 from ..clients import OAuthClient, OAuth2Client
-from ..compat import urlparse, parse_qs
+from ..compat import urlparse, parse_qs, patch, Mock
 
 
 class BaseClientTestCase(object):
@@ -20,7 +19,8 @@ class BaseClientTestCase(object):
         super(BaseClientTestCase, self).setUp()
         self.consumer_key = self.get_random_string()
         self.consumer_secret = self.get_random_string()
-        self.provider = self.create_provider(consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
+        self.provider = self.create_provider(
+            consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
         self.oauth = self.oauth_client(self.provider)
         self.factory = RequestFactory()
 

@@ -3,14 +3,14 @@ from __future__ import unicode_literals
 import json
 import logging
 
-from django.core.urlresolvers import reverse
 from django.utils.crypto import constant_time_compare, get_random_string
+from django.utils.encoding import force_text
 
 from requests.api import request
 from requests_oauthlib import OAuth1
 from requests.exceptions import RequestException
 
-from .compat import urlencode, parse_qs, force_text
+from .compat import urlencode, parse_qs
 
 
 logger = logging.getLogger('allaccess.clients')
@@ -24,7 +24,7 @@ class BaseOAuthClient(object):
 
     def get_access_token(self, request, callback=None):
         "Fetch access token from callback request."
-        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
+        raise NotImplementedError('Defined in a sub-class')  # pragma: no cover
 
     def get_profile_info(self, raw_token):
         "Fetch user profile information."
@@ -39,7 +39,7 @@ class BaseOAuthClient(object):
 
     def get_redirect_args(self, request, callback):
         "Get request parameters for redirect url."
-        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
+        raise NotImplementedError('Defined in a sub-class')  # pragma: no cover
 
     def get_redirect_url(self, request, callback, parameters=None):
         "Build authentication redirect url."
@@ -51,7 +51,7 @@ class BaseOAuthClient(object):
 
     def parse_raw_token(self, raw_token):
         "Parse token and secret from raw token response."
-        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
+        raise NotImplementedError('Defined in a sub-class')  # pragma: no cover
 
     def request(self, method, url, **kwargs):
         "Build remote url request."
@@ -59,7 +59,7 @@ class BaseOAuthClient(object):
 
     @property
     def session_key(self):
-        raise NotImplementedError('Defined in a sub-class') # pragma: no cover
+        raise NotImplementedError('Defined in a sub-class')  # pragma: no cover
 
 
 class OAuthClient(BaseOAuthClient):
@@ -87,7 +87,8 @@ class OAuthClient(BaseOAuthClient):
         "Fetch the OAuth request token. Only required for OAuth 1.0."
         callback = force_text(request.build_absolute_uri(callback))
         try:
-            response = self.request('post', self.provider.request_token_url, oauth_callback=callback)
+            response = self.request(
+                'post', self.provider.request_token_url, oauth_callback=callback)
             response.raise_for_status()
         except RequestException as e:
             logger.error('Unable to fetch request token: {0}'.format(e))

@@ -4,10 +4,8 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from mock import patch, Mock
-
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
-from ..compat import urlparse, parse_qs
+from ..compat import urlparse, parse_qs, patch, Mock
 
 
 class BaseViewTestCase(AllAccessTestCase):
@@ -19,7 +17,8 @@ class BaseViewTestCase(AllAccessTestCase):
     def setUp(self):
         self.consumer_key = self.get_random_string()
         self.consumer_secret = self.get_random_string()
-        self.provider = self.create_provider(consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
+        self.provider = self.create_provider(
+            consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
         self.url = reverse(self.url_name, kwargs={'provider': self.provider.name})
         # Replace exsiting settings
         self.LOGIN_URL = settings.LOGIN_URL
