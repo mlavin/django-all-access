@@ -10,6 +10,8 @@ v0.8.0 (TBD)
 Minor clean up release which drops support for outdated versions of Django. As
 such it also removes the old South migrations.
 
+- Added support for Django 1.9
+
 
 Backwards Incompatible Changes
 __________________________________

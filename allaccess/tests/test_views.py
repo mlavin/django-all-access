@@ -3,15 +3,16 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.test import override_settings
 
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
 from ..compat import urlparse, parse_qs, patch, Mock
 
 
+@override_settings(ROOT_URLCONF='allaccess.tests.urls')
 class BaseViewTestCase(AllAccessTestCase):
     "Common view test functionality."
 
-    urls = 'allaccess.tests.urls'
     url_name = None
 
     def setUp(self):
