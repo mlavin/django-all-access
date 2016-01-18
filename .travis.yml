@@ -10,8 +10,8 @@ env:
   - TOXENV=py27-django17-custom,py33-django17-custom
   - TOXENV=py27-django18-normal,py33-django18-normal
   - TOXENV=py27-django18-custom,py33-django18-custom
-  - TOXENV=py27-django19-normal,py34-django19-normal,py35-django19-normal
-  - TOXENV=py27-django19-custom,py34-django19-custom,py34-django19-custom
+  - TOXENV=py27-django19-normal,py34-django19-normal
+  - TOXENV=py27-django19-custom,py34-django19-custom
 
 install:
     - pip install tox pip wheel -U
