@@ -36,10 +36,11 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
     "Redirect user to OAuth provider to enable access."
 
     permanent = False
+    params = None
 
     def get_additional_parameters(self, provider):
         "Return additional redirect parameters for this provider."
-        return {}
+        return self.params or {}
 
     def get_callback_url(self, provider):
         "Return the callback url for this provider."
