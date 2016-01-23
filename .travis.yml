@@ -12,10 +12,13 @@ env:
   - TOXENV=py27-django19-custom,py34-django19-custom
 
 install:
-    - pip install tox pip wheel -U
+  - pip install tox pip wheel codecov -U
 
 script:
-    - tox
+  - tox
+
+after_success:
+  - codecov -e TOX_ENV
 
 branches:
   only:
