@@ -8,7 +8,8 @@ v0.8.0 (TBD)
 -----------------------------------
 
 Minor clean up release which drops support for outdated versions of Django. As
-such it also removes the old South migrations.
+such it also removes the old South migrations and the commands related to
+django-social-auth.
 
 - Added support for additional parameters in the redirect view.
 - Added support for more complex id lookups in the callback view.
@@ -23,6 +24,7 @@ __________________________________
 - Python 3.2 is no longer officially supported or tested.
 - Django < 1.8 is no longer officially supported or tested.
 - requests_oauthlib < 0.4.2 is no longer officially supported.
+- ``migrate_social_accounts`` and ``migrate_social_accounts`` commands have been removed.
 
 
 v0.7.2 (2015-05-13)
