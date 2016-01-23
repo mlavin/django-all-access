@@ -1,3 +1,0 @@
-[run]
-source = allaccess
-omit = */tests*,*/migrations/*,*/south_migrations/*
