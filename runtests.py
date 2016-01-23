@@ -5,26 +5,17 @@ import sys
 import django
 from django.conf import settings
 
-try:
-    import social_auth
-except ImportError:
-    social_auth = None
-
 SWAPPED = os.environ.get('SWAPPED', False)
 
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'allaccess',
 ]
-
-if social_auth is not None:
-    INSTALLED_APPS.append('social_auth')
 
 if not settings.configured:
     settings.configure(
@@ -45,7 +36,6 @@ if not settings.configured:
         AUTHENTICATION_BACKENDS=(
             'allaccess.backends.AuthorizedServiceBackend',
         ),
-        SITE_ID=1,
         SECRET_KEY='9a0e2569bccc45e49ba8e393233fc427',
         ROOT_URLCONF='allaccess.tests.urls',
         LOGIN_URL='/login/',
