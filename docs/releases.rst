@@ -14,6 +14,7 @@ such it also removes the old South migrations.
 - Added support for more complex id lookups in the callback view.
 - Additional documentation examples for customizing the views.
 - Added support for Django 1.9.
+- Tracking code coverage reports with Codecov.io.
 
 
 Backwards Incompatible Changes
