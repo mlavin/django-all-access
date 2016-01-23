@@ -6,8 +6,6 @@ python:
   - "3.4"
 
 env:
-  - TOXENV=py27-django17-normal,py33-django17-normal
-  - TOXENV=py27-django17-custom,py33-django17-custom
   - TOXENV=py27-django18-normal,py33-django18-normal
   - TOXENV=py27-django18-custom,py33-django18-custom
   - TOXENV=py27-django19-normal,py34-django19-normal

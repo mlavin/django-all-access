@@ -20,7 +20,7 @@ Backwards Incompatible Changes
 __________________________________
 
 - Python 3.2 is no longer officially supported or tested.
-- Django < 1.7 is no longer officially supported or tested.
+- Django < 1.8 is no longer officially supported or tested.
 - requests_oauthlib < 0.4.2 is no longer officially supported.
 
 
