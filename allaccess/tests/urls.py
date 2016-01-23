@@ -21,7 +21,7 @@ def login(request):
     return HttpResponse('Login')
 
 
-def test_404(request):
+def test_404(request, exception=None):
     return HttpResponseNotFound()
 
 
