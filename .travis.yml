@@ -11,6 +11,10 @@ env:
   - TOXENV=py27-django19-normal,py34-django19-normal
   - TOXENV=py27-django19-custom,py34-django19-custom
 
+cache:
+  directories:
+    - $HOME/.cache/pip
+
 install:
   - pip install tox pip wheel codecov -U
 
