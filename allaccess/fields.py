@@ -4,7 +4,6 @@ import binascii
 
 from django.conf import settings
 from django.db import models
-from django.utils import six
 from django.utils.encoding import force_bytes, force_text
 
 try:
@@ -13,7 +12,7 @@ except ImportError:  # pragma: no cover
     raise ImportError('PyCrypto is required to use django-all-access.')
 
 
-class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
+class EncryptedField(models.TextField):
     """
     This code is based on http://www.djangosnippets.org/snippets/1095/
     and django-fields https://github.com/svetlyak40wt/django-fields
@@ -36,7 +35,7 @@ class EncryptedField(six.with_metaclass(models.SubfieldBase, models.TextField)):
         mod = (len(value) + 2) % self.cipher.block_size
         return self.cipher.block_size - mod + 2
 
-    def to_python(self, value):
+    def from_db_value(self, value, expression, connection, context):
         if value is None:
             return value
         value = force_bytes(value)
