@@ -13,7 +13,6 @@ Contents
 
     quick-start
     providers
-    social-auth
     customize-views
     api-access
     contributing
