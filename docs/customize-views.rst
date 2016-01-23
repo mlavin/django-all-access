@@ -2,7 +2,7 @@ Customizing Redirects and Callbacks
 ====================================
 
 django-all-access provides default views/urls for authentication. These are built
-from Django's `class based views <https://docs.djangoproject.com/en/1.4/topics/class-based-views/>`_
+from Django's `class based views <https://docs.djangoproject.com/en/1.8/topics/class-based-views/>`_
 making them easy to extend or override the default behavior in your project.
 
 
@@ -11,7 +11,7 @@ OAuthRedirect View
 
 The initial step for authenticating with any OAuth provider is redirecting the
 user to the provider's website. The :py:class:`OAuthRedirect` view extends from the
-`RedirectView <https://docs.djangoproject.com/en/1.4/ref/class-based-views/#redirectview>`_
+`RedirectView <https://docs.djangoproject.com/en/1.8/ref/class-based-views/#redirectview>`_
 By default it is mapped to the ``allaccess-login`` URL name. This view takes one
 keyword argument from the URL pattern ``provider`` which corresponds to the ``Provider.name``
 for an enabled provider. If no enabled provider is found for the name, this view
@@ -19,16 +19,18 @@ will return a 404.
 
 .. class:: OAuthRedirect()
 
-    .. versionadded:: 0.5
     .. attribute:: client_class
-    
 
         Used to change the :py:class:`BaseOAuthClient` used by the view. See
         :py:meth:`OAuthRedirect.get_client` for more details.
 
-    .. versionadded:: 0.5
+    .. versionadded:: 0.8
+    .. attribute:: params
+        Used to pass additional parameters to the authorization redirect (i.e. ``scope`` requests).
+        See :py:meth:`OAuthRedirect.get_additional_parameters` for more details.
+
     .. method:: get_client(provider)
-        
+
         Here you can override the OAuth client class which is used to generate the
         redirect URL. Another use case is to disable the enforcement of the OAuth 2.0
         ``state`` parameter for providers which don't support it. If you are using
@@ -71,14 +73,13 @@ OAuthCallback View
 After the user has authenticated with the remote provider or denied access to your application
 request, they are returned to the callback specifed in the initial redirect. :py:class:`OAuthCallback`
 defines the default behaviour on this callback. This view extends from the base
-`View <https://docs.djangoproject.com/en/1.4/ref/class-based-views/#view>`_ class.
+`View <https://docs.djangoproject.com/en/1.8/ref/class-based-views/#view>`_ class.
 By default it is mapped to the ``allaccess-callback`` URL name. Similar to the :py:class:`OAuthRedirect` view,
 this view takes one keyword argument ``provider`` which corresponds to the ``Provider.name`` 
 for an enabled provider. If no enabled provider is found for the name, this view will return a 404.
 
 .. class:: OAuthCallback()
 
-    .. versionadded:: 0.5
     .. attribute:: client_class
 
         Used to change the :py:class:`BaseOAuthClient` used by the view. See
@@ -91,9 +92,8 @@ for an enabled provider. If no enabled provider is found for the name, this view
         and this view will return ``None``. You will most likely not need to change this
         in your project.
 
-    .. versionadded:: 0.5
     .. method:: get_client(provider)
-        
+
         Here you can override the OAuth client class which is used to fetch the access
         token and user information. Another use case is to disable the enforcement of
         the OAuth 2.0 ``state`` parameter for providers which don't support it. If you 
@@ -103,7 +103,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
         You should be sure to use the same client class for the redirect view as well.
 
     .. method:: get_error_redirect(provider, reason)
-        
+
         Returns the URL to send the user in the case of an authentication failure. The
         ``reason`` is a brief text description of the problem. By default this will return
         the user to the original login URL as defined by the ``LOGIN_URL`` setting.
@@ -125,7 +125,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
         does not need to be handled here.
 
         :note:
-        
+
             If you are using Django 1.5 support for a custom User model, you
             should override this method to ensure the user is created correctly.
 
@@ -234,7 +234,7 @@ an error.
 
 This view will require authentication which is handled in the URL pattern. There
 are multiple methods for decorating class based views which are detailed in the
-`Django docs <https://docs.djangoproject.com/en/1.4/topics/class-based-views/#decorating-class-based-views>`_.
+`Django docs <https://docs.djangoproject.com/en/1.8/topics/class-based-views/#decorating-class-based-views>`_.
 
 Next we will need a redirect view to send the user to this callback. This view
 will also require that the user already be authenticated which can be handled in

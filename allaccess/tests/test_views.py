@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.test import override_settings
+from django.test import override_settings, RequestFactory
 
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
 from ..compat import urlparse, parse_qs, patch, Mock
+from ..views import OAuthRedirect
 
 
-@override_settings(ROOT_URLCONF='allaccess.tests.urls')
+@override_settings(ROOT_URLCONF='allaccess.tests.urls', LOGIN_URL='/login/', LOGIN_REDIRECT_URL='/')
 class BaseViewTestCase(AllAccessTestCase):
     "Common view test functionality."
 
@@ -21,16 +22,6 @@ class BaseViewTestCase(AllAccessTestCase):
         self.provider = self.create_provider(
             consumer_key=self.consumer_key, consumer_secret=self.consumer_secret)
         self.url = reverse(self.url_name, kwargs={'provider': self.provider.name})
-        # Replace exsiting settings
-        self.LOGIN_URL = settings.LOGIN_URL
-        self.LOGIN_REDIRECT_URL = settings.LOGIN_REDIRECT_URL
-        settings.LOGIN_URL = '/login/'
-        settings.LOGIN_REDIRECT_URL = '/'
-
-    def tearDown(self):
-        # Restore settings
-        settings.LOGIN_URL = self.LOGIN_URL
-        settings.LOGIN_REDIRECT_URL = self.LOGIN_REDIRECT_URL
 
 
 class OAuthRedirectTestCase(BaseViewTestCase):
@@ -102,6 +93,20 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         self.provider.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
+
+    def test_redirect_params(self):
+        "Set additional redirect parameters in as_view."
+        view = OAuthRedirect.as_view(params={'scope': 'email'})
+        self.provider.request_token_url = ''
+        self.provider.save()
+        request = RequestFactory().get(self.url)
+        request.session = {}
+        response = view(request, provider=self.provider.name)
+        url = response['Location']
+        scheme, netloc, path, params, query, fragment = urlparse(url)
+        self.assertEqual('%s://%s%s' % (scheme, netloc, path), self.provider.authorization_url)
+        query = parse_qs(query)
+        self.assertEqual(query['scope'][0], 'email')
 
 
 class OAuthCallbackTestCase(BaseViewTestCase):
