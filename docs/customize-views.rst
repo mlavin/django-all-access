@@ -26,6 +26,7 @@ will return a 404.
 
     .. versionadded:: 0.8
     .. attribute:: params
+
         Used to pass additional parameters to the authorization redirect (i.e. ``scope`` requests).
         See :py:meth:`OAuthRedirect.get_additional_parameters` for more details.
 
@@ -85,6 +86,17 @@ for an enabled provider. If no enabled provider is found for the name, this view
         Used to change the :py:class:`BaseOAuthClient` used by the view. See
         :py:meth:`OAuthCallback.get_client` for more details.
 
+    .. versionadded:: 0.8
+    .. attribute:: provider_id
+
+        Used to customize how the user identifier is found from the user profile response from
+        the provider. If the provider response includes a nested response then this value
+        can include a dotted path to the id value.
+
+        For example if the response is `{'result': {'user': {'id': 'XXX'}}}` then you can
+        set this attribute to `result.user.id` to access the value.
+        See :py:meth:`OAuthCallback.get_user_id` for more details.
+
     .. method:: get_callback_url(provider)
 
         This returns the callback URL specified in the initial redirect if it is
@@ -96,7 +108,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
 
         Here you can override the OAuth client class which is used to fetch the access
         token and user information. Another use case is to disable the enforcement of
-        the OAuth 2.0 ``state`` parameter for providers which don't support it. If you 
+        the OAuth 2.0 ``state`` parameter for providers which don't support it. If you
         are using the view for a single provider, it would be easiest to set the
         :py:attr:`OAuthCallback.client_class` attribute on the class instead.
 
@@ -138,6 +150,9 @@ for an enabled provider. If no enabled provider is found for the name, this view
         ``id`` in the JSON dictionary. This will work for a number of providers, but
         will need to be changed to fit more complex response structures.
 
+        You can customize how this lookup is done by setting the :py:attr:`OAuthCallback.provider_id`.
+        This can be done either in the class definition or when calling `.as_view`.
+
     .. method:: handle_existing_user(provider, user, access, info)
 
         At this point the ``user`` has been authenticated via their ``access`` model
@@ -153,7 +168,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
         In the case of a failure to fetch the user's access token or remote profile information
         or determine their id from that info, this method will be called. It attachs a
         brief error message to the request via ``contrib.messages`` and redirects the
-        user to the result of the :py:meth:`OAuthCallback.get_error_redirect` method. You should override 
+        user to the result of the :py:meth:`OAuthCallback.get_error_redirect` method. You should override
         this function to add any additional logging or handling.
 
     .. method:: handle_new_user(provider, access, info)
@@ -161,15 +176,42 @@ for an enabled provider. If no enabled provider is found for the name, this view
         If the user could not be matched to an existing ``AccountAccess`` record for
         this provider or that record did not contain a user, this method will be called.
         At this point the ``access`` record has already been saved but is not tied to
-        a user. This will call :py:meth:`OAuthCallback.get_or_create_user` to construct a new user record. 
-        The user is then logged in and redirected to the result of the 
-        :py:meth:`OAuthCallback.get_login_redirect` call with ``new=True``.
+        a user. This will call :py:meth:`OAuthCallback.get_or_create_user` to construct a new user record.
+        The user is then logged in and redirected to the result of the
+        :py:meth:`OAuthCallback.get_login_redirect` call with ``new=True``
 
         You may want to override this user to complete more of their infomation or
         attempt to match them to an existing user by either their username or email.
-        You may want to override this to redirect them without creating a new user 
-        in order to have them complete another registration form 
+        You may want to override this to redirect them without creating a new user
+        in order to have them complete another registration form
         (i.e. pick a username or provide an email if not returned by the provider).
+
+
+Customization in URLs
+----------------------------------
+
+For some minor customizations to the redirects and callbacks, it's possible to
+handle that in the URL inclusion rather than by creating a subclass of the view.
+The most common customizations are adding additional scope on the redirect
+and changing how the provider identifier is found on the callback. Below is an example
+``urls.py`` which handles both of these cases.
+
+.. code-block:: python
+
+    from django.conf.urls import include, url
+
+    from allaccess.views import OAuthRedirect, OAuthCallback
+
+    urlpatterns = [
+        # Customize Facebook redirect to request additional scope
+        url(r'^accounts/login/(?P<provider>facebook)/$',
+            OAuthRedirect.as_view(params={'scope': 'email'})),
+        # Customize Foursqaure callback to handle nested response
+        url(r'^accounts/callback/(?P<provider>foursquare)/$',
+            OAuthCallback.as_view(provider_id='response.user.id')),
+        # All other provider cases are handled by the defaults
+        url(r'^accounts/', include('allaccess.urls')),
+    ]
 
 
 Additional Scope Example
@@ -259,10 +301,10 @@ example set of URL patterns is given below.
 
     from .views import AssociateRedirect, AssociateCallback
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         url(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
         url(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
-    )
+    ]
 
 That is the basic outline of how you would allow multiple account associations. This
 could be further customized using the hooks described earlier.

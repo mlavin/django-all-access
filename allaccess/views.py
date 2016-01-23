@@ -65,6 +65,8 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
 class OAuthCallback(OAuthClientMixin, View):
     "Base OAuth callback view."
 
+    provider_id = None
+
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
         try:
@@ -131,9 +133,14 @@ class OAuthCallback(OAuthClientMixin, View):
 
     def get_user_id(self, provider, info):
         "Return unique identifier from the profile info."
-        if hasattr(info, 'get'):
-            return info.get('id')
-        return None
+        id_key = self.provider_id or 'id'
+        result = info
+        try:
+            for key in id_key.split('.'):
+                result = result[key]
+            return result
+        except KeyError:
+            return None
 
     def handle_existing_user(self, provider, user, access, info):
         "Login user and redirect."

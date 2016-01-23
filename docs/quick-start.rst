@@ -10,7 +10,7 @@ Configure Settings
 
 You need to add ``allaccess`` to your installed apps as well as include an
 additional authentication backend in your project settings. django-all-access requires
-``django.contrib.auth``, ``django.contrib.sessions`` and ``django.contrib.messages`` 
+``django.contrib.auth``, ``django.contrib.sessions`` and ``django.contrib.messages``
 which are enabled in Django by default. ``django.contrib.admin`` is recommended 
 for managing the set of providers, but is not required.
 
@@ -52,13 +52,16 @@ your root URL configuration.
 
 .. code-block:: python
 
-    urlpatterns = patterns('',
+    from django.conf.urls import include
+
+
+    urlpatterns = [
         # Other URL patterns would go here
         url(r'^accounts/', include('allaccess.urls')),
-    )
+    ]
 
 This makes the login URL for a particular provider ``/accounts/login/<provider>/``,
-such as ``/accounts/login/twitter/`` or ``/accounts/login/facebook/``. Once the user 
+such as ``/accounts/login/twitter/`` or ``/accounts/login/facebook/``. Once the user
 has authenticated with the remote provider, they will be sent back to
 ``/accounts/callback/<provider>/``, such as ``/accounts/callback/twitter/``
 or ``/accounts/callback/facebook/``.
@@ -68,13 +71,8 @@ Create Database Tables
 ------------------------------------
 
 You'll need to create the necessary database tables for storing OAuth providers and
-user associations with those providers. This is done with the ``syncdb`` management
+user associations with those providers. This is done with the ``migrate`` management
 command built into Django::
-
-    python manage.py syncdb
-
-django-all-access uses `South <http://south.aeracode.org/>`_ to handle database migrations. 
-If you are also using South then you should run ``migrate`` instead::
 
     python manage.py migrate allaccess
 

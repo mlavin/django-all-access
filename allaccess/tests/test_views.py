@@ -7,7 +7,7 @@ from django.test import override_settings, RequestFactory
 
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
 from ..compat import urlparse, parse_qs, patch, Mock
-from ..views import OAuthRedirect
+from ..views import OAuthRedirect, OAuthCallback
 
 
 @override_settings(ROOT_URLCONF='allaccess.tests.urls', LOGIN_URL='/login/', LOGIN_REDIRECT_URL='/')
@@ -214,3 +214,19 @@ class OAuthCallbackTestCase(BaseViewTestCase):
     def test_authentication_redirect(self):
         "Post-authentication redirect to LOGIN_REDIRECT_URL."
         self._test_authentication_redirect()
+
+    def test_customized_provider_id(self):
+        "Change how to find the provider id in as_view."
+        view = OAuthCallback(provider_id='account_id')
+        result = view.get_user_id(self.provider, {'account_id': '123'})
+        self.assertEqual(result, '123')
+        result = view.get_user_id(self.provider, {'id': '123'})
+        self.assertIsNone(result)
+
+    def test_nested_provider_id(self):
+        "Allow easy access to nested provider ids."
+        view = OAuthCallback(provider_id='user.account_id')
+        result = view.get_user_id(self.provider, {'user': {'account_id': '123'}})
+        self.assertEqual(result, '123')
+        result = view.get_user_id(self.provider, {'id': '123'})
+        self.assertIsNone(result)
