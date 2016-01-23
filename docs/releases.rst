@@ -11,6 +11,8 @@ Minor clean up release which drops support for outdated versions of Django. As
 such it also removes the old South migrations.
 
 - Added support for additional parameters in the redirect view.
+- Added support for more complex id lookups in the callback view.
+- Additional documentation examples for customizing the views.
 - Added support for Django 1.9.
 
 
@@ -19,6 +21,7 @@ __________________________________
 
 - Python 3.2 is no longer officially supported or tested.
 - Django < 1.7 is no longer officially supported or tested.
+- requests_oauthlib < 0.4.2 is no longer officially supported.
 
 
 v0.7.2 (2015-05-13)

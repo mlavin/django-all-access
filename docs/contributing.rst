@@ -45,8 +45,7 @@ or::
 
 Note that the tests require the `mock <http://www.voidspace.org.uk/python/mock/>`_ library.
 To test against multiple versions of Django you can use install and use ``tox>=1.4``. The
-``tox`` command will run the tests against Django 1.3, 1.4 and the current Git master using
-Python 2.6.::
+``tox`` command will run the tests against the currently supported Python and Django versions.
 
     # Build all environments
     tox

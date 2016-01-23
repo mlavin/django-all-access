@@ -187,6 +187,33 @@ for an enabled provider. If no enabled provider is found for the name, this view
         (i.e. pick a username or provide an email if not returned by the provider).
 
 
+Customization in URLs
+----------------------------------
+
+For some minor customizations to the redirects and callbacks, it's possible to
+handle that in the URL inclusion rather than by creating a subclass of the view.
+The most common customizations are adding additional scope on the redirect
+and changing how the provider identifier is found on the callback. Below is an example
+``urls.py`` which handles both of these cases.
+
+.. code-block:: python
+
+    from django.conf.urls import include, url
+
+    from allaccess.views import OAuthRedirect, OAuthCallback
+
+    urlpatterns = [
+        # Customize Facebook redirect to request additional scope
+        url(r'^accounts/login/(?P<provider>facebook)/$',
+            OAuthRedirect.as_view(params={'scope': 'email'})),
+        # Customize Foursqaure callback to handle nested response
+        url(r'^accounts/callback/(?P<provider>foursquare)/$',
+            OAuthCallback.as_view(provider_id='response.user.id')),
+        # All other provider cases are handled by the defaults
+        url(r'^accounts/', include('allaccess.urls')),
+    ]
+
+
 Additional Scope Example
 ----------------------------------
 
@@ -274,10 +301,10 @@ example set of URL patterns is given below.
 
     from .views import AssociateRedirect, AssociateCallback
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         url(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
         url(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
-    )
+    ]
 
 That is the basic outline of how you would allow multiple account associations. This
 could be further customized using the hooks described earlier.
