@@ -46,13 +46,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='accountaccess',
             name='provider',
-            field=models.ForeignKey(to='allaccess.Provider'),
+            field=models.ForeignKey(to='allaccess.Provider', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='accountaccess',
             name='user',
-            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

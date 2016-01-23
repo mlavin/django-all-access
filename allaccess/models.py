@@ -58,8 +58,9 @@ class AccountAccess(models.Model):
     "Authorized remote OAuth provider."
 
     identifier = models.CharField(max_length=255)
-    provider = models.ForeignKey(Provider)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     access_token = EncryptedField(blank=True, null=True, default=None)
