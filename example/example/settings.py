@@ -7,8 +7,6 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
-TEMPLATE_DEBUG = DEBUG
-
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(';')
 
 DATABASES = {
@@ -73,10 +71,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', DEFAULT_SECRET_KEY)
 
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -85,13 +85,6 @@ ROOT_URLCONF = 'example.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'example.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASE_DIR, 'templates'),
-)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -117,9 +110,9 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -149,12 +142,19 @@ LOGIN_URL = '/'
 
 LOGIN_REDIRECT_URL = '/'
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.media',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.static',
-    'allaccess.context_processors.available_providers',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'allaccess.context_processors.available_providers',
+            ],
+        },
+    },
+]
