@@ -17,7 +17,6 @@ class EncryptedField(models.TextField):
     This code is based on http://www.djangosnippets.org/snippets/1095/
     and django-fields https://github.com/svetlyak40wt/django-fields
     """
-
     cipher_class = Crypto.Cipher.AES
     prefix = b'$AES$'
 
@@ -26,7 +25,6 @@ class EncryptedField(models.TextField):
         super(EncryptedField, self).__init__(*args, **kwargs)
 
     def _is_encrypted(self, value):
-
         return value.startswith(self.prefix)
 
     def _get_padding(self, value):
@@ -35,15 +33,23 @@ class EncryptedField(models.TextField):
         mod = (len(value) + 2) % self.cipher.block_size
         return self.cipher.block_size - mod + 2
 
+    def _decrypt(self, cypher_text):
+        cypher_text = cypher_text[len(self.prefix):]
+        cypher_text = binascii.a2b_hex(cypher_text)
+        return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
+
+    def _encrypt(self, clear_text):
+        padding = self._get_padding(clear_text)
+        if padding > 0:
+            clear_text = clear_text + b'\x00' + b'*' * (padding - 1)
+        return self.prefix + binascii.b2a_hex(self.cipher.encrypt(clear_text))
+
     def from_db_value(self, value, expression, connection, context):
         if value is None:
             return value
         value = force_bytes(value)
         if self._is_encrypted(value):
-            hexdigest = value[len(self.prefix):]
-            encrypted = binascii.a2b_hex(hexdigest)
-            decrypted = self.cipher.decrypt(encrypted).split(b'\x00')[0]
-            return force_text(decrypted)
+            return force_text(self._decrypt(value))
         return force_text(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
@@ -54,8 +60,5 @@ class EncryptedField(models.TextField):
             return None
         value = force_bytes(value)
         if not self._is_encrypted(value):
-            padding = self._get_padding(value)
-            if padding > 0:
-                value = value + b'\x00' + b'*' * (padding - 1)
-            value = self.prefix + binascii.b2a_hex(self.cipher.encrypt(value))
+            value = self._encrypt(value)
         return force_text(value)
