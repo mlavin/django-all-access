@@ -22,6 +22,10 @@ def compare_digest(a, b):
         return a == b
 
 
+class SignatureException(Exception):
+    pass
+
+
 class EncryptedField(models.TextField):
     """
     This code is based on http://www.djangosnippets.org/snippets/1095/
@@ -68,13 +72,14 @@ class EncryptedField(models.TextField):
         return hmac.new(self._get_key(), value).hexdigest()
 
     def _decrypt(self, cypher_text):
-        _, prefix, hmac, cypher_text = self._split_value(cypher_text)
-        if compare_digest(self._get_signature(cypher_text), hmac):
-            cypher_text = binascii.a2b_hex(cypher_text)
-            return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
-        raise Exception('SignatureException: '
-                        'EncryptedField cannot be decrypted. '
-                        'Did settings.SECRET_KEY change?')
+        _, prefix, mac, cypher_text = self._split_value(cypher_text)
+        if mac and not compare_digest(self._get_signature(cypher_text), mac):
+            raise SignatureException(
+                'EncryptedField cannot be decrypted. '
+                'Did settings.SECRET_KEY change?'
+            )
+        cypher_text = binascii.a2b_hex(cypher_text)
+        return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
 
     def _encrypt(self, clear_text, sign=True):
         clear_text = self._add_padding(clear_text)
