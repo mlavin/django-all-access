@@ -36,7 +36,7 @@ class SignedAESEncryption(object):
         self.cipher = self.cipher_class.new(self.get_key())
 
     def get_key(self):
-        return force_bytes(settings.SECRET_KEY)[:32]
+        return force_bytes(settings.SECRET_KEY.zfill(32))[:32]
 
     def get_signature(self, value):
         return hmac.new(self.get_key(), value).hexdigest()
