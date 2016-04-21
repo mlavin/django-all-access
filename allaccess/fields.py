@@ -66,6 +66,9 @@ class EncryptedField(models.TextField):
             clear_text = clear_text + b'\x00' + b'*' * (padding - 1)
         return self.prefix + binascii.b2a_hex(self.cipher.encrypt(clear_text))
 
+    def _get_signature(self, value):
+        return hmac.new(force_bytes(settings.SECRET_KEY), value).hexdigest()
+
     def from_db_value(self, value, expression, connection, context):
         if value is None:
             return value
