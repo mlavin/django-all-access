@@ -37,6 +37,18 @@ class EncryptedField(models.TextField):
     def _is_encrypted(self, value):
         return value.startswith(self.prefix)
 
+    def _split_value(self, value):
+        #: split value from database into _, prefix, hmac, cypher_text
+        parts = value.split(b'$')
+        if len(parts) == 3:
+            parts.insert(2, None)
+        return parts
+
+    def _is_signed(self, value):
+        #: value consists of 3 or 4 $ separated parts, check for hmac in 2nd
+        _, prefix, hmac, cypher_text = self._split_value(value)
+        return hmac is not None
+
     def _get_padding(self, value):
         # We always want at least 2 chars of padding (including zero byte),
         # so we could have up to block_size + 1 chars.
