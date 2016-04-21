@@ -31,8 +31,11 @@ class EncryptedField(models.TextField):
     prefix = b'$AES'
 
     def __init__(self, *args, **kwargs):
-        self.cipher = self.cipher_class.new(force_bytes(settings.SECRET_KEY)[:32])
+        self.cipher = self.cipher_class.new(self._get_key())
         super(EncryptedField, self).__init__(*args, **kwargs)
+
+    def _get_key(self):
+        return force_bytes(settings.SECRET_KEY)[:32]
 
     def _is_encrypted(self, value):
         return value.startswith(self.prefix)
@@ -62,7 +65,7 @@ class EncryptedField(models.TextField):
         return clear_text
 
     def _get_signature(self, value):
-        return hmac.new(force_bytes(settings.SECRET_KEY), value).hexdigest()
+        return hmac.new(self._get_key(), value).hexdigest()
 
     def _decrypt(self, cypher_text):
         _, prefix, hmac, cypher_text = self._split_value(cypher_text)
