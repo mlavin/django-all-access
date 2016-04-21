@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import binascii
+import hmac
 
 from django.conf import settings
 from django.db import models
@@ -10,6 +11,15 @@ try:
     import Crypto.Cipher.AES
 except ImportError:  # pragma: no cover
     raise ImportError('PyCrypto is required to use django-all-access.')
+
+
+def compare_digest(a, b):
+    try:
+        # new in python 2.7.7
+        from hmac import compare_digest
+        return compare_digest(a, b)
+    except ImportError:
+        return a == b
 
 
 class EncryptedField(models.TextField):
