@@ -70,7 +70,8 @@ class SignedAESEncryption(object):
 
     def decrypt(self, cypher_text):
         _, prefix, mac, cypher_text = self.split_value(cypher_text)
-        if mac and not compare_digest(self.get_signature(cypher_text), mac):
+        if self.sign and mac and \
+                not compare_digest(self.get_signature(cypher_text), mac):
             raise SignatureException(
                 'EncryptedField cannot be decrypted. '
                 'Did settings.SECRET_KEY change?'
