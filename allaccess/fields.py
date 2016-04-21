@@ -55,10 +55,6 @@ class EncryptedField(models.TextField):
         mod = (len(value) + 2) % self.cipher.block_size
         return self.cipher.block_size - mod + 2
 
-    def _decrypt(self, cypher_text):
-        cypher_text = cypher_text[len(self.prefix):]
-        cypher_text = binascii.a2b_hex(cypher_text)
-        return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
 
     def _encrypt(self, clear_text):
         padding = self._get_padding(clear_text)
@@ -68,6 +64,15 @@ class EncryptedField(models.TextField):
 
     def _get_signature(self, value):
         return hmac.new(force_bytes(settings.SECRET_KEY), value).hexdigest()
+
+    def _decrypt(self, cypher_text):
+        _, prefix, hmac, cypher_text = self._split_value(cypher_text)
+        if compare_digest(self._get_signature(cypher_text), hmac):
+            cypher_text = binascii.a2b_hex(cypher_text)
+            return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
+        raise Exception('SignatureException: '
+                        'EncryptedField cannot be decrypted. '
+                        'Did settings.SECRET_KEY change?')
 
     def from_db_value(self, value, expression, connection, context):
         if value is None:
