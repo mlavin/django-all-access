@@ -28,7 +28,7 @@ class EncryptedField(models.TextField):
     and django-fields https://github.com/svetlyak40wt/django-fields
     """
     cipher_class = Crypto.Cipher.AES
-    prefix = b'$AES$'
+    prefix = b'$AES'
 
     def __init__(self, *args, **kwargs):
         self.cipher = self.cipher_class.new(force_bytes(settings.SECRET_KEY)[:32])
@@ -55,12 +55,11 @@ class EncryptedField(models.TextField):
         mod = (len(value) + 2) % self.cipher.block_size
         return self.cipher.block_size - mod + 2
 
-
-    def _encrypt(self, clear_text):
+    def _add_padding(self, clear_text):
         padding = self._get_padding(clear_text)
         if padding > 0:
-            clear_text = clear_text + b'\x00' + b'*' * (padding - 1)
-        return self.prefix + binascii.b2a_hex(self.cipher.encrypt(clear_text))
+            return clear_text + b'\x00' + b'*' * (padding - 1)
+        return clear_text
 
     def _get_signature(self, value):
         return hmac.new(force_bytes(settings.SECRET_KEY), value).hexdigest()
@@ -73,6 +72,15 @@ class EncryptedField(models.TextField):
         raise Exception('SignatureException: '
                         'EncryptedField cannot be decrypted. '
                         'Did settings.SECRET_KEY change?')
+
+    def _encrypt(self, clear_text, sign=True):
+        clear_text = self._add_padding(clear_text)
+        cypher_text = binascii.b2a_hex(self.cipher.encrypt(clear_text))
+        parts = [self.prefix]
+        if sign:
+            parts.append(self._get_signature(cypher_text))
+        parts.append(cypher_text)
+        return b'$'.join(parts)
 
     def from_db_value(self, value, expression, connection, context):
         if value is None:
