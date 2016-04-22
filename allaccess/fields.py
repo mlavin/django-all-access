@@ -32,7 +32,7 @@ class SignedAESEncryption(object):
         return force_bytes(settings.SECRET_KEY.zfill(32))[:32]
 
     def get_signature(self, value):
-        return hmac.new(self.get_key(), value).hexdigest()
+        return force_bytes(hmac.new(self.get_key(), value).hexdigest())
 
     def get_padding(self, value):
         # We always want at least 2 chars of padding (including zero byte),
