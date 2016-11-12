@@ -3,7 +3,7 @@ sudo: false
 language: python
 
 python:
-  - "3.4"
+  - "3.5"
 
 env:
   - TOXENV=py27-django18-normal,py33-django18-normal
