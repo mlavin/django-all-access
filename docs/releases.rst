@@ -3,6 +3,17 @@ Release History
 
 Release and change history for django-all-access
 
+v0.9.0 (TBD)
+-----------------------------------
+
+Encrypted fields for storing the provider configurations and access tokens
+now sign the values after encryption to dectect if the key is valid before
+attempting to decrypt. This was added thanks to Florian Demmer (@fdemmer).
+
+Other small changes include:
+
+- Added Django 1.10 and Python 3.5 to the test suite coverage.
+
 
 v0.8.0 (2016-01-23)
 -----------------------------------
