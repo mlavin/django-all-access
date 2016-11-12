@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 DEBUG = os.environ.get('DEBUG', 'on') == 'on'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(';')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split(';')
 
 DATABASES = {
     'default': dj_database_url.config(default='postgres:///allaccess'),
