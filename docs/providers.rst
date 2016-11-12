@@ -4,7 +4,7 @@ Configuring Providers
 django-all-access configures and stores the set of OAuth providers in the database.
 To enable your users to authenticate with a particular provider, you will need to add
 the OAuth API URLs as well as your application's consumer key and consumer secret.
-The process of registering your application with each provider will vary and 
+The process of registering your application with each provider will vary and
 you should refer to the provider's API documentation for more information.
 
 .. note::
@@ -14,18 +14,16 @@ you should refer to the provider's API documentation for more information.
     `AES specification <http://en.wikipedia.org/wiki/Advanced_Encryption_Standard>`_.
     Since this is a symmetric-key encryption the key/secret pairs can still be read
     if the encryption key is compromised. In this case django-all-access uses a
-    key based on the standard ``SECRET_KEY`` setting. You should take care to keep 
+    key based on the standard ``SECRET_KEY`` setting. You should take care to keep
     this setting secret as its name would imply.
 
-
-.. versionadded:: 0.6
 
 Common Providers
 ------------------------------------
 
 To get you started, there is an initial fixture of commonly used providers. This includes
 the URLs needed for Facebook, Twitter, Google, Microsoft Live, Github and Bitbucket. Once you've
-added ``allaccess`` to your ``INSTALLED_APP`` and created the tables with ``syncdb``/``migrate``,
+added ``allaccess`` to your ``INSTALLED_APP`` and created the tables with ``migrate``,
 you can load this fixture via::
 
     python manage.py loaddata common_providers.json
@@ -38,8 +36,8 @@ and how they would be populated for additional providers you might want to use.
 OAuth 1.0 Providers
 ------------------------------------
 
-OAuth 1.0 Protocol is defined by `RFC 5849 <http://tools.ietf.org/html/rfc5849>`_. 
-It is sometimes referred to as 3-Legged OAuth due to the number of requests 
+OAuth 1.0 Protocol is defined by `RFC 5849 <http://tools.ietf.org/html/rfc5849>`_.
+It is sometimes referred to as 3-Legged OAuth due to the number of requests
 between the provider and consumer.
 
 To enable an OAuth provider, you should add a ``Provider`` record with the necessary
@@ -99,12 +97,20 @@ Facebook is a large social network which provides a REST API with OAuth 2.0
 authentication. The below ``Provider`` record will enable Facebook authentication::
 
     name: facebook
-    authorization_url: https://www.facebook.com/dialog/oauth
-    access_token_url: https://graph.facebook.com/oauth/access_token
-    profile_url: https://graph.facebook.com/me
+    authorization_url: https://www.facebook.com/v2.8/dialog/oauth
+    access_token_url: https://graph.facebook.com/v2.8/oauth/access_token
+    profile_url: https://graph.facebook.com/v2.8/me
 
 As you can see, the ``request_token_url`` is not included because it is not needed.
 After adding your consumer key and secret to this record you should now be able
 to authenticate with Facebook by visiting ``/accounts/login/facebook/``.
 Facebook also has `developer docs <http://developers.facebook.com/docs/>`_
 for additional information on using their API.
+
+.. note::
+
+    Facebook began using the version number in the URL as part of their 2.0 API.
+    Since then very little has changed with regard to the OAuth flow but the
+    version number is now required. The latest version of the API might not
+    match the documentation here. For the most up to date info on the Facebook
+    API you should consult their API docs.
