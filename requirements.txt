@@ -1,5 +1,5 @@
 # Deployment requirements
-django-all-access==0.8
+django-all-access==0.9
 requests-oauthlib==0.7.0
 requests==2.11.1
 oauthlib==2.0.0
