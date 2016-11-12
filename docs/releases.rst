@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v0.9.0 (TBD)
+v0.9.0 (2016-11-12)
 -----------------------------------
 
 Encrypted fields for storing the provider configurations and access tokens
