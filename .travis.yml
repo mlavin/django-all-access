@@ -29,13 +29,3 @@ after_success:
 branches:
   only:
     - master
-
-deploy:
-  provider: pypi
-  user: mlavin
-  password:
-    secure: "TcTMW0Kxty9Wz3uedxYdTisKsUulx+/9Cls5qnm1/sE8McHmR719Qs5An7VA+XWuVq2fdAsyQw/JQI6gYbtLvkb8wyLJA7WggWG1/pAscIyFNRpKM0qvFWxXrSA7eSu1jG9z/kM68wfdTBmHTLGiyGqWuvtGzYy9KdNXEVKNUj0="
-  distributions: "sdist bdist_wheel"
-  on:
-    tags: true
-    repo: mlavin/django-all-access
