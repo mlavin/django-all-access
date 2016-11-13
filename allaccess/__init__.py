@@ -4,7 +4,7 @@ from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 """
 
 
-__version__ = '0.9.0'
+__version__ = '0.10.0.dev.0'
 
 
 default_app_config = 'allaccess.apps.AllAccessConfig'
