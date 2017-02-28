@@ -64,6 +64,7 @@ class OAuthRedirect(OAuthClientMixin, RedirectView):
 class OAuthCallback(OAuthClientMixin, View):
     """Base OAuth callback view."""
     provider_id = None
+    profile_info_params = None
 
     def get(self, request, *args, **kwargs):
         name = kwargs.get('provider', '')
@@ -83,7 +84,7 @@ class OAuthCallback(OAuthClientMixin, View):
                 return self.handle_login_failure(provider, "Could not retrieve token.")
 
             # Fetch profile info
-            info = client.get_profile_info(raw_token)
+            info = client.get_profile_info(raw_token, self.get_profile_info_params())
             if info is None:
                 return self.handle_login_failure(provider, "Could not retrieve profile.")
             identifier = self.get_user_id(provider, info)
@@ -132,6 +133,10 @@ class OAuthCallback(OAuthClientMixin, View):
             'password': None
         }
         return User.objects.create_user(**kwargs)
+
+    def get_profile_info_params(self):
+        """Return params that are going to be sent when getting user profile info"""
+        return self.profile_info_params or {}
 
     def get_user_id(self, provider, info):
         """Return unique identifier from the profile info."""
