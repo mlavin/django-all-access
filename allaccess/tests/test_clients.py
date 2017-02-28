@@ -283,12 +283,12 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
     def test_access_token_response(self, requests):
         "Return full response text without parsing key/secret."
         response = Mock()
-        response.text = 'access_token=USER_ACESS_TOKEN'
+        response.text = 'access_token=USER_ACCESS_TOKEN'
         requests.return_value = response
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
         token = self.oauth.get_access_token(request)
-        self.assertEqual(token, 'access_token=USER_ACESS_TOKEN')
+        self.assertEqual(token, 'access_token=USER_ACCESS_TOKEN')
 
     def test_access_token_failure(self, requests):
         "Handle upstream server errors when fetching access token."
@@ -300,15 +300,15 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_profile_info_auth(self, requests):
         "Pass access token when requesting profile info."
-        raw_token = 'access_token=USER_ACESS_TOKEN'
+        raw_token = 'access_token=USER_ACCESS_TOKEN'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
-        self.assertEqual(kwargs['params']['access_token'], 'USER_ACESS_TOKEN')
+        self.assertEqual(kwargs['params']['access_token'], 'USER_ACCESS_TOKEN')
 
     def test_profile_info_url(self, requests):
         "Make get request for profile url."
-        raw_token = 'access_token=USER_ACESS_TOKEN'
+        raw_token = 'access_token=USER_ACCESS_TOKEN'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
@@ -319,15 +319,15 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
     def test_profile_info_failure(self, requests):
         "Handle upstream server errors when fetching profile info."
         requests.side_effect = RequestException('Server Down')
-        raw_token = 'access_token=USER_ACESS_TOKEN'
+        raw_token = 'access_token=USER_ACCESS_TOKEN'
         response = self.oauth.get_profile_info(raw_token)
         self.assertEqual(response, None)
 
     def test_parse_token_response_json(self, requests):
         "Parse token response which is JSON encoded per spec."
-        raw_token = '{"access_token": "USER_ACESS_TOKEN"}'
+        raw_token = '{"access_token": "USER_ACCESS_TOKEN"}'
         token, secret = self.oauth.parse_raw_token(raw_token)
-        self.assertEqual(token, 'USER_ACESS_TOKEN')
+        self.assertEqual(token, 'USER_ACCESS_TOKEN')
         self.assertEqual(secret, None)
 
     def test_parse_error_response_json(self, requests):
@@ -339,9 +339,9 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_parse_token_response_query(self, requests):
         "Parse token response which is url encoded (FB)."
-        raw_token = 'access_token=USER_ACESS_TOKEN'
+        raw_token = 'access_token=USER_ACCESS_TOKEN'
         token, secret = self.oauth.parse_raw_token(raw_token)
-        self.assertEqual(token, 'USER_ACESS_TOKEN')
+        self.assertEqual(token, 'USER_ACCESS_TOKEN')
         self.assertEqual(secret, None)
 
     def test_parse_invalid_token_response(self, requests):
@@ -377,9 +377,9 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_request_with_user_token(self, requests):
         "Use token for request auth."
-        token = '{"access_token": "USER_ACESS_TOKEN"}'
+        token = '{"access_token": "USER_ACCESS_TOKEN"}'
         self.oauth = self.oauth_client(self.provider, token=token)
         self.oauth.request('get', 'http://example.com/')
         self.assertTrue(requests.called)
         args, kwargs = requests.call_args
-        self.assertEqual(kwargs['params']['access_token'], 'USER_ACESS_TOKEN')
+        self.assertEqual(kwargs['params']['access_token'], 'USER_ACCESS_TOKEN')
