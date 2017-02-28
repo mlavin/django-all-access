@@ -84,7 +84,7 @@ class OAuthCallback(OAuthClientMixin, View):
                 return self.handle_login_failure(provider, "Could not retrieve token.")
 
             # Fetch profile info
-            info = client.get_profile_info(raw_token, self.get_profile_info_params())
+            info = client.get_profile_info(raw_token, self.get_profile_info_params(provider))
             if info is None:
                 return self.handle_login_failure(provider, "Could not retrieve profile.")
             identifier = self.get_user_id(provider, info)
@@ -134,7 +134,7 @@ class OAuthCallback(OAuthClientMixin, View):
         }
         return User.objects.create_user(**kwargs)
 
-    def get_profile_info_params(self):
+    def get_profile_info_params(self, provider):
         """Return params that are going to be sent when getting user profile info"""
         return self.profile_info_params or {}
 
