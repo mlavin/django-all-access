@@ -26,7 +26,7 @@ class BaseOAuthClient(object):
         "Fetch access token from callback request."
         raise NotImplementedError('Defined in a sub-class')  # pragma: no cover
 
-    def get_profile_info(self, raw_token, profile_info_params):
+    def get_profile_info(self, raw_token, profile_info_params={}):
         "Fetch user profile information."
         try:
             response = self.request('get', self.provider.profile_url, token=raw_token, params=profile_info_params)
