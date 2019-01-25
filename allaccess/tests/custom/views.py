@@ -4,7 +4,7 @@ import base64
 import hashlib
 
 from django.contrib.auth import get_user_model
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.encoding import smart_bytes, force_text
 
 from allaccess.views import OAuthRedirect, OAuthCallback
