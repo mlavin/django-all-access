@@ -23,7 +23,7 @@ setup(
     license='BSD',
     description=' '.join(__import__('allaccess').__doc__.splitlines()).strip(),
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Framework :: Django',
         'Framework :: Django :: 1.11',
