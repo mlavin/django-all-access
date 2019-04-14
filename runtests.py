@@ -33,6 +33,15 @@ if not settings.configured:
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
         ),
+        TEMPLATES=[{
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'OPTIONS': {
+                'context_processors': [
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ]
+            }
+        }],
         AUTHENTICATION_BACKENDS=(
             'allaccess.backends.AuthorizedServiceBackend',
         ),
