@@ -19,7 +19,7 @@ setup(
     author_email='markdlavin@gmail.com',
     packages=find_packages(),
     include_package_data=True,
-    url='https://github.com/mlavin/django-all-access',
+    url='https://github.com/fdemmer/django-all-access',
     license='BSD',
     description=' '.join(__import__('allaccess').__doc__.splitlines()).strip(),
     classifiers=[
