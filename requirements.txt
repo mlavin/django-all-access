@@ -1,12 +1,12 @@
 # Deployment requirements
-django-all-access==0.9
-requests-oauthlib==0.7.0
-requests==2.11.1
-oauthlib==2.0.0
+django-all-access==0.9.1
+requests-oauthlib==1.2.0
+requests==2.21.0
+oauthlib==3.0.1
 pycrypto==2.6.1
-Django==1.10.3
-gunicorn>=19.6,<19.7
+Django==1.11.20
+gunicorn==19.9.0
 dj-database-url==0.3.0
 dj-static==0.0.6
 static3==0.7.0
-psycopg2==2.6.2
+psycopg2==2.7.7
