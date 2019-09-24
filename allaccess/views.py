@@ -160,6 +160,10 @@ class OAuthCallback(OAuthClientMixin, View):
         user = self.get_or_create_user(provider, access, info)
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
-        user = authenticate(provider=access.provider, identifier=access.identifier)
+        user = authenticate(
+            self.request,
+            provider=access.provider,
+            identifier=access.identifier,
+        )
         login(self.request, user)
         return redirect(self.get_login_redirect(provider, user, access, True))
