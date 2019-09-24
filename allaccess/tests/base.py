@@ -1,6 +1,4 @@
 """Base test class and helper methods for writing tests."""
-from __future__ import unicode_literals
-
 import random
 import string
 import unittest
@@ -9,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from allaccess.models import Provider, AccountAccess
+from allaccess.models import AccountAccess, Provider
 
 
 def skipIfCustomUser(test_func):

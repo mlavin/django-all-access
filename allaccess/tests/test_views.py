@@ -1,13 +1,13 @@
 """Redirect and callback view tests."""
-from __future__ import unicode_literals
+from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
+from django.test import RequestFactory, override_settings
 from django.urls import reverse
-from django.test import override_settings, RequestFactory
 
-from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
-from ..compat import urlparse, parse_qs, patch, Mock
-from ..views import OAuthRedirect, OAuthCallback
+from .base import AccountAccess, AllAccessTestCase, get_user_model, skipIfCustomUser
+from ..compat import Mock, patch
+from ..views import OAuthCallback, OAuthRedirect
 
 
 @override_settings(ROOT_URLCONF='allaccess.tests.urls', LOGIN_URL='/login/', LOGIN_REDIRECT_URL='/')

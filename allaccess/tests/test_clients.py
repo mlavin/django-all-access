@@ -1,13 +1,14 @@
 """OAuth 1.0 and 2.0 client tests."""
 from __future__ import unicode_literals
 
-from django.test.client import RequestFactory
+from urllib.parse import parse_qs, urlparse
 
+from django.test.client import RequestFactory
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
-from ..clients import OAuthClient, OAuth2Client
-from ..compat import urlparse, parse_qs, patch, Mock
+from ..clients import OAuth2Client, OAuthClient
+from ..compat import Mock, patch
 
 
 class BaseClientTestCase(object):

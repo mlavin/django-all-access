@@ -1,6 +1,4 @@
 """Helpers to add provider and account access information to the template context."""
-from __future__ import unicode_literals
-
 from django.utils.functional import SimpleLazyObject
 
 from .compat import APPENGINE

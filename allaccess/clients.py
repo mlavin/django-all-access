@@ -1,14 +1,11 @@
-from __future__ import unicode_literals
-
 import json
 import logging
+from urllib.parse import parse_qs, urlencode
 
 from django.utils.crypto import constant_time_compare, get_random_string
 from django.utils.encoding import force_text
 from requests.api import request
 from requests.exceptions import RequestException
-
-from .compat import urlencode, parse_qs
 from requests_oauthlib import OAuth1
 
 logger = logging.getLogger('allaccess.clients')
