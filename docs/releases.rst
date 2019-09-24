@@ -4,6 +4,12 @@ Release History
 Release and change history for django-all-access
 
 
+v0.9.1 (2019-04-14)
+-----------------------------------
+
+Update for Django 2.x compatibility.
+
+
 v0.9.0 (2016-11-12)
 -----------------------------------
 
@@ -104,11 +110,11 @@ Backwards Incompatible Changes
 __________________________________
 
 - The ``key`` and ``secret`` columns on ``Provider`` were renamed to ``consumer_key`` and ``consumer_secret``. ``key`` is a reserved property
-name when using Google App Engine and ``secret`` was changed as well for consistency. A migration has been added for the change but
-if you were referencing the ``key``/``secret`` explicitly in your code those references need to be updated as well.
+  name when using Google App Engine and ``secret`` was changed as well for consistency. A migration has been added for the change but
+  if you were referencing the ``key``/``secret`` explicitly in your code those references need to be updated as well.
 - ``ProviderManager.enabled`` has been removed. This was a short-cut method for filtering out providers with key or secret values. However,
-it doesn't work on Google App Engine. It was only used in a few places internally so it was removed. The equivalent query is
-``Provider.objects.filter(consumer_secret__isnull=False, consumer_key__isnull=False)``
+  it doesn't work on Google App Engine. It was only used in a few places internally so it was removed. The equivalent query is
+  ``Provider.objects.filter(consumer_secret__isnull=False, consumer_key__isnull=False)``
 
 
 v0.5.1 (2013-08-16)
