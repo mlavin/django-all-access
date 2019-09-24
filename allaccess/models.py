@@ -9,7 +9,7 @@ from .fields import EncryptedField
 
 
 class ProviderManager(models.Manager):
-    "Additional manager methods for Providers."
+    """Additional manager methods for Providers."""
 
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -17,7 +17,7 @@ class ProviderManager(models.Manager):
 
 @python_2_unicode_compatible
 class Provider(models.Model):
-    "Configuration for OAuth provider."
+    """Configuration for OAuth provider."""
 
     name = models.CharField(max_length=50, unique=True)
     request_token_url = models.CharField(blank=True, max_length=255)
@@ -38,15 +38,16 @@ class Provider(models.Model):
         super(Provider, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.name, )
+        return self.name,
 
     def enabled(self):
         return self.consumer_key is not None and self.consumer_secret is not None
+
     enabled.boolean = True
 
 
 class AccountAccessManager(models.Manager):
-    "Additional manager for AccountAccess models."
+    """Additional manager for AccountAccess models."""
 
     def get_by_natural_key(self, identifier, provider):
         provider = Provider.objects.get_by_natural_key(provider)
@@ -55,7 +56,7 @@ class AccountAccessManager(models.Manager):
 
 @python_2_unicode_compatible
 class AccountAccess(models.Model):
-    "Authorized remote OAuth provider."
+    """Authorized remote OAuth provider."""
 
     identifier = models.CharField(max_length=255)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
@@ -78,7 +79,7 @@ class AccountAccess(models.Model):
         super(AccountAccess, self).save(*args, **kwargs)
 
     def natural_key(self):
-        return (self.identifier, ) + self.provider.natural_key()
+        return (self.identifier,) + self.provider.natural_key()
     natural_key.dependencies = ['allaccess.provider']
 
     @property

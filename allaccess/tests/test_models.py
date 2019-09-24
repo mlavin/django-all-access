@@ -1,17 +1,17 @@
-"Models and field encryption tests."
+"""Models and field encryption tests."""
 from __future__ import unicode_literals
 
 from .base import AllAccessTestCase, Provider, AccountAccess
 
 
 class ProviderTestCase(AllAccessTestCase):
-    "Custom provider methods and key/secret encryption."
+    """Custom provider methods and key/secret encryption."""
 
     def setUp(self):
         self.provider = self.create_provider()
 
     def test_save_empty_key(self):
-        "None/blank key should normalize to None which is not encrypted."
+        """None/blank key should normalize to None which is not encrypted."""
         self.provider.consumer_key = ''
         self.provider.save()
         self.assertEqual(self.provider.consumer_key, None)
@@ -21,7 +21,7 @@ class ProviderTestCase(AllAccessTestCase):
         self.assertEqual(self.provider.consumer_key, None)
 
     def test_save_empty_secret(self):
-        "None/blank secret should normalize to None which is not encrypted."
+        """None/blank secret should normalize to None which is not encrypted."""
         self.provider.consumer_secret = ''
         self.provider.save()
         self.assertEqual(self.provider.consumer_secret, None)
@@ -31,7 +31,7 @@ class ProviderTestCase(AllAccessTestCase):
         self.assertEqual(self.provider.consumer_secret, None)
 
     def test_encrypted_save(self):
-        "Encrypt key/secret on save."
+        """Encrypt key/secret on save."""
         key = self.get_random_string()
         secret = self.get_random_string()
         self.provider.consumer_key = key
@@ -46,7 +46,7 @@ class ProviderTestCase(AllAccessTestCase):
         self.assertTrue(provider.raw_secret.startswith('$AES$'))
 
     def test_encrypted_fetch(self):
-        "Decrypt key/secret on save."
+        """Decrypt key/secret on save."""
         key = self.get_random_string()
         secret = self.get_random_string()
         self.provider.consumer_key = key
@@ -58,13 +58,13 @@ class ProviderTestCase(AllAccessTestCase):
 
 
 class AccountAccessTestCase(AllAccessTestCase):
-    "Custom AccountAccess methods and access token encryption."
+    """Custom AccountAccess methods and access token encryption."""
 
     def setUp(self):
         self.access = self.create_access()
 
     def test_save_empty_token(self):
-        "None/blank access token should normalize to None which is not encrypted."
+        """None/blank access token should normalize to None which is not encrypted."""
         self.access.access_token = ''
         self.access.save()
         self.assertEqual(self.access.access_token, None)
@@ -74,7 +74,7 @@ class AccountAccessTestCase(AllAccessTestCase):
         self.assertEqual(self.access.access_token, None)
 
     def test_encrypted_save(self):
-        "Encrypt access token on save."
+        """Encrypt access token on save."""
         access_token = self.get_random_string()
         self.access.access_token = access_token
         self.access.save()
@@ -86,7 +86,7 @@ class AccountAccessTestCase(AllAccessTestCase):
         self.assertEqual(access.access_token, access_token, "Token should be unencrypted on fetch.")
 
     def test_encrypted_update(self):
-        "Access token should be encrypted on update."
+        """Access token should be encrypted on update."""
         access_token = self.get_random_string()
         AccountAccess.objects.filter(pk=self.access.pk).update(access_token=access_token)
         access = AccountAccess.objects.extra(
@@ -97,7 +97,7 @@ class AccountAccessTestCase(AllAccessTestCase):
         self.assertEqual(access.access_token, access_token, "Token should be unencrypted on fetch.")
 
     def test_fetch_api_client(self):
-        "Get API client with the provider and user token set."
+        """Get API client with the provider and user token set."""
         access_token = self.get_random_string()
         self.access.access_token = access_token
         self.access.save()

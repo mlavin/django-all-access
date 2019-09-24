@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 
 def home(request):
-    "Simple homepage view."
+    """Simple homepage view."""
     context = {}
     if request.user.is_authenticated():
         try:

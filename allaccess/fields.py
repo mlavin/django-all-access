@@ -76,8 +76,10 @@ class SignedAESEncryption(object):
         clear_text = self.add_padding(clear_text)
         cypher_text = binascii.b2a_hex(self.cipher.encrypt(clear_text))
         parts = [self.prefix]
+
         if self.sign:
             parts.append(self.get_signature(cypher_text))
+
         parts.append(cypher_text)
         return b'$'.join(parts)
 
@@ -96,18 +98,23 @@ class EncryptedField(models.TextField):
     def from_db_value(self, value, expression, connection):
         if value is None:
             return value
+
         value = force_bytes(value)
         if self.cipher.is_encrypted(value):
             return force_text(self.cipher.decrypt(value))
+
         return force_text(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         if self.null:
             # Normalize empty values to None
             value = value or None
+
         if value is None:
             return None
+
         value = force_bytes(value)
         if not self.cipher.is_encrypted(value):
             value = self.cipher.encrypt(value)
+
         return force_text(value)
