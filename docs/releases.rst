@@ -4,7 +4,7 @@ Release History
 Release and change history for django-all-access
 
 
-v1.0.0 (tbd)
+v1.0.0 (2019-09-25)
 -----------------------------------
 
 Drop Python 2.x and Django 1.x support.
