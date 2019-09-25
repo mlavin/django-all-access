@@ -1,17 +1,18 @@
-"OAuth 1.0 and 2.0 client tests."
+"""OAuth 1.0 and 2.0 client tests."""
 from __future__ import unicode_literals
 
-from django.test.client import RequestFactory
+from urllib.parse import parse_qs, urlparse
 
+from django.test.client import RequestFactory
 from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
-from ..clients import OAuthClient, OAuth2Client
-from ..compat import urlparse, parse_qs, patch, Mock
+from ..clients import OAuth2Client, OAuthClient
+from ..compat import Mock, patch
 
 
 class BaseClientTestCase(object):
-    "Common client test functionality."
+    """Common client test functionality."""
 
     oauth_client = None
 
@@ -25,7 +26,7 @@ class BaseClientTestCase(object):
         self.factory = RequestFactory()
 
     def test_redirect_url(self, *args, **kwargs):
-        "Redirect url is build from provider authorization_url."
+        """Redirect url is build from provider authorization_url."""
         with patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
             request = self.factory.get('/login/')
@@ -36,7 +37,7 @@ class BaseClientTestCase(object):
             self.assertEqual(query, {'foo': ['bar']})
 
     def test_additional_redirect_args(self, *args, **kwargs):
-        "Additional redirect arguments."
+        """Additional redirect arguments."""
         with patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
             request = self.factory.get('/login/')
@@ -50,7 +51,7 @@ class BaseClientTestCase(object):
 @patch('allaccess.clients.OAuth1')
 @patch('allaccess.clients.request')
 class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
-    "OAuth 1.0 client handling to match http://oauth.net/core/1.0/"
+    """OAuth 1.0 client handling to match http://oauth.net/core/1.0/"""
 
     oauth_client = OAuthClient
 
@@ -60,7 +61,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.provider.save()
 
     def test_request_token_auth(self, requests, auth):
-        "Construct post auth with provider key and secret."
+        """Construct post auth with provider key and secret."""
         request = self.factory.get('/login/')
         self.oauth.get_request_token(request, callback='/callback/')
         self.assertTrue(auth.called)
@@ -73,7 +74,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['callback_uri'], 'http://testserver/callback/')
 
     def test_request_token_url(self, requests, auth):
-        "Post should be sent to provider's request_token_url."
+        """Post should be sent to provider's request_token_url."""
         request = self.factory.get('/login/')
         self.oauth.get_request_token(request, callback='/callback/')
         self.assertTrue(requests.called)
@@ -83,7 +84,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(url, self.provider.request_token_url)
 
     def test_request_token_response(self, requests, auth):
-        "Return full response text without parsing key/secret."
+        """Return full response text without parsing key/secret."""
         response = Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
@@ -92,14 +93,14 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
 
     def test_request_token_failure(self, requests, auth):
-        "Handle upstream server errors when fetching request token."
+        """Handle upstream server errors when fetching request token."""
         requests.side_effect = RequestException('Server Down')
         request = self.factory.get('/login/')
         token = self.oauth.get_request_token(request, callback='/callback/')
         self.assertEqual(token, None)
 
     def test_access_token_auth(self, requests, auth):
-        "Construct auth from provider key and secret and request token."
+        """Construct auth from provider key and secret and request token."""
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
         self.oauth.get_access_token(request)
@@ -113,7 +114,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['callback_uri'], 'http://testserver/callback/')
 
     def test_access_token_auth_custom_callback(self, requests, auth):
-        "Construct auth when a callback is given."
+        """Construct auth when a callback is given."""
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
         self.oauth.get_access_token(request, callback='/other/')
@@ -127,7 +128,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['callback_uri'], 'http://testserver/other/')
 
     def test_access_token_no_request_token(self, requests, auth):
-        "Handle no request token found in the session."
+        """Handle no request token found in the session."""
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {}
         response = self.oauth.get_access_token(request)
@@ -136,7 +137,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(auth.called)
 
     def test_access_token_no_verifier(self, requests, auth):
-        "Don't request access token if no verifier was given."
+        """Don't request access token if no verifier was given."""
         request = self.factory.get('/callback/')
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
         response = self.oauth.get_access_token(request)
@@ -145,7 +146,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(auth.called)
 
     def test_access_token_bad_request_token(self, requests, auth):
-        "Handle bad request token found in the session."
+        """Handle bad request token found in the session."""
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'XXXXX'}
         self.oauth.get_access_token(request)
@@ -158,7 +159,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['verifier'], 'verifier')
 
     def test_access_token_url(self, requests, auth):
-        "Post should be sent to provider's access_token_url."
+        """Post should be sent to provider's access_token_url."""
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
         self.oauth.get_access_token(request)
@@ -169,7 +170,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(url, self.provider.access_token_url)
 
     def test_access_token_response(self, requests, auth):
-        "Return full response text without parsing key/secret."
+        """Return full response text without parsing key/secret."""
         response = Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
@@ -179,7 +180,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(token, 'oauth_token=token&oauth_token_secret=secret')
 
     def test_access_token_failure(self, requests, auth):
-        "Handle upstream server errors when fetching access token."
+        """Handle upstream server errors when fetching access token."""
         requests.side_effect = RequestException('Server Down')
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
         request.session = {self.oauth.session_key: 'oauth_token=token&oauth_token_secret=secret'}
@@ -187,7 +188,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(token, None)
 
     def test_profile_info_auth(self, requests, auth):
-        "Construct auth from provider key and secret and user token."
+        """Construct auth from provider key and secret and user token."""
         raw_token = 'oauth_token=token&oauth_token_secret=secret'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(auth.called)
@@ -198,7 +199,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
 
     def test_profile_info_url(self, requests, auth):
-        "Make get request for profile url."
+        """Make get request for profile url."""
         raw_token = 'oauth_token=token&oauth_token_secret=secret'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(requests.called)
@@ -208,14 +209,14 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(url, self.provider.profile_url)
 
     def test_profile_info_failure(self, requests, auth):
-        "Handle upstream server errors when fetching profile info."
+        """Handle upstream server errors when fetching profile info."""
         requests.side_effect = RequestException('Server Down')
         raw_token = 'oauth_token=token&oauth_token_secret=secret'
         response = self.oauth.get_profile_info(raw_token)
         self.assertEqual(response, None)
 
     def test_request_with_user_token(self, requests, auth):
-        "Use token for request auth."
+        """Use token for request auth."""
         token = 'oauth_token=token&oauth_token_secret=secret'
         self.oauth = self.oauth_client(self.provider, token=token)
         self.oauth.request('get', 'http://example.com/')
@@ -229,12 +230,12 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
 @patch('allaccess.clients.request')
 class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
-    "OAuth 2.0 client handling."
+    """OAuth 2.0 client handling."""
 
     oauth_client = OAuth2Client
 
     def test_access_token_url(self, requests):
-        "Get should be sent to provider's access_token_url."
+        """Get should be sent to provider's access_token_url."""
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request)
@@ -245,7 +246,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(url, self.provider.access_token_url)
 
     def test_access_token_parameters(self, requests):
-        "Check parameters used when fetching access token."
+        """Check parameters used when fetching access token."""
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request)
@@ -259,7 +260,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(params['client_secret'], self.provider.consumer_secret)
 
     def test_access_token_custom_callback(self, requests):
-        "Check parameters used with custom callback."
+        """Check parameters used with custom callback."""
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
         self.oauth.get_access_token(request, callback='/other/')
@@ -273,7 +274,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(params['client_secret'], self.provider.consumer_secret)
 
     def test_access_token_no_code(self, requests):
-        "Don't request token if no code was given to the callback."
+        """Don't request token if no code was given to the callback."""
         request = self.factory.get('/callback/', {'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
         token = self.oauth.get_access_token(request)
@@ -281,7 +282,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(requests.called)
 
     def test_access_token_response(self, requests):
-        "Return full response text without parsing key/secret."
+        """Return full response text without parsing key/secret."""
         response = Mock()
         response.text = 'access_token=USER_ACESS_TOKEN'
         requests.return_value = response
@@ -291,7 +292,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(token, 'access_token=USER_ACESS_TOKEN')
 
     def test_access_token_failure(self, requests):
-        "Handle upstream server errors when fetching access token."
+        """Handle upstream server errors when fetching access token."""
         requests.side_effect = RequestException('Server Down')
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {self.oauth.session_key: 'foo'}
@@ -299,7 +300,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(token, None)
 
     def test_profile_info_auth(self, requests):
-        "Pass access token when requesting profile info."
+        """Pass access token when requesting profile info."""
         raw_token = 'access_token=USER_ACESS_TOKEN'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(requests.called)
@@ -307,7 +308,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['params']['access_token'], 'USER_ACESS_TOKEN')
 
     def test_profile_info_url(self, requests):
-        "Make get request for profile url."
+        """Make get request for profile url."""
         raw_token = 'access_token=USER_ACESS_TOKEN'
         self.oauth.get_profile_info(raw_token)
         self.assertTrue(requests.called)
@@ -317,42 +318,42 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(url, self.provider.profile_url)
 
     def test_profile_info_failure(self, requests):
-        "Handle upstream server errors when fetching profile info."
+        """Handle upstream server errors when fetching profile info."""
         requests.side_effect = RequestException('Server Down')
         raw_token = 'access_token=USER_ACESS_TOKEN'
         response = self.oauth.get_profile_info(raw_token)
         self.assertEqual(response, None)
 
     def test_parse_token_response_json(self, requests):
-        "Parse token response which is JSON encoded per spec."
+        """Parse token response which is JSON encoded per spec."""
         raw_token = '{"access_token": "USER_ACESS_TOKEN"}'
         token, secret = self.oauth.parse_raw_token(raw_token)
         self.assertEqual(token, 'USER_ACESS_TOKEN')
         self.assertEqual(secret, None)
 
     def test_parse_error_response_json(self, requests):
-        "Parse token error response which is JSON encoded per spec."
+        """Parse token error response which is JSON encoded per spec."""
         raw_token = '{"error": "invalid_request"}'
         token, secret = self.oauth.parse_raw_token(raw_token)
         self.assertEqual(token, None)
         self.assertEqual(secret, None)
 
     def test_parse_token_response_query(self, requests):
-        "Parse token response which is url encoded (FB)."
+        """Parse token response which is url encoded (FB)."""
         raw_token = 'access_token=USER_ACESS_TOKEN'
         token, secret = self.oauth.parse_raw_token(raw_token)
         self.assertEqual(token, 'USER_ACESS_TOKEN')
         self.assertEqual(secret, None)
 
     def test_parse_invalid_token_response(self, requests):
-        "Parse garbage token response."
+        """Parse garbage token response."""
         raw_token = 'XXXXX'
         token, secret = self.oauth.parse_raw_token(raw_token)
         self.assertEqual(token, None)
         self.assertEqual(secret, None)
 
     def test_access_token_no_state_session(self, requests):
-        "Handle no state found in the session."
+        """Handle no state found in the session."""
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})
         request.session = {}
         response = self.oauth.get_access_token(request)
@@ -360,7 +361,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(requests.called)
 
     def test_access_token_no_state_provider(self, requests):
-        "Handle no state returned by the provider."
+        """Handle no state returned by the provider."""
         request = self.factory.get('/callback/', {'code': 'code'})
         request.session = {self.oauth.session_key: 'foo'}
         response = self.oauth.get_access_token(request)
@@ -368,7 +369,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(requests.called)
 
     def test_access_token_state_incorrect(self, requests):
-        "Handle invalid state returned by the provider"
+        """Handle invalid state returned by the provider"""
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'bar'})
         request.session = {self.oauth.session_key: 'foo'}
         response = self.oauth.get_access_token(request)
@@ -376,7 +377,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertFalse(requests.called)
 
     def test_request_with_user_token(self, requests):
-        "Use token for request auth."
+        """Use token for request auth."""
         token = '{"access_token": "USER_ACESS_TOKEN"}'
         self.oauth = self.oauth_client(self.provider, token=token)
         self.oauth.request('get', 'http://example.com/')

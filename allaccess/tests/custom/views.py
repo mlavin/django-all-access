@@ -11,18 +11,18 @@ from allaccess.views import OAuthRedirect, OAuthCallback
 
 
 class CustomRedirect(OAuthRedirect):
-    "Redirect to custom callback."
+    """Redirect to custom callback."""
 
     def get_callback_url(self, provider):
-        "Return the callback url for this provider."
+        """Return the callback url for this provider."""
         return reverse('custom-callback', kwargs={'provider': provider.name})
 
 
 class CustomCallback(OAuthCallback):
-    "Create custom user on callback."
+    """Create custom user on callback."""
 
     def get_or_create_user(self, provider, access, info):
-        "Create a shell custom.MyUser."
+        """Create a shell custom.MyUser."""
         email = info.get('email', None)
         if email is None:
             # No email was given by the provider so create a fake one
