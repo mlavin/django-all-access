@@ -1,9 +1,10 @@
 sudo: false
 
 language: python
-
 python:
   - "3.5"
+  - "3.6"
+  - "3.7"
 
 env:
   - TOXENV=py35-django21-normal,py36-django21-normal,py37-django21-normal
