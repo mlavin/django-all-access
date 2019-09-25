@@ -185,8 +185,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'django-all-access.tex', u'django-all-access Documentation',
-   u'Mark Lavin', 'manual'),
+  ('index', 'django-all-access.tex', 'django-all-access Documentation',
+   'Mark Lavin', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -215,8 +215,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'django-all-access', u'django-all-access Documentation',
-     [u'Mark Lavin'], 1)
+    ('index', 'django-all-access', 'django-all-access Documentation',
+     ['Mark Lavin'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'django-all-access', u'django-all-access Documentation',
-   u'Mark Lavin', 'django-all-access', 'One line description of project.',
+  ('index', 'django-all-access', 'django-all-access Documentation',
+   'Mark Lavin', 'django-all-access', 'One line description of project.',
    'Miscellaneous'),
 ]
 
