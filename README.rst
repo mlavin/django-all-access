@@ -8,11 +8,11 @@ The goal of this project is to make it easy to create your own workflows for
 authenticating with these remote APIs. django-all-access will provide the simple
 views with sane defaults along with hooks to override the default behavior.
 
-.. image:: https://travis-ci.org/mlavin/django-all-access.svg?branch=master
-    :target: https://travis-ci.org/mlavin/django-all-access
+.. image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
+    :target: https://travis-ci.org/fdemmer/django-all-access
 
 .. image:: https://codecov.io/github/mlavin/django-all-access/coverage.svg?branch=master
-    :target: https://codecov.io/github/mlavin/django-all-access?branch=master
+    :target: https://codecov.io/github/fdemmer/django-all-access?branch=master
 
 You can find a basic demo application running at http://django-all-access.mlavin.org/
 
@@ -27,12 +27,17 @@ Features
 Installation
 ------------------------------------
 
-It is easiest to install django-all-access from PyPi using pip::
+It is easiest to install this fork of django-all-access from GitHub using pip:
 
-    pip install django-all-access
+.. code-block:: shell
+
+    pip install git+https://github.com/fdemmer/django-all-access@v1.0.0#egg=django-all-access
+
 
 django-all-access requires Python 3.5+ along with the following Python
-packages::
+packages (and will be automatically installed if necessary):
+
+.. code-block:: text
 
     django>=2.0
     pycrypto>=2.4
@@ -52,7 +57,8 @@ License
 --------------------------------------
 
 django-all-access is released under the BSD License. See the
-`LICENSE <https://github.com/mlavin/django-all-access/blob/master/LICENSE>`_ file for more details.
+`LICENSE <https://github.com/fdemmer/django-all-access/blob/master/LICENSE>`_
+file for more details.
 
 
 Contributing
@@ -63,4 +69,4 @@ the project you can join the `mailing list <http://groups.google.com/group/djang
 through Google Groups.
 
 If you think you've found a bug or are interested in contributing to this project
-check out `django-all-access on Github <https://github.com/mlavin/django-all-access>`_.
+check out `django-all-access on Github <https://github.com/fdemmer/django-all-access>`_.
