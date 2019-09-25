@@ -6,12 +6,10 @@ python:
   - "3.5"
 
 env:
-  - TOXENV=py27-django18-normal,py33-django18-normal
-  - TOXENV=py27-django18-custom,py33-django18-custom
-  - TOXENV=py27-django19-normal,py34-django19-normal
-  - TOXENV=py27-django19-custom,py34-django19-custom
-  - TOXENV=py27-django110-normal,py34-django110-normal,py35-django110-normal
-  - TOXENV=py27-django110-custom,py34-django110-custom,py35-django110-custom
+  - TOXENV=py35-django21-normal,py36-django21-normal,py37-django21-normal
+  - TOXENV=py35-django21-custom,py36-django21-custom,py37-django21-custom
+  - TOXENV=py35-django22-normal,py36-django22-normal,py37-django22-normal
+  - TOXENV=py35-django22-custom,py36-django22-custom,py37-django22-custom
 
 cache:
   directories:
