@@ -58,7 +58,7 @@ will return a 404.
     .. method:: get_callback_url(provider)
 
         This returns the URL which the remote provider should return the user after
-        authentication. It is called by :py:meth:`OAuthRedirect.get_redirect_url` to construct 
+        authentication. It is called by :py:meth:`OAuthRedirect.get_redirect_url` to construct
         the appropriate redirect URL. By default the reverses the ``allaccess-callback``
         URL name with the passed provider name.
 
@@ -72,11 +72,11 @@ OAuthCallback View
 ----------------------
 
 After the user has authenticated with the remote provider or denied access to your application
-request, they are returned to the callback specifed in the initial redirect. :py:class:`OAuthCallback`
+request, they are returned to the callback specified in the initial redirect. :py:class:`OAuthCallback`
 defines the default behaviour on this callback. This view extends from the base
 `View <https://docs.djangoproject.com/en/1.8/ref/class-based-views/#view>`_ class.
 By default it is mapped to the ``allaccess-callback`` URL name. Similar to the :py:class:`OAuthRedirect` view,
-this view takes one keyword argument ``provider`` which corresponds to the ``Provider.name`` 
+this view takes one keyword argument ``provider`` which corresponds to the ``Provider.name``
 for an enabled provider. If no enabled provider is found for the name, this view will return a 404.
 
 .. class:: OAuthCallback()
@@ -97,12 +97,25 @@ for an enabled provider. If no enabled provider is found for the name, this view
         set this attribute to `result.user.id` to access the value.
         See :py:meth:`OAuthCallback.get_user_id` for more details.
 
+    .. versionadded:: 1.1.0
+    .. attribute:: profile_info_params
+
+        Used to pass additional parameters to the profile info request (i.e. ``fields``).
+        See :py:meth:`OAuthCallback.get_profile_info_params` for more details.
+
     .. method:: get_callback_url(provider)
 
         This returns the callback URL specified in the initial redirect if it is
         different than the current ``request.path``. By default the callback URL will be the same
         and this view will return ``None``. You will most likely not need to change this
         in your project.
+
+    .. method:: get_profile_info_params(provider)
+
+        Here you can return additional parameters for the profile info request.
+        By default this returns ``{}``. Use this to request specific or additional
+        fields from the user profile of the provider (eg.
+        `Facebook <https://developers.facebook.com/docs/graph-api/reference/user/>`_).
 
     .. method:: get_client(provider)
 
@@ -128,12 +141,12 @@ for an enabled provider. If no enabled provider is found for the name, this view
 
     .. method:: get_or_create_user(provider, access, info)
 
-        This method is used by :py:meth:`OAuthCallback.handle_new_user` to construct a new user with a 
-        random username, no email and an unusable password. You may want to override 
-        this user to complete more of their infomation or attempt to match them 
+        This method is used by :py:meth:`OAuthCallback.handle_new_user` to construct a new user with a
+        random username, no email and an unusable password. You may want to override
+        this user to complete more of their information or attempt to match them
         to an existing user by either their username or email.
 
-        :py:meth:`OAuthCallback.handle_new_user` will connect the user to the ``access`` record and 
+        :py:meth:`OAuthCallback.handle_new_user` will connect the user to the ``access`` record and
         does not need to be handled here.
 
         :note:
@@ -166,7 +179,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
     .. method:: handle_login_failure(provider, reason)
 
         In the case of a failure to fetch the user's access token or remote profile information
-        or determine their id from that info, this method will be called. It attachs a
+        or determine their id from that info, this method will be called. It attaches a
         brief error message to the request via ``contrib.messages`` and redirects the
         user to the result of the :py:meth:`OAuthCallback.get_error_redirect` method. You should override
         this function to add any additional logging or handling.
@@ -180,7 +193,7 @@ for an enabled provider. If no enabled provider is found for the name, this view
         The user is then logged in and redirected to the result of the
         :py:meth:`OAuthCallback.get_login_redirect` call with ``new=True``
 
-        You may want to override this user to complete more of their infomation or
+        You may want to override this user to complete more of their information or
         attempt to match them to an existing user by either their username or email.
         You may want to override this to redirect them without creating a new user
         in order to have them complete another registration form
@@ -206,7 +219,7 @@ and changing how the provider identifier is found on the callback. Below is an e
         # Customize Facebook redirect to request additional scope
         url(r'^accounts/login/(?P<provider>facebook)/$',
             OAuthRedirect.as_view(params={'scope': 'email'})),
-        # Customize Foursqaure callback to handle nested response
+        # Customize Foursquare callback to handle nested response
         url(r'^accounts/callback/(?P<provider>foursquare)/$',
             OAuthCallback.as_view(provider_id='response.user.id')),
         # All other provider cases are handled by the defaults
