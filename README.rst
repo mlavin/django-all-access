@@ -11,8 +11,8 @@ views with sane defaults along with hooks to override the default behavior.
 .. image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
     :target: https://travis-ci.org/fdemmer/django-all-access
 
-.. image:: https://codecov.io/github/mlavin/django-all-access/coverage.svg?branch=master
-    :target: https://codecov.io/github/fdemmer/django-all-access?branch=master
+.. image:: https://codecov.io/gh/fdemmer/django-all-access/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/fdemmer/django-all-access
 
 You can find a basic demo application running at http://django-all-access.mlavin.org/
 
