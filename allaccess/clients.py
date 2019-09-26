@@ -219,7 +219,7 @@ class OAuth2Client(BaseOAuthClient):
         user_token = kwargs.pop('token', self.token)
         token, _ = self.parse_raw_token(user_token)
         if token is not None:
-            params = kwargs.get('params', {})
+            params = kwargs.get('params') or {}
             params['access_token'] = token
             kwargs['params'] = params
         return super(OAuth2Client, self).request(method, url, **kwargs)
