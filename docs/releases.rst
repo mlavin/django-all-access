@@ -4,6 +4,16 @@ Release History
 Release and change history for django-all-access
 
 
+v1.1.0 (2019-09-26)
+-----------------------------------
+
+Add ``OAuthCallback.get_profile_info_params()`` to fetch additional profile
+fields from Facebook. This was already added to upstream by Николай Данаилов,
+but lost in the forking process.
+
+- https://github.com/mlavin/django-all-access/pull/75
+
+
 v1.0.0 (2019-09-25)
 -----------------------------------
 
@@ -20,8 +30,8 @@ v0.9.0 (2016-11-12)
 -----------------------------------
 
 Encrypted fields for storing the provider configurations and access tokens
-now sign the values after encryption to dectect if the key is valid before
-attempting to decrypt. This was added thanks to Florian Demmer (@fdemmer).
+now sign the values after encryption to detect if the key is valid before
+attempting to decrypt. This was added thanks to Florian Demmer.
 
 Other small changes include:
 
@@ -151,7 +161,7 @@ __________________________________
 v0.4.1 (2013-01-02)
 ------------------------------------
 
-There were incompatibilty issues with requests-oauthlib (0.2) and requests which
+There were compatibility issues with requests-oauthlib (0.2) and requests which
 required dropping requests 1.0 support. The requirement of oauthlib was also raised
 to 0.3.4 due to similar issues. For more detail see the below issues.
 
@@ -261,7 +271,7 @@ _________________
 Bug Fixes
 _________________
 
-- Fixed OAuth2Client to include ``grant_type`` paramater when requesting access token
+- Fixed OAuth2Client to include ``grant_type`` parameter when requesting access token
 - Fixed OAuth2Client to match current OAuth draft for access token response as well as legacy response from Facebook
 
 
