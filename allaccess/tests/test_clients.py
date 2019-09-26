@@ -1,6 +1,7 @@
 """OAuth 1.0 and 2.0 client tests."""
 from __future__ import unicode_literals
 
+from unittest import mock
 from urllib.parse import parse_qs, urlparse
 
 from django.test.client import RequestFactory
@@ -8,7 +9,6 @@ from requests.exceptions import RequestException
 
 from .base import AllAccessTestCase
 from ..clients import OAuth2Client, OAuthClient
-from ..compat import Mock, patch
 
 
 class BaseClientTestCase(object):
@@ -27,7 +27,7 @@ class BaseClientTestCase(object):
 
     def test_redirect_url(self, *args, **kwargs):
         """Redirect url is build from provider authorization_url."""
-        with patch.object(self.oauth, 'get_redirect_args') as args:
+        with mock.patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
             request = self.factory.get('/login/')
             url = self.oauth.get_redirect_url(request, callback='/callback/')
@@ -38,7 +38,7 @@ class BaseClientTestCase(object):
 
     def test_additional_redirect_args(self, *args, **kwargs):
         """Additional redirect arguments."""
-        with patch.object(self.oauth, 'get_redirect_args') as args:
+        with mock.patch.object(self.oauth, 'get_redirect_args') as args:
             args.return_value = {'foo': 'bar'}
             request = self.factory.get('/login/')
             additional = {'scope': 'email'}
@@ -48,8 +48,8 @@ class BaseClientTestCase(object):
             self.assertEqual(query, {'foo': ['bar'], 'scope': ['email']})
 
 
-@patch('allaccess.clients.OAuth1')
-@patch('allaccess.clients.request')
+@mock.patch('allaccess.clients.OAuth1')
+@mock.patch('allaccess.clients.request')
 class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
     """OAuth 1.0 client handling to match http://oauth.net/core/1.0/"""
 
@@ -85,7 +85,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_request_token_response(self, requests, auth):
         """Return full response text without parsing key/secret."""
-        response = Mock()
+        response = mock.Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
         request = self.factory.get('/login/')
@@ -171,7 +171,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_access_token_response(self, requests, auth):
         """Return full response text without parsing key/secret."""
-        response = Mock()
+        response = mock.Mock()
         response.text = 'oauth_token=token&oauth_token_secret=secret'
         requests.return_value = response
         request = self.factory.get('/callback/', {'oauth_verifier': 'verifier'})
@@ -228,7 +228,7 @@ class OAuthClientTestCase(BaseClientTestCase, AllAccessTestCase):
         self.assertEqual(kwargs['resource_owner_secret'], 'secret')
 
 
-@patch('allaccess.clients.request')
+@mock.patch('allaccess.clients.request')
 class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
     """OAuth 2.0 client handling."""
 
@@ -283,7 +283,7 @@ class OAuth2ClientTestCase(BaseClientTestCase, AllAccessTestCase):
 
     def test_access_token_response(self, requests):
         """Return full response text without parsing key/secret."""
-        response = Mock()
+        response = mock.Mock()
         response.text = 'access_token=USER_ACESS_TOKEN'
         requests.return_value = response
         request = self.factory.get('/callback/', {'code': 'code', 'state': 'foo'})

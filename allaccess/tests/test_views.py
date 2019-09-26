@@ -1,4 +1,5 @@
 """Redirect and callback view tests."""
+from unittest import mock
 from urllib.parse import parse_qs, urlparse
 
 from django.conf import settings
@@ -6,7 +7,6 @@ from django.test import RequestFactory, override_settings
 from django.urls import reverse
 
 from .base import AccountAccess, AllAccessTestCase, get_user_model, skipIfCustomUser
-from ..compat import Mock, patch
 from ..views import OAuthCallback, OAuthRedirect
 
 
@@ -33,7 +33,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         """Redirect url for OAuth 1.0 provider."""
         self.provider.request_token_url = self.get_random_url()
         self.provider.save()
-        with patch('allaccess.clients.OAuthClient.get_request_token') as request_token:
+        with mock.patch('allaccess.clients.OAuthClient.get_request_token') as request_token:
             request_token.return_value = 'oauth_token=token&oauth_token_secret=secret'
             response = self.client.get(self.url)
             url = response['Location']
@@ -44,7 +44,7 @@ class OAuthRedirectTestCase(BaseViewTestCase):
         """Redirect parameters for OAuth 1.0 provider."""
         self.provider.request_token_url = self.get_random_url()
         self.provider.save()
-        with patch('allaccess.clients.OAuthClient.get_request_token') as request_token:
+        with mock.patch('allaccess.clients.OAuthClient.get_request_token') as request_token:
             request_token.return_value = 'oauth_token=token&oauth_token_secret=secret'
             response = self.client.get(self.url)
             url = response['Location']
@@ -117,9 +117,9 @@ class OAuthCallbackTestCase(BaseViewTestCase):
     def setUp(self):
         super(OAuthCallbackTestCase, self).setUp()
         # Patch OAuth client
-        self.patched_get_client = patch('allaccess.views.get_client')
+        self.patched_get_client = mock.patch('allaccess.views.get_client')
         self.get_client = self.patched_get_client.start()
-        self.mock_client = Mock()
+        self.mock_client = mock.Mock()
         self.get_client.return_value = self.mock_client
 
     def tearDown(self):

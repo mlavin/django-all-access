@@ -9,7 +9,7 @@ Ways to Contribute
 ------------------------------------
 
 Not all contributions are source code related. You can contribute to the project by
-writing a blog post on using django-all-access and sharing with the 
+writing a blog post on using django-all-access and sharing with the
 `mailing list <http://groups.google.com/group/django-all-access>`_. You can also
 submit bug reports, feature requests or documentation updates through the Github
 `issues <https://github.com/mlavin/django-all-access/issues>`_.
@@ -43,8 +43,7 @@ or::
 
     python runtests.py
 
-Note that the tests require the `mock <http://www.voidspace.org.uk/python/mock/>`_ library.
-To test against multiple versions of Django you can use install and use ``tox>=1.4``. The
+To test against multiple versions of Django you can use install and use ``tox``. The
 ``tox`` command will run the tests against the currently supported Python and Django versions.
 
     # Build all environments
