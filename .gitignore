@@ -1,11 +1,13 @@
 *.py[co]
 .project
 .pydevproject
+.vscode
 *~
 *.db
 *.orig
 *.DS_Store
 .coverage
+coverage.xml
 .tox
 *.egg-info/*
 docs/_build/*
