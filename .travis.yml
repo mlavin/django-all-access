@@ -6,18 +6,12 @@ python:
   - "3.6"
   - "3.7"
 
-env:
-  - TOXENV=py35-django21-normal,py36-django21-normal,py37-django21-normal
-  - TOXENV=py35-django21-custom,py36-django21-custom,py37-django21-custom
-  - TOXENV=py35-django22-normal,py36-django22-normal,py37-django22-normal
-  - TOXENV=py35-django22-custom,py36-django22-custom,py37-django22-custom
-
 cache:
   directories:
     - $HOME/.cache/pip
 
 install:
-  - pip install tox pip wheel codecov -U
+  - pip install -U tox tox-travis pip wheel codecov
 
 script:
   - tox
