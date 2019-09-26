@@ -1,14 +1,13 @@
-import os
-from setuptools import setup, find_packages
+import pathlib
+
+from setuptools import find_packages, setup
 
 
 def read_file(filename):
     """Read a file into a string"""
-    path = os.path.abspath(os.path.dirname(__file__))
-    filepath = os.path.join(path, filename)
     try:
-        return open(filepath).read()
-    except IOError:
+        return (pathlib.Path(__file__).parent / filename).read_text()
+    except FileNotFoundError:
         return ''
 
 
