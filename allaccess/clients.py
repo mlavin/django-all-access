@@ -28,8 +28,8 @@ class BaseOAuthClient(object):
                 token=raw_token, params=profile_info_params,
             )
             response.raise_for_status()
-        except RequestException as exc:
-            logger.error('Unable to fetch user profile: {0}'.format(exc))
+        except RequestException:
+            logger.exception('Unable to fetch user profile')
             return None
         else:
             return response.json() or response.text
@@ -75,8 +75,8 @@ class OAuthClient(BaseOAuthClient):
                     token=raw_token, data=data, oauth_callback=callback,
                 )
                 response.raise_for_status()
-            except RequestException as exc:
-                logger.error('Unable to fetch access token: {0}'.format(exc))
+            except RequestException:
+                logger.exception('Unable to fetch OAuth access token')
                 return None
             else:
                 return response.text
@@ -89,8 +89,8 @@ class OAuthClient(BaseOAuthClient):
             response = self.request(
                 'post', self.provider.request_token_url, oauth_callback=callback)
             response.raise_for_status()
-        except RequestException as exc:
-            logger.error('Unable to fetch request token: {0}'.format(exc))
+        except RequestException:
+            logger.exception('Unable to fetch request token')
             return None
         else:
             return response.text
@@ -175,8 +175,8 @@ class OAuth2Client(BaseOAuthClient):
         try:
             response = self.request('post', self.provider.access_token_url, data=args)
             response.raise_for_status()
-        except RequestException as exc:
-            logger.error('Unable to fetch access token: {0}'.format(exc))
+        except RequestException:
+            logger.exception('Unable to fetch OAuth2 access token')
             return None
         else:
             return response.text
