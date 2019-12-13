@@ -40,7 +40,7 @@ setup(
     ],
     long_description=read_file('README.rst'),
     install_requires=(
-        'pycrypto>=2.4',
+        'pycryptodome>=3.9',
         'requests>=2.0',
         'requests_oauthlib>=0.4.2',
         'oauthlib>=0.6.2',

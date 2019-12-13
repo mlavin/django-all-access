@@ -9,7 +9,7 @@ from django.utils.encoding import force_bytes, force_text
 try:
     import Crypto.Cipher.AES
 except ImportError:  # pragma: no cover
-    raise ImportError('PyCrypto is required to use django-all-access.')
+    raise ImportError('PyCryptodome is required to use django-all-access.')
 
 
 class SignatureException(Exception):
@@ -17,13 +17,17 @@ class SignatureException(Exception):
 
 
 class SignedAESEncryption(object):
-    cipher_class = Crypto.Cipher.AES
     prefix = b'$AES'
     #: enable hmac signature of cypher text with the same key (default: True)
     sign = True
 
     def __init__(self, *args, **kwargs):
-        self.cipher = self.cipher_class.new(self.get_key())
+        cipher_class = Crypto.Cipher.AES
+        self.block_size = cipher_class.block_size
+        self.cipher = cipher_class.new(
+            self.get_key(),
+            mode=cipher_class.MODE_ECB,
+        )
 
     def get_key(self):
         return force_bytes(settings.SECRET_KEY.zfill(32))[:32]
@@ -34,8 +38,8 @@ class SignedAESEncryption(object):
     def get_padding(self, value):
         # We always want at least 2 chars of padding (including zero byte),
         # so we could have up to block_size + 1 chars.
-        mod = (len(value) + 2) % self.cipher.block_size
-        return self.cipher.block_size - mod + 2
+        mod = (len(value) + 2) % self.block_size
+        return self.block_size - mod + 2
 
     def add_padding(self, clear_text):
         padding = self.get_padding(clear_text)
@@ -89,7 +93,7 @@ class EncryptedField(models.TextField):
     encryption_class = SignedAESEncryption
 
     def __init__(self, *args, **kwargs):
-        self.cipher = self.encryption_class()
+        self.cipher = self.encryption_class(*args, **kwargs)
         super(EncryptedField, self).__init__(*args, **kwargs)
 
     def from_db_value(self, value, expression, connection):

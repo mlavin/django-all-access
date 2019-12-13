@@ -3,7 +3,7 @@ django-all-access==0.9.1
 requests-oauthlib==1.2.0
 requests==2.21.0
 oauthlib==3.0.1
-pycrypto==2.6.1
+pycryptodome==3.9.4
 Django==1.11.20
 gunicorn==19.9.0
 dj-database-url==0.3.0
