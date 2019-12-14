@@ -4,6 +4,13 @@ Release History
 Release and change history for django-all-access
 
 
+v1.2.0 (2019-12-14)
+-----------------------------------
+
+Replace PyCrypto with PyCryptodome.
+``SignedAESEncryption`` still uses AES with ECB mode for compatibility.
+
+
 v1.1.0 (2019-09-26)
 -----------------------------------
 
