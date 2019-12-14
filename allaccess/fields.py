@@ -21,7 +21,7 @@ class SignedAESEncryption(object):
     cipher_class = Crypto.Cipher.AES
     digestmod = hashlib.md5
     prefix = b'$AES'
-    #: enable hmac signature of cypher text with the same key (default: True)
+    #: enable hmac signature of cipher text with the same key (default: True)
     sign = True
 
     def __init__(self, *args, **kwargs):
@@ -57,7 +57,7 @@ class SignedAESEncryption(object):
         return clear_text
 
     def split_value(self, value):
-        #: split value from database into _, prefix, mac, cypher_text
+        #: split value from database into _, prefix, mac, cipher_text
         parts = value.split(b'$')
         if len(parts) == 3:
             parts.insert(2, None)
@@ -68,29 +68,29 @@ class SignedAESEncryption(object):
 
     def is_signed(self, value):
         #: value consists of 3 or 4 $ separated parts, check for mac in 2nd
-        _, prefix, mac, cypher_text = self.split_value(value)
+        _, prefix, mac, cipher_text = self.split_value(value)
         return mac is not None
 
-    def decrypt(self, cypher_text):
-        _, prefix, mac, cypher_text = self.split_value(cypher_text)
+    def decrypt(self, cipher_text):
+        _, prefix, mac, cipher_text = self.split_value(cipher_text)
         if self.sign and mac and \
-                not constant_time_compare(self.get_signature(cypher_text), mac):
+                not constant_time_compare(self.get_signature(cipher_text), mac):
             raise SignatureException(
                 'EncryptedField cannot be decrypted. '
                 'Did settings.SECRET_KEY change?'
             )
-        cypher_text = binascii.a2b_hex(cypher_text)
-        return self.cipher.decrypt(cypher_text).split(b'\x00')[0]
+        cipher_text = binascii.a2b_hex(cipher_text)
+        return self.cipher.decrypt(cipher_text).split(b'\x00')[0]
 
     def encrypt(self, clear_text):
         clear_text = self.add_padding(clear_text)
-        cypher_text = binascii.b2a_hex(self.cipher.encrypt(clear_text))
+        cipher_text = binascii.b2a_hex(self.cipher.encrypt(clear_text))
         parts = [self.prefix]
 
         if self.sign:
-            parts.append(self.get_signature(cypher_text))
+            parts.append(self.get_signature(cipher_text))
 
-        parts.append(cypher_text)
+        parts.append(cipher_text)
         return b'$'.join(parts)
 
 
