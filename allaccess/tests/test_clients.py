@@ -1,6 +1,4 @@
 """OAuth 1.0 and 2.0 client tests."""
-from __future__ import unicode_literals
-
 from unittest import mock
 from urllib.parse import parse_qs, urlparse
 
