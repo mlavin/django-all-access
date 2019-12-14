@@ -1,4 +1,5 @@
 import binascii
+import hashlib
 import hmac
 
 from django.conf import settings
@@ -17,23 +18,31 @@ class SignatureException(Exception):
 
 
 class SignedAESEncryption(object):
+    cipher_class = Crypto.Cipher.AES
+    digestmod = hashlib.md5
     prefix = b'$AES'
     #: enable hmac signature of cypher text with the same key (default: True)
     sign = True
 
     def __init__(self, *args, **kwargs):
-        cipher_class = Crypto.Cipher.AES
-        self.block_size = cipher_class.block_size
-        self.cipher = cipher_class.new(
+        self.block_size = self.get_blocksize()
+        self.cipher = self.cipher_class.new(
             self.get_key(),
-            mode=cipher_class.MODE_ECB,
+            **self.get_cipher_kwargs()
         )
+
+    def get_blocksize(self):
+        return self.cipher_class.block_size
+
+    def get_cipher_kwargs(self):
+        return dict(mode=self.cipher_class.MODE_ECB)
 
     def get_key(self):
         return force_bytes(settings.SECRET_KEY.zfill(32))[:32]
 
     def get_signature(self, value):
-        return force_bytes(hmac.new(self.get_key(), value).hexdigest())
+        h = hmac.new(self.get_key(), msg=value, digestmod=self.digestmod)
+        return force_bytes(h.hexdigest())
 
     def get_padding(self, value):
         # We always want at least 2 chars of padding (including zero byte),
