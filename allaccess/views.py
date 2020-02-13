@@ -151,7 +151,7 @@ class OAuthCallback(OAuthClientMixin, View):
 
     def handle_existing_user(self, provider, user, access, info):
         "Login user and redirect."
-        login(self.request, user)
+        login(self.request, user, backend='allaccess.backends.AuthorizedServiceBackend')
         return redirect(self.get_login_redirect(provider, user, access))
 
     def handle_login_failure(self, provider, reason):
@@ -166,5 +166,5 @@ class OAuthCallback(OAuthClientMixin, View):
         access.user = user
         AccountAccess.objects.filter(pk=access.pk).update(user=user)
         user = authenticate(provider=access.provider, identifier=access.identifier)
-        login(self.request, user)
+        login(self.request, user, backend='allaccess.backends.AuthorizedServiceBackend')
         return redirect(self.get_login_redirect(provider, user, access, True))
