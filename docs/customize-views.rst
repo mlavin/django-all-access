@@ -284,7 +284,7 @@ the URL pattern.
 
 .. code-block:: python
 
-    from django.core.urlresolvers import reverse
+    from django.urls import reverse
     from allaccess.views import OAuthRedirect
 
     class AssociateRedirect(OAuthRedirect):

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import override_settings, RequestFactory
 
 from .base import AllAccessTestCase, AccountAccess, get_user_model, skipIfCustomUser
