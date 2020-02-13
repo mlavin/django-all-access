@@ -93,7 +93,7 @@ class EncryptedField(models.TextField):
         self.cipher = self.encryption_class()
         super(EncryptedField, self).__init__(*args, **kwargs)
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         if value is None:
             return value
         value = force_bytes(value)
