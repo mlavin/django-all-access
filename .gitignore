@@ -9,6 +9,7 @@
 .coverage
 coverage.xml
 .tox
+.eggs
 *.egg-info/*
 docs/_build/*
 dist/*
