@@ -1,8 +1,8 @@
-from django.urls import re_path
+from django.urls import path
 
 from .views import OAuthCallback, OAuthRedirect
 
 urlpatterns = [
-    re_path(r'^login/(?P<provider>(\w|-)+)/$', OAuthRedirect.as_view(), name='allaccess-login'),
-    re_path(r'^callback/(?P<provider>(\w|-)+)/$', OAuthCallback.as_view(), name='allaccess-callback'),
+    path('login/(?P<str:provider>/', OAuthRedirect.as_view(), name='allaccess-login'),
+    path('callback/(?P<str:provider>/', OAuthCallback.as_view(), name='allaccess-callback'),
 ]
