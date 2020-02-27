@@ -43,7 +43,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'django-all-access'
-copyright = '2012-%s, Mark Lavin' % datetime.date.today().year
+copyright = '2012-%s, Mark Lavin & contributors' % datetime.date.today().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
