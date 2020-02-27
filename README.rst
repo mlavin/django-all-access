@@ -1,6 +1,12 @@
 django-all-access
 ===================
 
+.. image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
+    :target: https://travis-ci.org/fdemmer/django-all-access
+
+.. image:: https://codecov.io/gh/fdemmer/django-all-access/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/fdemmer/django-all-access
+
 django-all-access is a reusable application for user registration and authentication
 from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 
@@ -8,20 +14,15 @@ The goal of this project is to make it easy to create your own workflows for
 authenticating with these remote APIs. django-all-access will provide the simple
 views with sane defaults along with hooks to override the default behavior.
 
-.. image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
-    :target: https://travis-ci.org/fdemmer/django-all-access
-
-.. image:: https://codecov.io/gh/fdemmer/django-all-access/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/fdemmer/django-all-access
-
 You can find a basic demo application running at http://django-all-access.mlavin.org/
+
 
 Features
 ------------------------------------
 
 - Sane and secure defaults for OAuth authentication
 - Easy customization through class-based views
-- Built on the amazing `requests <http://docs.python-requests.org/>`_ library
+- Built using the amazing `requests <https://requests.readthedocs.io/en/master/>`_ library
 
 
 Installation
@@ -31,7 +32,7 @@ It is easiest to install this fork of django-all-access from GitHub using pip:
 
 .. code-block:: shell
 
-    pip install git+https://github.com/fdemmer/django-all-access@v1.0.0#egg=django-all-access
+    pip install git+https://github.com/fdemmer/django-all-access@v1.3.0#egg=django-all-access
 
 
 django-all-access requires Python 3.5+ along with the following Python
@@ -50,7 +51,13 @@ Documentation
 --------------------------------------
 
 Additional documentation on using django-all-access is available on
-`Read The Docs <http://readthedocs.org/docs/django-all-access/>`_.
+`Read The Docs <https://django-all-access.readthedocs.io/en/latest/>`_.
+
+
+Releases
+--------------------------------------
+
+`Changelog <https://github.com/fdemmer/django-all-access/blob/master/docs/releases.rst>`_.
 
 
 License
@@ -65,7 +72,7 @@ Contributing
 --------------------------------------
 
 If you have questions about using django-all-access or want to follow updates about
-the project you can join the `mailing list <http://groups.google.com/group/django-all-access>`_
+the project you can join the `mailing list <https://groups.google.com/group/django-all-access>`_
 through Google Groups.
 
 If you think you've found a bug or are interested in contributing to this project
