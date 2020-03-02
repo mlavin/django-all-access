@@ -3,15 +3,11 @@ sudo: false
 language: python
 
 python:
-  - "3.5"
+  - "3.7"
 
 env:
-  - TOXENV=py27-django18-normal,py33-django18-normal
-  - TOXENV=py27-django18-custom,py33-django18-custom
-  - TOXENV=py27-django19-normal,py34-django19-normal
-  - TOXENV=py27-django19-custom,py34-django19-custom
-  - TOXENV=py27-django110-normal,py34-django110-normal,py35-django110-normal
-  - TOXENV=py27-django110-custom,py34-django110-custom,py35-django110-custom
+  - TOXENV=py37-django30-normal
+  - TOXENV=py37-django30-custom
 
 cache:
   directories:
