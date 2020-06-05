@@ -4,7 +4,7 @@ requests-oauthlib==0.7.0
 requests==2.11.1
 oauthlib==2.0.0
 pycrypto==2.6.1
-Django==1.10.3
+Django==1.11.29
 gunicorn>=19.6,<19.7
 dj-database-url==0.3.0
 dj-static==0.0.6
