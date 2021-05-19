@@ -4,6 +4,18 @@ Release History
 Release and change history for django-all-access
 
 
+v1.3.1 (2021-05-19)
+-----------------------------------
+
+Fix warnings with Django 3.1 & 3.2.
+
+Updates to test matrix:
+
+- add Python 3.9
+- add Django 3.1 & 3.2
+- remove Django 3.0
+
+
 v1.3.0 (2020-02-28)
 -----------------------------------
 
@@ -13,10 +25,10 @@ attribute ``digestmod``.
 
 Updates to test matrix:
 
-- remove Python 3.5
-- remove Django 2.0, 2.1
 - add Python 3.8
 - add Django 3.0
+- remove Python 3.5
+- remove Django 2.0, 2.1
 
 
 v1.2.0 (2019-12-14)
