@@ -25,6 +25,7 @@ if not settings.configured:
                 'NAME': ':memory:',
             }
         },
+        DEFAULT_AUTO_FIELD='django.db.models.AutoField',
         INSTALLED_APPS=INSTALLED_APPS,
         MIDDLEWARE=(
             'django.middleware.common.CommonMiddleware',
