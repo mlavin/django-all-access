@@ -2,11 +2,11 @@
 django-all-access is a reusable application for user registration and authentication
 from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
 """
-__version__ = '1.3.1'
+import logging
+
+__version__ = '1.3.2'
 
 default_app_config = 'allaccess.apps.AllAccessConfig'
-
-import logging
 
 
 class NullHandler(logging.Handler):

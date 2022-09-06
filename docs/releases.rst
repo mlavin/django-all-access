@@ -4,6 +4,17 @@ Release History
 Release and change history for django-all-access
 
 
+v1.3.2 (2022-09-06)
+-----------------------------------
+
+Updates to test matrix and required fixes:
+
+- add Python 3.10
+- add Django 4.0 & 4.1
+- remove Django 2.2 & 3.1
+- remove Heroku related files
+
+
 v1.3.1 (2021-05-19)
 -----------------------------------
 
