@@ -3,9 +3,9 @@ import hashlib
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-from django.utils.encoding import smart_bytes, force_text
+from django.utils.encoding import force_str, smart_bytes
 
-from allaccess.views import OAuthRedirect, OAuthCallback
+from allaccess.views import OAuthCallback, OAuthRedirect
 
 
 class CustomRedirect(OAuthRedirect):
@@ -27,7 +27,8 @@ class CustomCallback(OAuthCallback):
             digest = hashlib.sha1(smart_bytes(access)).digest()
             # Base 64 encode to get below 30 characters
             # Removed padding characters
-            email = '%s@example.com' % force_text(base64.urlsafe_b64encode(digest)).replace('=', '')
+            identifier = force_str(base64.urlsafe_b64encode(digest)).replace('=', '')
+            email = f'{identifier}@example.com'
         User = get_user_model()
         kwargs = {
             'email': email,

@@ -5,7 +5,7 @@ import hmac
 from django.conf import settings
 from django.db import models
 from django.utils.crypto import constant_time_compare
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 
 try:
     import Crypto.Cipher.AES
@@ -111,9 +111,9 @@ class EncryptedField(models.TextField):
 
         value = force_bytes(value)
         if self.cipher.is_encrypted(value):
-            return force_text(self.cipher.decrypt(value))
+            return force_str(self.cipher.decrypt(value))
 
-        return force_text(value)
+        return force_str(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         if self.null:
@@ -127,4 +127,4 @@ class EncryptedField(models.TextField):
         if not self.cipher.is_encrypted(value):
             value = self.cipher.encrypt(value)
 
-        return force_text(value)
+        return force_str(value)

@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, get_user_model, login
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.encoding import force_text, smart_bytes
+from django.utils.encoding import force_str, smart_bytes
 from django.views.generic import RedirectView, View
 
 from .clients import get_client
@@ -125,7 +125,7 @@ class OAuthCallback(OAuthClientMixin, View):
         digest = hashlib.sha1(smart_bytes(access)).digest()
         # Base 64 encode to get below 30 characters
         # Removed padding characters
-        username = force_text(base64.urlsafe_b64encode(digest)).replace('=', '')
+        username = force_str(base64.urlsafe_b64encode(digest)).replace('=', '')
         User = get_user_model()
         kwargs = {
             User.USERNAME_FIELD: username,

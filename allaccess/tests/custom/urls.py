@@ -1,11 +1,10 @@
-from django.conf.urls import url
+from django.urls import re_path
 
-from .views import CustomRedirect, CustomCallback
-
+from .views import CustomCallback, CustomRedirect
 
 urlpatterns = [
-    url(r'^custom-login/(?P<provider>(\w|-)+)/$',
+    re_path(r'^custom-login/(?P<provider>(\w|-)+)/$',
         CustomRedirect.as_view(), name='custom-login'),
-    url(r'^custom-callback/(?P<provider>(\w|-)+)/$',
+    re_path(r'^custom-callback/(?P<provider>(\w|-)+)/$',
         CustomCallback.as_view(), name='custom-callback'),
 ]
