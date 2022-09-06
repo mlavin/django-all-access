@@ -31,7 +31,7 @@ class Provider(models.Model):
     def save(self, *args, **kwargs):
         self.consumer_key = self.consumer_key or None
         self.consumer_secret = self.consumer_secret or None
-        super(Provider, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def natural_key(self):
         return self.name,
@@ -63,15 +63,15 @@ class AccountAccess(models.Model):
 
     objects = AccountAccessManager()
 
-    class Meta(object):
+    class Meta:
         unique_together = ('identifier', 'provider')
 
     def __str__(self):
-        return '{0} {1}'.format(self.provider, self.identifier)
+        return f'{self.provider} {self.identifier}'
 
     def save(self, *args, **kwargs):
         self.access_token = self.access_token or None
-        super(AccountAccess, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def natural_key(self):
         return (self.identifier,) + self.provider.natural_key()

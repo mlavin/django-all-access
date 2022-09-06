@@ -17,7 +17,7 @@ from .models import AccountAccess, Provider
 logger = logging.getLogger('allaccess.views')
 
 
-class OAuthClientMixin(object):
+class OAuthClientMixin:
     """Mixin for getting OAuth client for a provider."""
     client_class = None
 
@@ -84,7 +84,7 @@ class OAuthCallback(OAuthClientMixin, View):
                 return self.handle_login_failure(provider, "Could not retrieve token.")
 
             # Fetch profile info
-            info = client.get_profile_info(raw_token, self.get_profile_info_params(provider))
+            info = client.get_profile_info(raw_token, self.get_profile_info_params(provider))  # noqa
             if info is None:
                 return self.handle_login_failure(provider, "Could not retrieve profile.")
             identifier = self.get_user_id(provider, info)
@@ -156,7 +156,7 @@ class OAuthCallback(OAuthClientMixin, View):
 
     def handle_login_failure(self, provider, reason):
         """Message user and redirect on error."""
-        logger.error('Authenication Failure: {0}'.format(reason))
+        logger.error(f'Authenication Failure: {reason}')
         messages.error(self.request, 'Authenication Failed.')
         return redirect(self.get_error_redirect(provider, reason))
 

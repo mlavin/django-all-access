@@ -11,7 +11,7 @@ from requests_oauthlib import OAuth1
 logger = logging.getLogger('allaccess.clients')
 
 
-class BaseOAuthClient(object):
+class BaseOAuthClient:
     def __init__(self, provider, token=''):
         self.provider = provider
         self.token = token
@@ -44,7 +44,7 @@ class BaseOAuthClient(object):
         additional = parameters or {}
         args.update(additional)
         params = urlencode(args)
-        return '{0}?{1}'.format(self.provider.authorization_url, params)
+        return f'{self.provider.authorization_url}?{params}'
 
     def parse_raw_token(self, raw_token):
         """Parse token and secret from raw token response."""
@@ -132,11 +132,11 @@ class OAuthClient(BaseOAuthClient):
             callback_uri=callback,
         )
         kwargs['auth'] = oauth
-        return super(OAuthClient, self).request(method, url, **kwargs)
+        return super().request(method, url, **kwargs)
 
     @property
     def session_key(self):
-        return 'allaccess-{0}-request-token'.format(self.provider.name)
+        return f'allaccess-{self.provider.name}-request-token'
 
 
 class OAuth2Client(BaseOAuthClient):
@@ -222,11 +222,11 @@ class OAuth2Client(BaseOAuthClient):
             params = kwargs.get('params') or {}
             params['access_token'] = token
             kwargs['params'] = params
-        return super(OAuth2Client, self).request(method, url, **kwargs)
+        return super().request(method, url, **kwargs)
 
     @property
     def session_key(self):
-        return 'allaccess-{0}-request-state'.format(self.provider.name)
+        return f'allaccess-{self.provider.name}-request-state'
 
 
 def get_client(provider, token=''):

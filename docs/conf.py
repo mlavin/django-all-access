@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # django-all-access documentation build configuration file, created by
 # sphinx-quickstart on Tue Jun 19 22:50:45 2012.
 #
@@ -11,8 +9,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 import datetime
-import os
-import sys
+
 import allaccess
 
 # If extensions (or modules to document with autodoc) are in another directory,

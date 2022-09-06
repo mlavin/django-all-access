@@ -17,7 +17,7 @@ class SignatureException(Exception):
     pass
 
 
-class SignedAESEncryption(object):
+class SignedAESEncryption:
     cipher_class = Crypto.Cipher.AES
     digestmod = hashlib.md5
     prefix = b'$AES'
@@ -103,7 +103,7 @@ class EncryptedField(models.TextField):
 
     def __init__(self, *args, **kwargs):
         self.cipher = self.encryption_class(*args, **kwargs)
-        super(EncryptedField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def from_db_value(self, value, expression, connection):
         if value is None:
