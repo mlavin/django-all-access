@@ -1,11 +1,23 @@
 django-all-access
 ===================
 
-.. image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
+|TravisCI Build| |Coverage| |PyPI Download| |PyPI Python Versions| |PyPI License|
+
+.. |TravisCI Build| image:: https://travis-ci.org/fdemmer/django-all-access.svg?branch=master
     :target: https://travis-ci.org/fdemmer/django-all-access
 
-.. image:: https://codecov.io/gh/fdemmer/django-all-access/branch/master/graph/badge.svg
+.. |Coverage| image:: https://codecov.io/gh/fdemmer/django-all-access/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/fdemmer/django-all-access
+
+.. |PyPI Download| image:: https://img.shields.io/pypi/v/fdemmer-django-all-access.svg
+   :target: https://pypi.python.org/pypi/fdemmer-django-all-access/
+
+.. |PyPI Python Versions| image:: https://img.shields.io/pypi/pyversions/fdemmer-django-all-access.svg
+   :target: https://pypi.python.org/pypi/fdemmer-django-all-access/
+
+.. |PyPI License| image:: https://img.shields.io/pypi/l/fdemmer-django-all-access.svg
+   :target: https://pypi.python.org/pypi/fdemmer-django-all-access/
+
 
 django-all-access is a reusable application for user registration and authentication
 from OAuth 1.0 and OAuth 2.0 providers such as Twitter and Facebook.
@@ -14,7 +26,9 @@ The goal of this project is to make it easy to create your own workflows for
 authenticating with these remote APIs. django-all-access will provide the simple
 views with sane defaults along with hooks to override the default behavior.
 
-You can find a basic demo application running at http://django-all-access.mlavin.org/
+This is a fork to provide updates for compatibility and a package on PyPI only.
+
+django-all-acccess was originally authored by `Mark Lavin <https://mlavin.org/>`.
 
 
 Features
@@ -28,19 +42,18 @@ Features
 Installation
 ------------------------------------
 
-It is easiest to install this fork of django-all-access from GitHub using pip:
+It is easiest to install this fork of django-all-access using pip:
 
 .. code-block:: shell
 
-    pip install git+https://github.com/fdemmer/django-all-access@v1.3.0#egg=django-all-access
+    pip install fdemmer-django-all-access
 
 
-django-all-access requires Python 3.5+ along with the following Python
-packages (and will be automatically installed if necessary):
+django-all-access requires Python 3.6+ & Django along with the following Python
+packages (which are automatically installed if necessary):
 
 .. code-block:: text
 
-    django>=2.0
     pycryptodome>=3.9
     requests>=2.0
     requests_oauthlib>=0.4.2
