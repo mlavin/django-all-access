@@ -251,7 +251,7 @@ in your project, you should update your ``LOGGING`` configuration to include
     }
 
 For more information on logging please see the
-`Django documentation <https://docs.djangoproject.com/en/1.4/topics/logging/>`_
+`Django documentation <https://docs.djangoproject.com/en/stable/topics/logging/>`_
 or the `Python documentation <http://docs.python.org/library/logging.html>`_.
 
 

@@ -2,7 +2,7 @@ Customizing Redirects and Callbacks
 ====================================
 
 django-all-access provides default views/urls for authentication. These are built
-from Django's `class based views <https://docs.djangoproject.com/en/1.8/topics/class-based-views/>`_
+from Django's `class based views <https://docs.djangoproject.com/en/stable/topics/class-based-views/>`_
 making them easy to extend or override the default behavior in your project.
 
 
@@ -11,7 +11,7 @@ OAuthRedirect View
 
 The initial step for authenticating with any OAuth provider is redirecting the
 user to the provider's website. The :py:class:`OAuthRedirect` view extends from the
-`RedirectView <https://docs.djangoproject.com/en/1.8/ref/class-based-views/#redirectview>`_
+`RedirectView <https://docs.djangoproject.com/en/stable/ref/class-based-views/base/#redirectview>`_
 By default it is mapped to the ``allaccess-login`` URL name. This view takes one
 keyword argument from the URL pattern ``provider`` which corresponds to the ``Provider.name``
 for an enabled provider. If no enabled provider is found for the name, this view
@@ -74,7 +74,7 @@ OAuthCallback View
 After the user has authenticated with the remote provider or denied access to your application
 request, they are returned to the callback specified in the initial redirect. :py:class:`OAuthCallback`
 defines the default behaviour on this callback. This view extends from the base
-`View <https://docs.djangoproject.com/en/1.8/ref/class-based-views/#view>`_ class.
+`View <https://docs.djangoproject.com/en/stable/ref/class-based-views/base/#view>`_ class.
 By default it is mapped to the ``allaccess-callback`` URL name. Similar to the :py:class:`OAuthRedirect` view,
 this view takes one keyword argument ``provider`` which corresponds to the ``Provider.name``
 for an enabled provider. If no enabled provider is found for the name, this view will return a 404.
@@ -211,19 +211,19 @@ and changing how the provider identifier is found on the callback. Below is an e
 
 .. code-block:: python
 
-    from django.conf.urls import include, url
+    from django.urls import include, re_path
 
     from allaccess.views import OAuthRedirect, OAuthCallback
 
     urlpatterns = [
         # Customize Facebook redirect to request additional scope
-        url(r'^accounts/login/(?P<provider>facebook)/$',
+        re_path(r'^accounts/login/(?P<provider>facebook)/$',
             OAuthRedirect.as_view(params={'scope': 'email'})),
         # Customize Foursquare callback to handle nested response
-        url(r'^accounts/callback/(?P<provider>foursquare)/$',
+        re_path(r'^accounts/callback/(?P<provider>foursquare)/$',
             OAuthCallback.as_view(provider_id='response.user.id')),
         # All other provider cases are handled by the defaults
-        url(r'^accounts/', include('allaccess.urls')),
+        re_path(r'^accounts/', include('allaccess.urls')),
     ]
 
 
@@ -289,7 +289,7 @@ an error.
 
 This view will require authentication which is handled in the URL pattern. There
 are multiple methods for decorating class based views which are detailed in the
-`Django docs <https://docs.djangoproject.com/en/1.8/topics/class-based-views/#decorating-class-based-views>`_.
+`Django docs <https://docs.djangoproject.com/en/stable/topics/class-based-views/intro/#decorating-class-based-views>`_.
 
 Next we will need a redirect view to send the user to this callback. This view
 will also require that the user already be authenticated which can be handled in
@@ -311,12 +311,13 @@ example set of URL patterns is given below.
 .. code-block:: python
 
     from django.contrib.auth.decorators import login_required
+    from django.urls import re_path
 
     from .views import AssociateRedirect, AssociateCallback
 
     urlpatterns = [
-        url(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
-        url(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
+        re_path(r'^associate/(?P<provider>(\w|-)+)/$', login_required(AssociateRedirect.as_view()), name='associate'),
+        re_path(r'^associate-callback/(?P<provider>(\w|-)+)/$', login_required(AssociateCallback.as_view()), name='associate-callback'),
     ]
 
 That is the basic outline of how you would allow multiple account associations. This

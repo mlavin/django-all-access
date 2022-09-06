@@ -11,7 +11,7 @@ Configure Settings
 You need to add ``allaccess`` to your installed apps as well as include an
 additional authentication backend in your project settings. django-all-access requires
 ``django.contrib.auth``, ``django.contrib.sessions`` and ``django.contrib.messages``
-which are enabled in Django by default. ``django.contrib.admin`` is recommended 
+which are enabled in Django by default. ``django.contrib.admin`` is recommended
 for managing the set of providers, but is not required.
 
 .. code-block:: python
@@ -52,12 +52,11 @@ your root URL configuration.
 
 .. code-block:: python
 
-    from django.conf.urls import include
-
+    from django.urls import include, path
 
     urlpatterns = [
         # Other URL patterns would go here
-        url(r'^accounts/', include('allaccess.urls')),
+        path('accounts/', include('allaccess.urls')),
     ]
 
 This makes the login URL for a particular provider ``/accounts/login/<provider>/``,
