@@ -13,7 +13,7 @@ trim_trailing_whitespace = true
 [*.{py, md, rst, ini}]
 max_line_length = 88
 
-[*.{html, css, scss, js, json, yml}]
+[*.{html, css, scss, js, json, yml, yaml}]
 tab_width = 2
 
 [*.md]
